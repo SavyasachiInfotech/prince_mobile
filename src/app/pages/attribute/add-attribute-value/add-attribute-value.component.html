@@ -1,0 +1,124 @@
+<div class="page-wrapper">
+  <!-- ============================================================== -->
+  <!-- Container fluid  -->
+  <!-- ============================================================== -->
+  <div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+      <div class="col-md-5 align-self-center">
+        <h4 class="text-themecolor">Add Attribute's Value</h4>
+      </div>
+      <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item">Attribute</li>
+            <li class="breadcrumb-item active">Add Attribute's Value</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Info box Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+      <!-- Column -->
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <form action="#">
+              <div class="form-body">
+                <h5 class="card-title">About Attribute Value</h5>
+                <hr />
+                <!--/row-->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Attribute</label>
+                      <select
+                        class="form-control"
+                        data-placeholder="Choose an Attribute"
+                        tabindex="1"
+                        [(ngModel)]="attribute.attribute_id"
+                        name="attribute"
+                        (change)="changeAttribute()"
+                      >
+                        <option *ngFor="let attribute of attributes" [value]="attribute.id"
+                          >{{attribute.name}}</option
+                        >
+                      </select>
+                    </div>
+                  </div>
+                  <!--/span-->
+                </div>
+
+                <!--/row-->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Attribute Value</label>
+                      <input
+                        type="text"
+                        id="firstName"
+                        class="form-control"
+                        placeholder="Attribute value"
+                        name="value"
+                        [(ngModel)]="attribute.value"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <hr />
+              </div>
+              <div class="form-actions m-t-40">
+                <button type="submit" class="btn btn-success" (click)="saveAttribute()">Save</button>
+                <button type="button" class="btn btn-dark" (click)="cancelAttribute()">Cancel</button>
+              </div>
+            </form>
+            <hr />
+            <div class="form-body">
+              <h5 class="card-title">Attribute's Values</h5>
+              <hr />
+            </div>
+            <div class="table-responsive">
+              <table class="table product-overview" id="myTable">
+                <thead>
+                  <tr>
+                    <th>Attribute Value Id</th>
+                    <th>Value</th>
+                    <th>Attribute</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let value of values">
+                    <td>{{value.id}}</td>
+                    <td>{{value.value}}</td>
+                    <td>{{value.attribute_id}}</td>
+                    <td>
+                      <i class="material-icons" (click)="editAttributeRequest(value)">edit</i>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Column -->
+    </div>
+    <!-- ============================================================== -->
+    <!-- End PAge Content -->
+    <!-- ============================================================== -->
+  </div>
+  <!-- ============================================================== -->
+  <!-- End Container fluid  -->
+  <!-- ============================================================== -->
+</div>
+<!-- ============================================================== -->

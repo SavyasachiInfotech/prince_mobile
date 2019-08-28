@@ -1,0 +1,41 @@
+.left-sidebar {
+  position: fixed;
+  width: 220px;
+  height: 100%;
+  top: 0;
+  z-index: 20;
+  padding-top: 70px;
+  box-shadow: 1px 0 20px rgba(0, 0, 0, 0.08);
+  background: #fff;
+}
+li {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  padding-left: 8px;
+  list-style: none;
+  color: #333333;
+  font-weight: 500;
+  cursor: pointer;
+  a {
+    color: #333333;
+    width: 100%;
+  }
+  a:hover {
+    color: #fb9678;
+    text-decoration: none;
+  }
+}
+li {
+  div {
+    display: flex;
+  }
+}
+.link {
+  display: inline-block;
+}
+li:hover {
+  color: #fb9678;
+}
+ul {
+  padding-left: 0px;
+}

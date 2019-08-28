@@ -1,0 +1,67 @@
+<aside class="left-sidebar">
+  <!-- Sidebar scroll-->
+  <div class="sidebar-content">
+    <div class="menus">
+      <ul class="list-unstyled components">
+        <li>
+          <div>
+            <a
+              href="#attribute"
+              data-toggle="collapse"
+              aria-expanded="false"
+              class="link"
+              >Attributes</a
+            >
+            <i class="material-icons">chevron_right</i>
+          </div>
+
+          <ul
+            aria-expanded="false"
+            id="attribute"
+            class="collapse list-unstyled"
+          >
+            <li>
+              <a class="link" (click)="goToLink('attribute')">Add Attributes</a>
+            </li>
+            <li>
+              <a class="link" (click)="goToLink('attribute/attribute-value')"
+                >Add Attribute's value</a
+              >
+            </li>
+          </ul>
+        </li>
+
+        <li>
+            <div>
+                <a
+                  href="#category"
+                  data-toggle="collapse"
+                  aria-expanded="false"
+                  class="link"
+                  >Category</a
+                >
+                <i class="material-icons">chevron_right</i>
+              </div>
+          <ul
+            aria-expanded="false"
+            id="category"
+            class="collapse list-unstyled"
+          >
+            <li>
+              <a class="link" (click)="goToLink('category')">Add Category</a>
+            </li>
+            <li>
+              <a class="link" (click)="goToLink('category/sub-category')"
+                >Add Sub Category</a
+              >
+            </li>
+          </ul>
+        </li>
+        <li (click)="goToLink('mobile')">Mobiles</li>
+        <li (click)="goToLink('product/add-product')">Products</li>
+        <li>Orders</li>
+      </ul>
+    </div>
+  </div>
+  <!-- End Sidebar scroll-->
+</aside>
