@@ -5,7 +5,13 @@ import { LayoutComponent } from "../theme/layout/layout.component";
 const routes: Routes = [
   {
     path: "",
+    loadChildren: () => import("./auth/auth.module").then(m => m.AuthModule)
+  },
+  {
+    path: "dashboard",
     component: LayoutComponent,
+    loadChildren: () =>
+      import("../theme/theme.module").then(m => m.ThemeModule),
     children: [
       {
         path: "category",
@@ -18,12 +24,14 @@ const routes: Routes = [
           import("./attribute/attribute.module").then(m => m.AttributeModule)
       },
       {
-        path:"mobile",
-        loadChildren:()=>import("./mobile/mobile.module").then(m=>m.MobileModule)
+        path: "mobile",
+        loadChildren: () =>
+          import("./mobile/mobile.module").then(m => m.MobileModule)
       },
       {
-        path:"product",
-        loadChildren:()=>import("./product/product.module").then(m=>m.ProductModule)
+        path: "product",
+        loadChildren: () =>
+          import("./product/product.module").then(m => m.ProductModule)
       }
     ]
   }

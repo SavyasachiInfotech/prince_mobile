@@ -10,7 +10,6 @@ const {
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 
-
 /** Verify the user token */
 
 function verifyToken(req, res, next) {
@@ -30,31 +29,22 @@ function verifyToken(req, res, next) {
   next();
 }
 
-router.get("/get-mobiles/:up", [param("up").isNumeric()], verifyToken, (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(200).json({
-      status: process.env.ERROR,
-      message: "Invalid Input Found",
-      errors: errors.array()
-    });
-  } else {
-    let sql = "select * from mobile_models limit " + req.params.up + "," + limit;
-    con.query(sql, (err, result) => {
-      if (err) {
-        console.log(err);
+router.get("/get-specifications", verifyToken, (req, res) => {
+  let sql = "select * from specification";
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      if (result.length > 0) {
+        res.status(200).json({ status: process.env.SUCCESS, message: "Getting specifications successfully.", data: result });
       } else {
-        if (result.length > 0) {
-          res.status(200).json({ status: 200, message: "Mobiles getting successfully", data: result });
-        } else {
-          res.status(200).json({ status: 404, message: "No record found of mobiles." });
-        }
+        res.status(200).json({ status: process.env.NOT_FOUND, message: process.env.NO_RECORD });
       }
-    })
-  }
+    }
+  });
 });
 
-router.post("/add-mobile", [check("name").isString()], verifyToken, (req, res) => {
+router.post("/add-specifications", [check("name").isString()], verifyToken, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(200).json({
@@ -63,19 +53,20 @@ router.post("/add-mobile", [check("name").isString()], verifyToken, (req, res) =
       errors: errors.array()
     });
   } else {
-    mobile = req.body;
-    sql = 'insert into mobile_models(name) values("' + mobile.name + '")';
+    let specification = req.body;
+    let sql = 'insert into specif ication(name) values("' + specification.name + '")';
     con.query(sql, (err, result) => {
       if (err) {
         console.log(err);
+        res.status(200).json({ status: 400, message: "Specification is not added." });
       } else {
-        res.status(200).json({ status: 200, message: "Mobile added successfully" });
+        res.status(200).json({ status: 200, message: "Specification is added successfully." })
       }
     });
   }
 });
 
-router.put("/update-mobile", [check("name").isString(), check("id").isNumeric()], verifyToken, (req, res) => {
+router.put("/update-specifications", [check("name").isString(), check("id").isNumeric()], verifyToken, (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(200).json({
@@ -84,13 +75,14 @@ router.put("/update-mobile", [check("name").isString(), check("id").isNumeric()]
       errors: errors.array()
     });
   } else {
-    mobile = req.body;
-    sql = 'update mobile_models set name="' + mobile.name + '" where id=' + mobile.id;
+    let specification = req.body;
+    let sql = 'update specification set name="' + specification.name + "' where id=" + specification.id;
     con.query(sql, (err, result) => {
       if (err) {
         console.log(err);
+        res.status(200).json({ status: process.env.ERROR, message: "Specification is not updated." });
       } else {
-        res.status(200).json({ status: 200, message: "Mobile updated successfully" });
+        res.status(200).json({ status: process.env.SUCCESS, message: "Specification is updated successfully." });
       }
     });
   }

@@ -1,0 +1,91 @@
+.login-register {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  height: 100%;
+  width: 100%;
+  padding: 10% 0;
+  position: fixed;
+}
+
+#wrapper {
+  padding: 10px;
+}
+i {
+  font-size: 15px;
+}
+a {
+  text-decoration: none;
+}
+
+.form-control {
+  margin-top: 15px;
+  background-image: linear-gradient(#fb9678, #fb9678),
+    linear-gradient(#e9ecef, #e9ecef);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  float: none;
+  background-color: rgba(0, 0, 0, 0);
+  background-position: center bottom, center calc(100% - 1px);
+  background-repeat: no-repeat;
+  background-size: 0 2px, 100% 1px;
+  padding: 0;
+  transition: background 0s ease-out 0s;
+  min-height: 38px;
+  display: initial;
+  color: #212529;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 2px);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background-clip: padding-box;
+  font-weight: 400;
+}
+input {
+  margin: 0;
+  font-family: inherit;
+}
+button {
+  border-radius: 50px;
+}
+.login-box {
+  width: 400px;
+  margin: 0 auto;
+}
+.card-body {
+  padding: 2rem;
+}
+.btn-info {
+  background-color: #03a9f3;
+  border-color: #03a9f3;
+  margin-top: 10px;
+}
+.login-box .footer {
+  width: 100%;
+  left: 0px;
+  right: 0px;
+}
+.login-box .social {
+  display: block;
+  margin-bottom: 30px;
+}
+.m-b-20 {
+  margin-bottom: 20px;
+}
+h3 {
+  font-size: 1.4rem;
+}
+#recoverform {
+  display: none;
+}
+
+.login-sidebar {
+  padding: 0px;
+  margin-top: 0px;
+}
+.login-sidebar .login-box {
+  right: 0px;
+  position: absolute;
+  height: 100%;
+}

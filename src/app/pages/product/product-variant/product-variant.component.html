@@ -5,13 +5,13 @@
         <!-- ============================================================== -->
         <div class="row page-titles">
             <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Add Product</h4>
+                <h4 class="text-themecolor">Add Product Variant</h4>
             </div>
             <div class="col-md-7 align-self-center text-right">
                 <div class="d-flex justify-content-end align-items-center">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a>Home</a></li>
-                        <li class="breadcrumb-item active">Add Product</li>
+                        <li class="breadcrumb-item active">Add Product Variant</li>
                     </ol>
                 </div>
             </div>
@@ -27,17 +27,16 @@
             <div class="col-lg-12">
                 <div class="card">
                     <div class="card-body">
-                        <form action="#">
+                        <form #form="ngForm">
                             <div class="form-body">
-                                <h5 class="card-title">About Product</h5>
+                                <h5 class="card-title">About Product Variant</h5>
                                 <hr>
 
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Product Id</label>
-                                            <input type="text" id="firstName" readonly class="form-control" placeholder="Product-Id">
-                                        
+                                            <input type="text" name="firstName" [(ngModel)]="variant.product_id" readonly class="form-control" placeholder="Product-Id">
                                         </div>
                                     </div>
                                 </div>
@@ -47,7 +46,7 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Product Name</label>
-                                            <input type="text" id="firstName"  class="form-control" placeholder="Product-Name">
+                                            <input type="text" name="product_name" [(ngModel)]="variant.name" class="form-control" placeholder="Product-Name">
                                         
                                         </div>
                                     </div>
@@ -55,129 +54,65 @@
                                 <!--/row-->
 
                                 <div class="row">
+                                        <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label">Product Price</label>
+                                                    <input type="number" name="price" [(ngModel)]="variant.price" class="form-control" placeholder="Product-Price">                                                
+                                                </div>
+                                            </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Product Discount</label>
-                                            <input type="number" id="firstName" class="form-control" placeholder="Discount">                                                
+                                            <input type="number" name="discount" [(ngModel)]="variant.discount" class="form-control" placeholder="Discount">                                                
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Product Quantity</label>
-                                            <input type="number" id="firstName" class="form-control" placeholder="Quantity">
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                                 <!--/row-->
 
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Product Price</label>
-                                            <input type="number" id="firstName" class="form-control" placeholder="Product-Price">                                                
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Delivery Charge</label>
-                                            <input type="number" id="firstName" class="form-control" placeholder="Delivery -Charge">
-                                        </div>
-                                    </div>
+                                        <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="control-label">Product Quantity</label>
+                                                    <input type="number" name="quantity" [(ngModel)]="variant.quantity" class="form-control" placeholder="Quantity">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Color</label>
+                                                        <select class="form-control" name="colors" [(ngModel)]="variant.color_id" data-placeholder="Choose a Color" tabindex="1">
+                                                           <option *ngFor="let color of colors" [value]="color.id">{{color.value}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
                                 </div>
                                 <!--/row-->
                                 <div class="row">
                                    <div class="col-md-6">
                                         <div class="form-group">
+                                            <input type="checkbox" class="check" name="parent" [(ngModel)]="variant.parent">
                                             <label class="control-label">Parent</label>
-                                            <br/>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
-                                                <label class="custom-control-label" for="customRadioInline1">Yes</label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
-                                                <label class="custom-control-label" for="customRadioInline2">No</label>
-                                            </div>
                                         </div>
                                     </div>
 
                                    <div class="col-md-6">
                                         <div class="form-group">
+                                            <input  type="checkbox" class="check" name="image" [(ngModel)]="variant.image_required">  
                                             <label class="control-label">Image Required</label>
-                                            <br/>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
-                                                <label class="custom-control-label" for="customRadioInline1">Yes</label>
-                                            </div>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                                <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
-                                                <label class="custom-control-label" for="customRadioInline2">No</label>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Color</label>
-                                            <select class="form-control" data-placeholder="Choose a Color" tabindex="1">
-                                                <option value="Category 2">Category 2</option>
-                                                <option value="Category 3">Category 3</option>
-                                                <option value="Category 4">Category 4</option>
-                                                <option value="Category 1">Category 1</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                                  <button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i><a href="a-category-add.html">Add Color</a> </button>                  
-                                        </div>
-                                    </div>
-                                    <!--/span-->
-                                </div>
-                                <div class="row">
-                                   <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label"><h5><b>Specification</b></h5></label>
-                                        
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Specification 1</label>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                               <input type="text" id="Specification 1"  class="form-control" placeholder="Product-Name">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Specification 2</label>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                               <input type="text" id="Specification 2"  class="form-control" placeholder="Product-Name">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="control-label">Specification 3</label>
-                                            <div class="custom-control custom-radio custom-control-inline">
-                                               <input type="text" id="Specification 3"  class="form-control" placeholder="Product-Name">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Brand</label>
-                                            <select class="form-control" data-placeholder="Choose a Brand" tabindex="1">
-                                                <option value="Category 1">Category 1</option>
-                                                <option value="Category 2">Category 2</option>
-                                                <option value="Category 3">Category 3</option>
-                                                <option value="Category 4">Category 4</option>
+                                            <select class="form-control" name="brands" [(ngModel)]="variant.brand_id" data-placeholder="Choose a Brand" tabindex="1">
+                                               <option *ngFor="let brand of brands" [value]="brand.id">{{brand.value}}</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                                  <button type="button" class="btn btn-info d-none d-lg-block m-l-15"><i class="fa fa-plus-circle"></i><a href="a-category-add.html">Add Brand</a> </button>                  
-                                        </div>
-                                    </div>
+                                    
                                 </div>
 
 
@@ -186,7 +121,7 @@
 
 
                             <div class="form-actions m-t-40">
-                              <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Save</button>
+                              <button type="submit" class="btn btn-success" (click)="saveVariant()"> Save</button>
                                 <button type="button" class="btn btn-dark">Cancel</button>
                             
                             </div>
@@ -201,20 +136,25 @@
                             <table class="table product-overview" id="myTable">
                                 <thead>
                                     <tr>
-                                        <th>Category Id</th>
-                                        <th>Category Name</th>
-                                        <th>Parent Id</th>
+                                        <th>Variant Id</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Discount</th>
+                                        <th>Quantity</th>
+                                        <th>Action</th>
                                         <th>Add Image</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>Steave Jobs</td>
-                                        <td>#85457898</td>
-                                        <td>#85457898</td>
+                                    <tr *ngFor="let variant of variants">
+                                        <td>{{variant.variant_id}}</td>
+                                        <td>{{variant.name}}</td>
+                                        <td>{{variant.price}}</td>
+                                        <td>{{variant.discount}}</td>
+                                        <td>{{variant.quantity}}</td>
+                                        <td><i class="material-icons" (click)="editVariant(variant)">edit</i></td>
                                         <td>
-                                            <a routerLink="../../add-image/1">+ Add Image</a>
+                                            <a routerLink="../../add-image/{{variant.variant_id}}">+ Add Image</a>
                                         </td>
                                     </tr>
                                 </tbody>
