@@ -84,7 +84,7 @@ router.post(
     } else {
       let variant = req.body;
       let sql =
-        "insert into product_variant(product_id,name,price,discount,quantity,parent,color_id,brand_id,image_required,thumbnail,list_image,view_image,main_image) value(" +
+        "insert into product_variant(product_id,name,price,discount,quantity,parent,color_id,brand_id,image_required,thumbnail,list_image,view_image,main_image) values(" +
         variant.product_id +
         ',"' +
         variant.name +
@@ -102,7 +102,7 @@ router.post(
         variant.brand_id +
         "," +
         variant.image_required +
-        "'[]','[]','[]','[]')";
+        ",'[]','[]','[]','[]')";
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
