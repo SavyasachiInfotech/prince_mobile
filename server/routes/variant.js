@@ -59,6 +59,22 @@ router.get(
   }
 );
 
+router.get(
+  "/get-variant/:id",
+  [param("id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    let sql = "select * from product_variant where variant_id=" + req.params.id;
+    con.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.status(200).json({ status: 200, data: result });
+      }
+    });
+  }
+);
+
 router.post(
   "/add-variants",
   [

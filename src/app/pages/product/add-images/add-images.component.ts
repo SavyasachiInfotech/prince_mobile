@@ -23,10 +23,11 @@ export class AddImagesComponent implements OnInit {
   ngOnInit() {
     this._route.params.subscribe(params => {
       this.variant_id = params.id;
-      this._variantService.getVariants(this.variant_id).subscribe(res => {
+      console.log(this.variant_id);
+      this._variantService.getvariant(this.variant_id).subscribe(res => {
         //@ts-ignore
         this.variant = res.data[0];
-        console.log(this.variant);
+        console.log(res);
         if (this.variant.list_image.length > 0) {
           this.list = JSON.parse(this.variant.list_image);
           for (let i = 0; i < 6; i++) {
