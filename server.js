@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
-const port = 4200;
+const port = 3000;
 const api = require("./server/api");
 var compression = require("compression");
 require("dotenv").config();
@@ -23,7 +23,7 @@ app.get("*", function(req, res) {
   res.sendFile(path.join(__dirname, "dist/admin/index.html"));
 });
 
-app.listen(process.env.PORT, function() {
+app.listen(3000, function() {
   console.log("Server running on " + port);
 });
 
