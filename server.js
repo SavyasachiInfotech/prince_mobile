@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
-const port = 3000;
+const port = 4200;
 const api = require("./server/api");
 var compression = require("compression");
 require("dotenv").config();
