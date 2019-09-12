@@ -6,6 +6,8 @@ router.get("/", (req, res) => {
   res.send("api works");
 });
 
+const client = require("./client");
+
 const product = require("./routes/product");
 const attribute = require("./routes/attribute");
 const category = require("./routes/category");
@@ -16,6 +18,7 @@ const variant = require("./routes/variant");
 const authentication = require("./routes/authentication");
 const imageUpload = require("./routes/image_upload");
 
+app.use("/client", client);
 app.use("/authentication", authentication);
 app.use("/product", product);
 app.use("/attribute", attribute);
