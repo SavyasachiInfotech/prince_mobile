@@ -1,0 +1,100 @@
+{
+  "configVersion": 1,
+  "timestamp": 1564631257127,
+  "index": "/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "urls": [
+        "/3-es5.34a73dc3fbf4072f54ad.js",
+        "/4-es2015.ef11009d102d6e3256a5.js",
+        "/4-es5.28cdfff96c1df99fe3c4.js",
+        "/5-es2015.e704147b0ee6c5afdf0c.js",
+        "/5-es5.fd8c368100aed4ed69e9.js",
+        "/6-es2015.d52fe066a7e913013f3a.js",
+        "/favicon.ico",
+        "/index.html",
+        "/main-es2015.3d8c764e0d40bb5e40bc.js",
+        "/main-es5.d3fe39a8870808acc52c.js",
+        "/polyfills-es2015.4d31cca2afc45cfd85b5.js",
+        "/polyfills-es5.2219c87348e60efc0076.js",
+        "/runtime-es2015.27fc5efaf76e98f4088d.js",
+        "/runtime-es5.f9779d47f3221d1b808c.js",
+        "/scripts.6cf4da7113bcd1218d80.js",
+        "/styles.2dd7d85b5d3a39fe8324.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "urls": [
+        "/MaterialIcons-Regular.012cf6a10129e2275d79.woff",
+        "/MaterialIcons-Regular.570eb83859dc23dd0eec.woff2",
+        "/MaterialIcons-Regular.a37b0c01c0baf1888ca8.ttf",
+        "/MaterialIcons-Regular.e79bfd88537def476913.eot",
+        "/assets/icons/icon-128x128.png",
+        "/assets/icons/icon-144x144.png",
+        "/assets/icons/icon-152x152.png",
+        "/assets/icons/icon-192x192.png",
+        "/assets/icons/icon-384x384.png",
+        "/assets/icons/icon-512x512.png",
+        "/assets/icons/icon-72x72.png",
+        "/assets/icons/icon-96x96.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/3-es5.34a73dc3fbf4072f54ad.js": "ceb200ef55b419257010ac18018b2bcbea2d5076",
+    "/4-es2015.ef11009d102d6e3256a5.js": "8fc083c48ceaa21db257870ea7d04a0230518577",
+    "/4-es5.28cdfff96c1df99fe3c4.js": "c001d0b72f3e3297b541d839a9e59a06047eb4a5",
+    "/5-es2015.e704147b0ee6c5afdf0c.js": "19bce17841c45d5e8468107a544f9ab755728618",
+    "/5-es5.fd8c368100aed4ed69e9.js": "9b5450ce4576b7e9880a82e13abdbfca7f1e3387",
+    "/6-es2015.d52fe066a7e913013f3a.js": "040f601675741dae32c3d951aa5940bfa27fdb8f",
+    "/MaterialIcons-Regular.012cf6a10129e2275d79.woff": "c6c953c2ccb2ca9abb21db8dbf473b5a435f0082",
+    "/MaterialIcons-Regular.570eb83859dc23dd0eec.woff2": "09963592e8c953cc7e14e3fb0a5b05d5042e8435",
+    "/MaterialIcons-Regular.a37b0c01c0baf1888ca8.ttf": "fc05de31234e0090f7ddc28ce1b23af4026cb1da",
+    "/MaterialIcons-Regular.e79bfd88537def476913.eot": "26fb8cecb5512223277b4d290a24492a0f09ede1",
+    "/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
+    "/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
+    "/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
+    "/assets/icons/icon-192x192.png": "1abd80d431a237a853ce38147d8c63752f10933b",
+    "/assets/icons/icon-384x384.png": "329749cd6393768d3131ed6304c136b1ca05f2fd",
+    "/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
+    "/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
+    "/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
+    "/favicon.ico": "84161b857f5c547e3699ddfbffc6d8d737542e01",
+    "/index.html": "6d983b3d8f24c177a09bb6a3faf12aab6da48ae7",
+    "/main-es2015.3d8c764e0d40bb5e40bc.js": "87a4171f1836cafa18db69f6caaaa5442152d747",
+    "/main-es5.d3fe39a8870808acc52c.js": "fed50282eee8227baebd96723b59d9c28c8b3db0",
+    "/polyfills-es2015.4d31cca2afc45cfd85b5.js": "058203dab4ba87056d6976029ba60fa42e6f75b9",
+    "/polyfills-es5.2219c87348e60efc0076.js": "6c9688c6586bfcf669879655ba5874ef1d2b4bcf",
+    "/runtime-es2015.27fc5efaf76e98f4088d.js": "3989331e7fc64cc42388b2513c863d8b88113770",
+    "/runtime-es5.f9779d47f3221d1b808c.js": "a29901ea0fe663d7c8459ae7e04585d60fddb90b",
+    "/scripts.6cf4da7113bcd1218d80.js": "2f2e9392c36d206a5e2da1b0b3c6522114707235",
+    "/styles.2dd7d85b5d3a39fe8324.css": "a9822be65cc6c441890a7fa134c1ad89e46c5b7b"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ]
+}
