@@ -27,7 +27,7 @@ router.post(
   [
     check("email").isEmail(),
     check("password").isLength({ min: 5 }),
-    check("mobile").isNumeric(),
+    check("mobile").isNumeric({ min: 10 }),
     check("full_name").isString()
   ],
   (req, res) => {
@@ -39,10 +39,11 @@ router.post(
       let sql =
         "select * from customer where email='" +
         user.email +
-        "' or mobile=" +
+        "' or mobile1=" +
         user.mobile;
       con.query(sql, (err, result) => {
         if (err) {
+          console.log(err);
           res.status(200).json({ status: "0", message: "Enter valid data." });
         } else {
           if (result.length > 0) {
@@ -71,7 +72,7 @@ router.post(
                 ")";
               con.query(sql, (err, result) => {
                 if (err) {
-                  res.status("200").json({
+                  res.status(200).json({
                     status: "0",
                     message: "User is not registered. Please try agian later."
                   });
@@ -96,5 +97,48 @@ router.post(
     }
   }
 );
+
+router.post("/login-user", (req, res) => {
+  let data = req.body;
+  let mobile;
+  if (isNaN(data.email)) {
+    mobile = -4;
+  } else {
+    mobile = data.email;
+  }
+  let sql =
+    'select * from customer where email="' +
+    data.email +
+    '" or mobile1=' +
+    mobile;
+  con.query(sql, (err, result) => {
+    if (err) {
+      res
+        .status(200)
+        .json({ status: "0", message: "Enter valid Email/Mobile." });
+    } else {
+      if (result.length > 0) {
+        if (result[0].password == data.password) {
+          let payload = { subject: result[0].id };
+          let jwt_token = jwt.sign(payload, "MysupersecreteKey");
+          res.status(200).send({
+            status: "1",
+            message: "Logged in successfully.",
+            token: jwt_token
+          });
+        } else {
+          res.status(200).json({
+            status: "0",
+            message: "Your Username and password are not matched."
+          });
+        }
+      } else {
+        res
+          .status(200)
+          .json({ status: "0", message: "Enter registered Email/Mobile." });
+      }
+    }
+  });
+});
 
 module.exports = router;
