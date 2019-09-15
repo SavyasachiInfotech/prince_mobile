@@ -74,6 +74,7 @@ router.post(
                 ")";
               con.query(sql, (err, result) => {
                 if (err) {
+                  console.log(err);
                   res.status(200).json({
                     status: "0",
                     message: "User is not registered. Please try agian later."
@@ -87,6 +88,7 @@ router.post(
                     token: jwt_token
                   });
                 }
+                con.end();
               });
             } else {
               res
@@ -95,6 +97,7 @@ router.post(
             }
           }
         }
+        con.end();
       });
     }
   }
@@ -140,6 +143,7 @@ router.post("/login-user", (req, res) => {
           .json({ status: "0", message: "Enter registered Email/Mobile." });
       }
     }
+    con.end();
   });
 });
 
