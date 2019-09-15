@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 11, 2019 at 01:39 AM
+-- Generation Time: Sep 15, 2019 at 08:38 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `e-commerce`
+-- Database: `e_commerce`
 --
 
 -- --------------------------------------------------------
@@ -30,11 +30,18 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admin` (
   `admin_id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `email` varchar(400) NOT NULL,
-  `password` varchar(40) NOT NULL,
-  `added_date` datetime NOT NULL DEFAULT current_timestamp()
+  `name` varchar(100) DEFAULT NULL,
+  `email` varchar(400) DEFAULT NULL,
+  `password` varchar(40) DEFAULT NULL,
+  `added_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`admin_id`, `name`, `email`, `password`, `added_date`) VALUES
+(1, 'Parth Dhankecha', 'admin@admin.com', 'a66abb5684c45962d887564f08346e8d', '2019-09-14 20:35:28');
 
 -- --------------------------------------------------------
 
@@ -44,8 +51,8 @@ CREATE TABLE `admin` (
 
 CREATE TABLE `attribute` (
   `attribute_id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `date_time` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `name` varchar(50) DEFAULT NULL,
+  `date_time` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -56,8 +63,8 @@ CREATE TABLE `attribute` (
 
 CREATE TABLE `attribute_value` (
   `attribute_value_id` int(11) NOT NULL,
-  `value` varchar(100) NOT NULL,
-  `attribute_id` int(11) NOT NULL
+  `value` varchar(100) DEFAULT NULL,
+  `attribute_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -68,9 +75,9 @@ CREATE TABLE `attribute_value` (
 
 CREATE TABLE `banners` (
   `id` int(11) NOT NULL,
-  `image` varchar(700) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `banner_type` int(11) NOT NULL
+  `image` varchar(700) DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `banner_type` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -81,12 +88,12 @@ CREATE TABLE `banners` (
 
 CREATE TABLE `cart` (
   `item_id` int(11) NOT NULL,
-  `cart_id` int(11) NOT NULL,
-  `variant_id` int(11) NOT NULL,
-  `attributes` text NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `added_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `modified_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `cart_id` int(11) DEFAULT NULL,
+  `variant_id` int(11) DEFAULT NULL,
+  `attributes` text DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `added_date` datetime DEFAULT current_timestamp(),
+  `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -97,12 +104,12 @@ CREATE TABLE `cart` (
 
 CREATE TABLE `category` (
   `category_id` int(11) NOT NULL,
-  `name` varchar(60) NOT NULL,
-  `description` text NOT NULL,
-  `image` varchar(700) NOT NULL,
-  `image_required` tinyint(1) NOT NULL,
-  `parent_id` int(11) NOT NULL,
-  `mobile_required` tinyint(1) NOT NULL
+  `name` varchar(60) DEFAULT NULL,
+  `description` text DEFAULT NULL,
+  `image` varchar(700) DEFAULT NULL,
+  `image_required` tinyint(1) DEFAULT NULL,
+  `parent_id` int(11) DEFAULT NULL,
+  `mobile_required` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -113,18 +120,18 @@ CREATE TABLE `category` (
 
 CREATE TABLE `customer` (
   `id` int(11) NOT NULL,
-  `fname` varchar(100) NOT NULL,
-  `lname` varchar(100) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `email` varchar(400) NOT NULL,
-  `password` varchar(40) NOT NULL,
-  `mobile1` bigint(20) NOT NULL,
-  `mobile2` bigint(20) NOT NULL,
-  `city` varchar(100) NOT NULL,
-  `state` varchar(100) NOT NULL,
-  `added_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `modified_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `reset_token` text NOT NULL
+  `fname` varchar(100) DEFAULT NULL,
+  `lname` varchar(100) DEFAULT NULL,
+  `username` varchar(100) DEFAULT NULL,
+  `email` varchar(400) DEFAULT NULL,
+  `password` varchar(40) DEFAULT NULL,
+  `mobile1` bigint(20) DEFAULT NULL,
+  `mobile2` bigint(20) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
+  `added_date` datetime DEFAULT current_timestamp(),
+  `modified_date` datetime DEFAULT current_timestamp(),
+  `reset_token` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -135,15 +142,15 @@ CREATE TABLE `customer` (
 
 CREATE TABLE `customer_address` (
   `address_id` int(11) NOT NULL,
-  `add1` text NOT NULL,
-  `add2` text NOT NULL,
-  `add3` text NOT NULL,
-  `landmark` int(11) NOT NULL,
-  `city` int(11) NOT NULL,
-  `state` int(11) NOT NULL,
-  `pincode` int(11) NOT NULL,
-  `mobile` int(11) NOT NULL,
-  `customer_id` int(11) NOT NULL
+  `add1` text DEFAULT NULL,
+  `add2` text DEFAULT NULL,
+  `add3` text DEFAULT NULL,
+  `landmark` int(11) DEFAULT NULL,
+  `city` int(11) DEFAULT NULL,
+  `state` int(11) DEFAULT NULL,
+  `pincode` int(11) DEFAULT NULL,
+  `mobile` int(11) DEFAULT NULL,
+  `customer_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -154,15 +161,15 @@ CREATE TABLE `customer_address` (
 
 CREATE TABLE `customer_order` (
   `order_id` int(11) NOT NULL,
-  `customer_id` int(11) NOT NULL,
-  `address_id` int(11) NOT NULL,
-  `shipment_id` varchar(100) NOT NULL,
-  `awbno` varchar(100) NOT NULL,
-  `comment` text NOT NULL,
-  `apx_shipped_date` date NOT NULL,
-  `status_id` int(11) NOT NULL,
-  `added_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `modified_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `customer_id` int(11) DEFAULT NULL,
+  `address_id` int(11) DEFAULT NULL,
+  `shipment_id` varchar(100) DEFAULT NULL,
+  `awbno` varchar(100) DEFAULT NULL,
+  `comment` text DEFAULT NULL,
+  `apx_shipped_date` date DEFAULT NULL,
+  `status_id` int(11) DEFAULT NULL,
+  `added_date` datetime DEFAULT current_timestamp(),
+  `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -173,7 +180,7 @@ CREATE TABLE `customer_order` (
 
 CREATE TABLE `mobile_brand` (
   `brand_id` int(11) NOT NULL,
-  `name` varchar(200) NOT NULL
+  `name` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -184,8 +191,8 @@ CREATE TABLE `mobile_brand` (
 
 CREATE TABLE `mobile_models` (
   `mdel_id` int(11) NOT NULL,
-  `model_name` varchar(100) NOT NULL,
-  `brand_id` int(11) NOT NULL
+  `model_name` varchar(100) DEFAULT NULL,
+  `brand_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -196,11 +203,11 @@ CREATE TABLE `mobile_models` (
 
 CREATE TABLE `offer` (
   `offer_id` int(11) NOT NULL,
-  `name` varchar(300) NOT NULL,
-  `offer_per` float NOT NULL,
-  `maximum_limit` int(11) NOT NULL COMMENT 'Discount upto rs.',
-  `banner` varchar(700) NOT NULL,
-  `category_id` int(11) NOT NULL
+  `name` varchar(300) DEFAULT NULL,
+  `offer_per` float DEFAULT NULL,
+  `maximum_limit` int(11) DEFAULT NULL COMMENT 'Discount upto rs.',
+  `banner` varchar(700) DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -211,14 +218,14 @@ CREATE TABLE `offer` (
 
 CREATE TABLE `order_detail` (
   `item_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `variant_id` int(11) NOT NULL,
-  `attributes` text NOT NULL,
-  `variant` text NOT NULL COMMENT 'JSON of whole Product',
-  `quantity` int(11) NOT NULL,
-  `cancel_bit` tinyint(1) NOT NULL,
-  `unit_cost` int(11) NOT NULL,
-  `promocode` int(11) NOT NULL
+  `order_id` int(11) DEFAULT NULL,
+  `variant_id` int(11) DEFAULT NULL,
+  `attributes` text DEFAULT NULL,
+  `variant` text DEFAULT NULL COMMENT 'JSON of whole Product',
+  `quantity` int(11) DEFAULT NULL,
+  `cancel_bit` tinyint(1) DEFAULT NULL,
+  `unit_cost` int(11) DEFAULT NULL,
+  `promocode` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -229,9 +236,9 @@ CREATE TABLE `order_detail` (
 
 CREATE TABLE `product` (
   `product_id` int(11) NOT NULL,
-  `descripiton` text NOT NULL,
-  `is_display` tinyint(1) NOT NULL,
-  `category_id` int(11) NOT NULL
+  `descripiton` text DEFAULT NULL,
+  `is_display` tinyint(1) DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -243,7 +250,7 @@ CREATE TABLE `product` (
 CREATE TABLE `product_specification` (
   `product_id` int(11) NOT NULL,
   `specification_id` int(11) NOT NULL,
-  `value` int(11) NOT NULL
+  `value` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -254,23 +261,23 @@ CREATE TABLE `product_specification` (
 
 CREATE TABLE `product_variant` (
   `variant_id` int(11) NOT NULL,
-  `name` text NOT NULL,
-  `price` int(11) NOT NULL,
-  `discount` float NOT NULL,
-  `tax_id` int(11) NOT NULL,
-  `accept_promocode` tinyint(1) NOT NULL,
-  `min_qty` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL,
-  `parent` tinyint(1) NOT NULL,
-  `avg_rating` float NOT NULL,
-  `attribute` text NOT NULL COMMENT 'JSON format attributes',
-  `thumbnail` text NOT NULL COMMENT 'JSON Array',
-  `list_image` text NOT NULL COMMENT 'JSON Array',
-  `view_image` text NOT NULL COMMENT 'JSON Array',
-  `main_image` text NOT NULL COMMENT 'JSON Array',
-  `admin_id` int(11) NOT NULL,
-  `added_on` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `modified_date` datetime NOT NULL DEFAULT current_timestamp()
+  `name` text DEFAULT NULL,
+  `price` int(11) DEFAULT NULL,
+  `discount` float DEFAULT NULL,
+  `tax_id` int(11) DEFAULT NULL,
+  `accept_promocode` tinyint(1) DEFAULT NULL,
+  `min_qty` int(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `parent` tinyint(1) DEFAULT NULL,
+  `avg_rating` float DEFAULT NULL,
+  `attribute` text DEFAULT NULL COMMENT 'JSON format attributes',
+  `thumbnail` text DEFAULT NULL COMMENT 'JSON Array',
+  `list_image` text DEFAULT NULL COMMENT 'JSON Array',
+  `view_image` text DEFAULT NULL COMMENT 'JSON Array',
+  `main_image` text DEFAULT NULL COMMENT 'JSON Array',
+  `admin_id` int(11) DEFAULT NULL,
+  `added_on` datetime DEFAULT current_timestamp(),
+  `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -292,8 +299,8 @@ CREATE TABLE `return_reason` (
 
 CREATE TABLE `shipping` (
   `id` int(11) NOT NULL,
-  `max_amount` float NOT NULL,
-  `charge` float NOT NULL
+  `max_amount` float DEFAULT NULL,
+  `charge` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -304,10 +311,10 @@ CREATE TABLE `shipping` (
 
 CREATE TABLE `specification` (
   `specification_id` int(11) NOT NULL,
-  `specification_key` varchar(80) NOT NULL,
-  `category_id` int(11) NOT NULL,
-  `type` int(11) NOT NULL,
-  `date_time` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `specification_key` varchar(80) DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `type` int(11) DEFAULT NULL,
+  `date_time` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -503,7 +510,7 @@ ALTER TABLE `variant_attribute`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `attribute`
@@ -539,7 +546,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customer_address`
