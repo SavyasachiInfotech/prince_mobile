@@ -28,40 +28,37 @@ router.post(
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log("hv");
       res.status(200).json({ status: 400, errors: errors.array() });
     } else {
       let user = req.body;
-      if (user.email && user.password) {
-        let sql = "select * from admin where name='" + user.email + "'";
-        con.query(sql, (err, result) => {
-          if (err) {
-            console.log(err);
-          } else {
-            if (result.length > 0) {
-              if (result[0].password === user.password) {
-                let payload = { subject: result[0].id };
-                let token = jwt.sign(payload, "MysupersecreteKey");
-                res.status(200).json({
-                  status: 200,
-                  message: "User is logged in successfully",
-                  token: token
-                });
-              } else {
-                res.status(200).json({
-                  status: 400,
-                  message: "Username and Password are not matched"
-                });
-              }
+      let sql = "select * from admin where name='" + user.email + "'";
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          if (result.length > 0) {
+            if (result[0].password === user.password) {
+              let payload = { subject: result[0].id };
+              let token = jwt.sign(payload, "MysupersecreteKey");
+              res.status(200).json({
+                status: 200,
+                message: "User is logged in successfully",
+                token: token
+              });
             } else {
-              res
-                .status(200)
-                .json({ status: 400, message: "Username not found" });
+              res.status(200).json({
+                status: 400,
+                message: "Username and Password are not matched"
+              });
             }
+          } else {
+            res
+              .status(200)
+              .json({ status: 400, message: "Username not found" });
           }
-        });
-      } else {
-        res.status(200).send({ status: 400, message: "Invalid Data Found" });
-      }
+        }
+      });
     }
   }
 );
@@ -80,33 +77,30 @@ router.post(
       res.status(200).json({ status: 400, errors: errors.array() });
     } else {
       let user = req.body;
-      if (user.email && user.password && user.full_name && user.mobile) {
-        let sql =
-          "insert into admin(name,password,mobile,full_name) values('" +
-          user.email +
-          "','" +
-          md5(user.password) +
-          "'," +
-          user.mobile +
-          ",'" +
-          user.full_name +
-          "')";
-        con.query(sql, (err, result) => {
-          if (err) {
-            console.log(err);
-          } else {
-            let payload = { subject: result.insertId };
-            let jwt_token = jwt.sign(payload, "MysupersecreteKey");
-            res.status(200).send({
-              status: 200,
-              message: "User registered successfully",
-              token: jwt_token
-            });
-          }
-        });
-      } else {
-        res.status(200).send({ status: 400, message: "Invalid Data Found" });
-      }
+
+      let sql =
+        "insert into admin(name,password,mobile,full_name) values('" +
+        user.email +
+        "','" +
+        md5(user.password) +
+        "'," +
+        user.mobile +
+        ",'" +
+        user.full_name +
+        "')";
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          let payload = { subject: result.insertId };
+          let jwt_token = jwt.sign(payload, "MysupersecreteKey");
+          res.status(200).send({
+            status: 200,
+            message: "User registered successfully",
+            token: jwt_token
+          });
+        }
+      });
     }
   }
 );
