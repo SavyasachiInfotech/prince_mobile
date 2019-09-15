@@ -26,8 +26,8 @@ router.post(
   "/register-user",
   [
     check("email").isEmail(),
-    check("password").isLength({ min: 5 }),
-    check("mobile").isNumeric({ min: 10 }),
+    check("password").isLength(),
+    check("mobile").isNumeric(),
     check("full_name").isString()
   ],
   (req, res) => {
