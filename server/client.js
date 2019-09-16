@@ -7,7 +7,9 @@ router.get("/", (req, res) => {
 });
 
 const authentication = require("./client/authentication");
+const home = require("./client/homepage");
 
 app.use("/authentication", authentication);
+app.use("/home", home);
 
 module.exports = app;

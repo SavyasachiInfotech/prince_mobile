@@ -43,6 +43,7 @@ router.post(
         user.email +
         "' or mobile1=" +
         user.mobile;
+
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
@@ -97,7 +98,6 @@ router.post(
             }
           }
         }
-        con.end();
       });
     }
   }
@@ -143,7 +143,6 @@ router.post("/login-user", (req, res) => {
           .json({ status: "0", message: "Enter registered Email/Mobile." });
       }
     }
-    con.end();
   });
 });
 
