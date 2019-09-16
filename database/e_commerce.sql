@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 15, 2019 at 08:38 PM
+-- Generation Time: Sep 16, 2019 at 05:29 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -133,6 +133,13 @@ CREATE TABLE `customer` (
   `modified_date` datetime DEFAULT current_timestamp(),
   `reset_token` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `city`, `state`, `added_date`, `modified_date`, `reset_token`) VALUES
+(5, NULL, NULL, 'Parth Dhankecha', 'pm3290@gail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9856563777, NULL, NULL, NULL, '2019-09-16 20:13:05', '2019-09-16 20:13:05', NULL);
 
 -- --------------------------------------------------------
 
@@ -275,6 +282,7 @@ CREATE TABLE `product_variant` (
   `list_image` text DEFAULT NULL COMMENT 'JSON Array',
   `view_image` text DEFAULT NULL COMMENT 'JSON Array',
   `main_image` text DEFAULT NULL COMMENT 'JSON Array',
+  `product_id` int(11) NOT NULL,
   `admin_id` int(11) DEFAULT NULL,
   `added_on` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
@@ -462,7 +470,8 @@ ALTER TABLE `product_specification`
 ALTER TABLE `product_variant`
   ADD PRIMARY KEY (`variant_id`),
   ADD KEY `tax_id` (`tax_id`),
-  ADD KEY `Admin ID` (`admin_id`);
+  ADD KEY `Admin ID` (`admin_id`),
+  ADD KEY `product_id` (`product_id`);
 
 --
 -- Indexes for table `return_reason`
@@ -546,7 +555,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `customer_address`
