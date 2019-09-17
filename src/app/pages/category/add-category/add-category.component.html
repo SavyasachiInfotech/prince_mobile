@@ -69,9 +69,41 @@
 
                 <hr />
               </div>
+              <div class="form-group">
+                <label class="check-container"
+                  ><span class="check-head">Image Required</span>
+                  <input
+                    type="checkbox"
+                    name="image_required"
+                    [(ngModel)]="category.image_required"
+                  />
+                  <span class="checkmark"></span>
+                </label>
+                <label class="check-container"
+                  ><span class="check-head">Mobile Required</span>
+                  <input
+                    type="checkbox"
+                    name="mobile_required"
+                    [(ngModel)]="category.mobile_required"
+                  />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
               <div class="form-actions m-t-40">
-                <button type="submit" class="btn btn-success" (click)="saveCategory()">Save</button>
-                <button type="button" class="btn btn-dark" (click)="cancelCategory()">Cancel</button>
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  (click)="saveCategory()"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-dark"
+                  (click)="cancelCategory()"
+                >
+                  Cancel
+                </button>
               </div>
             </form>
             <hr />
@@ -91,11 +123,13 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let category of categories">
-                    <td>{{category.id}}</td>
-                    <td>{{category.name}}</td>
-                    <td>{{category.description}}</td>
+                    <td>{{ category.category_id }}</td>
+                    <td>{{ category.name }}</td>
+                    <td>{{ category.description }}</td>
                     <td>
-                      <i class="material-icons" (click)="editCategory(category)">edit</i>
+                      <i class="material-icons" (click)="editCategory(category)"
+                        >edit</i
+                      >
                     </td>
                   </tr>
                 </tbody>

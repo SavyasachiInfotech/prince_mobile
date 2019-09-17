@@ -1,55 +1,63 @@
-import { Component, OnInit } from '@angular/core';
-import { CategoryService } from 'src/app/core/mock/category.service';
-import { Config } from 'src/app/core/data/config';
+import { Component, OnInit } from "@angular/core";
+import { CategoryService } from "src/app/core/mock/category.service";
+import { Config } from "src/app/core/data/config";
 
 @Component({
-  selector: 'app-add-category',
-  templateUrl: './add-category.component.html',
-  styleUrls: ['./add-category.component.scss']
+  selector: "app-add-category",
+  templateUrl: "./add-category.component.html",
+  styleUrls: ["./add-category.component.scss"]
 })
 export class AddCategoryComponent implements OnInit {
-
   category;
-  editBit=false;
+  editBit = false;
   categories;
 
-  constructor(private _categoryService:CategoryService,
-              private _config:Config) {
-                this.cancelCategory();
-                this.setCategory();
-              }
-
-  ngOnInit() {
-
+  constructor(
+    private _categoryService: CategoryService,
+    private _config: Config
+  ) {
+    this.cancelCategory();
+    this.setCategory();
   }
 
-  cancelCategory(){
-    this.editBit=false
-    this.category={name:"",description:""};
+  ngOnInit() {}
+
+  cancelCategory() {
+    this.editBit = false;
+    this.category = {
+      name: "",
+      description: "",
+      image_required: false,
+      mobile_required: false
+    };
   }
 
-  setCategory(){
-    this._categoryService.getCategory(0).subscribe(res=>{
-      //@ts-ignore
-      if(res.status==200){
+  setCategory() {
+    this._categoryService.getCategory(0).subscribe(
+      res => {
         //@ts-ignore
-        this.categories=res.categories;
-      } else {
-       // alert("Category not found. Please try again later.");
+        if (res.status == 200) {
+          //@ts-ignore
+          this.categories = res.categories;
+        } else {
+          // alert("Category not found. Please try again later.");
+        }
+      },
+      err => {
+        alert(this._config.err);
       }
-    },err=>{
-      alert(this._config.err);
-    });
+    );
   }
 
-
-  saveCategory(){
-    if(this.category.name!=""){
-      if(this.editBit){
+  saveCategory() {
+    console.log(this.category);
+    if (this.category.name != "") {
+      if (this.editBit) {
         this._categoryService.editCategory(this.category).subscribe(
-          res=>{
+          res => {
+            console.log(res);
             //@ts-ignore
-            if(res.status==200){
+            if (res.status == 200) {
               alert("Category updted successfully.");
               this.cancelCategory();
               this.setCategory();
@@ -57,15 +65,15 @@ export class AddCategoryComponent implements OnInit {
               alert("Category not updated. Please try again later.");
             }
           },
-          err=>{
+          err => {
             alert(this._config.err);
           }
-        )
+        );
       } else {
         this._categoryService.addCategory(this.category).subscribe(
-          res=>{
+          res => {
             //@ts-ignore
-            if(res.status==200){
+            if (res.status == 200) {
               alert("Category added successfully.");
               this.cancelCategory();
               this.setCategory();
@@ -73,18 +81,18 @@ export class AddCategoryComponent implements OnInit {
               alert("Category not added. Please try again later.");
             }
           },
-          err=>{
+          err => {
             alert(this._config.err);
           }
-        )
+        );
       }
     } else {
-      alert("Enter the data properly.")
+      alert("Enter the data properly.");
     }
   }
 
-  editCategory(category){
-    this.category=category;
-    this.editBit=true;
+  editCategory(category) {
+    this.category = category;
+    this.editBit = true;
   }
 }

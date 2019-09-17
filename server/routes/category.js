@@ -127,7 +127,12 @@ router.get(
 
 router.post(
   "/add-category",
-  [check("name").isString(), check("description").isString()],
+  [
+    check("name").isString(),
+    check("description").isString(),
+    check("image_required").isBoolean(),
+    check("mobile_required").isBoolean()
+  ],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -136,11 +141,15 @@ router.post(
     } else {
       let category = req.body;
       let sql =
-        "insert into category(name,description,parent_id) values('" +
+        "insert into category(name,description,parent_id,image_required,mobile_required) values('" +
         category.name.replace("'", "''") +
         "','" +
         category.description.replace("'", "''") +
-        "',0)";
+        "',0," +
+        category.image_required +
+        "," +
+        category.mobile_required +
+        ")";
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {
@@ -168,7 +177,9 @@ router.post(
   [
     check("name").isString(),
     check("description").isString(),
-    check("parent_id").isNumeric()
+    check("parent_id").isNumeric(),
+    check("image_required").isBoolean(),
+    check("mobile_required").isBoolean()
   ],
   verifyToken,
   (req, res) => {
@@ -178,12 +189,16 @@ router.post(
     } else {
       let category = req.body;
       let sql =
-        "insert into category(name,description,parent_id) values('" +
+        "insert into category(name,description,parent_id,image_required,mobile_required) values('" +
         category.name.replace("'", "''") +
         "','" +
         category.description.replace("'", "''") +
         "'," +
         category.parent_id +
+        "," +
+        category.image_required +
+        "," +
+        category.mobile_required +
         ")";
       con.query(sql, (err, result) => {
         if (err) {
@@ -210,9 +225,11 @@ router.post(
 router.put(
   "/edit-category",
   [
-    check("id").isNumeric(),
+    check("category_id").isNumeric(),
     check("name").isString(),
-    check("description").isString()
+    check("description").isString(),
+    check("image_required").isBoolean(),
+    check("mobile_required").isBoolean()
   ],
   verifyToken,
   (req, res) => {
@@ -226,8 +243,12 @@ router.put(
         category.name +
         "', description='" +
         category.description +
-        "' where id=" +
-        category.id;
+        "', image_required=" +
+        category.image_required +
+        ", mobile_required=" +
+        category.mobile_required +
+        " where category_id=" +
+        category.category_id;
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {
@@ -253,10 +274,12 @@ router.put(
 router.put(
   "/edit-subcategory",
   [
-    check("id").isNumeric(),
+    check("category_id").isNumeric(),
     check("name").isString(),
     check("description").isString(),
-    check("parent_id").isNumeric()
+    check("parent_id").isNumeric(),
+    check("image_required").isBoolean(),
+    check("mobile_required").isBoolean()
   ],
   verifyToken,
   (req, res) => {
@@ -272,8 +295,12 @@ router.put(
         category.description +
         "',parent_id=" +
         category.parent_id +
-        " where id=" +
-        category.id;
+        ",image_required=" +
+        category.image_required +
+        ", mobile_required=" +
+        category.mobile_required +
+        " where category_id=" +
+        category.category_id;
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {

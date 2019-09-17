@@ -129,18 +129,24 @@ router.post("/login-user", (req, res) => {
           res.status(200).send({
             status: "1",
             message: "Logged in successfully.",
-            token: jwt_token
+            token: jwt_token,
+            user: {
+              id: result[0].id,
+              username: result[0].username,
+              email: result[0].email,
+              mobile: result[0].mobile1
+            }
           });
         } else {
           res.status(200).json({
-            status: "0",
+            status: "2",
             message: "Your Username and password are not matched."
           });
         }
       } else {
         res
           .status(200)
-          .json({ status: "0", message: "Enter registered Email/Mobile." });
+          .json({ status: "2", message: "Enter registered Email/Mobile." });
       }
     }
   });

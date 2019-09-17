@@ -32,13 +32,15 @@ router.post(
       res.status(200).json({ status: 400, errors: errors.array() });
     } else {
       let user = req.body;
-      let sql = "select * from admin where name='" + user.email + "'";
+      let sql = "select * from admin where email='" + user.email + "'";
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
         } else {
           if (result.length > 0) {
-            if (result[0].password === user.password) {
+            if (
+              result[0].password.toLowerCase() === user.password.toLowerCase()
+            ) {
               let payload = { subject: result[0].id };
               let token = jwt.sign(payload, "MysupersecreteKey");
               res.status(200).json({
@@ -79,7 +81,7 @@ router.post(
       let user = req.body;
 
       let sql =
-        "insert into admin(name,password,mobile,full_name) values('" +
+        "insert into admin(email,password,mobile,name) values('" +
         user.email +
         "','" +
         md5(user.password) +

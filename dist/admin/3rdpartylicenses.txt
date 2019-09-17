@@ -29,6 +29,9 @@ MIT
 @angular/core
 MIT
 
+@angular/forms
+MIT
+
 @angular/platform-browser
 MIT
 
@@ -266,6 +269,9 @@ Apache-2.0
  limitations under the License.
  
 
+
+ts-md5
+MIT
 
 tslib
 Apache-2.0

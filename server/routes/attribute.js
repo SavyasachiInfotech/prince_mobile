@@ -45,7 +45,7 @@ router.get(
       });
     } else {
       let sql =
-        "select * from attributes limit " +
+        "select * from attribute limit " +
         req.params.up +
         "," +
         process.env.RECORD_LIMIT;
@@ -131,7 +131,7 @@ router.get(
 
 router.post(
   "/add-attribute",
-  [check("name").isString(), check("description").isString()],
+  [check("name").isString()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -141,12 +141,7 @@ router.post(
         .json({ status: process.env.ERROR, errors: errors.array() });
     } else {
       let attribute = req.body;
-      let sql =
-        'insert into attributes(name,description) values("' +
-        attribute.name +
-        '","' +
-        attribute.description +
-        '")';
+      let sql = 'insert into attribute(name) values("' + attribute.name + '")';
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {
@@ -211,11 +206,7 @@ router.post(
 
 router.put(
   "/edit-attribute/:id",
-  [
-    param("id").isNumeric(),
-    check("name").isString(),
-    check("description").isString()
-  ],
+  [param("id").isNumeric(), check("name").isString()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -227,12 +218,7 @@ router.put(
       let attribute = req.body;
       let id = req.params.id;
       let sql =
-        "update attributes set name='" +
-        attribute.name +
-        "', description='" +
-        attribute.description +
-        "' where id=" +
-        id;
+        "update attribute set name='" + attribute.name + "' where id=" + id;
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {

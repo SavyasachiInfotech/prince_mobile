@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
   loginAdmin() {
     let pattern = new RegExp(/.+@.+\..+/);
     if (pattern.test(this.user.email)) {
-      if (this.user.password.length > 8) {
+      if (this.user.password.length > 4) {
         this.user.password = Md5.hashStr(this.user.password).toString();
         this._authService.loginAdmin(this.user).subscribe(
           res => {
