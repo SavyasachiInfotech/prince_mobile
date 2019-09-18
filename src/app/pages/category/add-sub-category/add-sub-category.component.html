@@ -54,20 +54,22 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group">
-                        <label class="control-label">Sub Category Description</label>
-                        <input
-                          type="text"
-                          id="firstName"
-                          class="form-control"
-                          placeholder="Sub Category Description"
-                          name="description"
-                          [(ngModel)]="category.description"
-                        />
-                      </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label"
+                        >Sub Category Description</label
+                      >
+                      <input
+                        type="text"
+                        id="firstName"
+                        class="form-control"
+                        placeholder="Sub Category Description"
+                        name="description"
+                        [(ngModel)]="category.description"
+                      />
                     </div>
                   </div>
+                </div>
 
                 <!--/row-->
                 <div class="row">
@@ -82,7 +84,11 @@
                         [(ngModel)]="category.parent_id"
                         (change)="changeCategory()"
                       >
-                        <option *ngFor="let category of categories" [value]="category.id">{{category.name}}</option>
+                        <option
+                          *ngFor="let category of categories"
+                          [value]="category.category_id"
+                          >{{ category.name }}</option
+                        >
                       </select>
                     </div>
                   </div>
@@ -91,8 +97,20 @@
                 <hr />
               </div>
               <div class="form-actions m-t-40">
-                <button type="submit" class="btn btn-success" (click)="saveCategory()">Save</button>
-                <button type="button" class="btn btn-dark" (click)="cancelCategory()">Cancel</button>
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  (click)="saveCategory()"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-dark"
+                  (click)="cancelCategory()"
+                >
+                  Cancel
+                </button>
               </div>
             </form>
             <hr />
@@ -104,7 +122,7 @@
               <table class="table product-overview" id="myTable">
                 <thead>
                   <tr>
-                    <th>Category Id/th>
+                    <th>Category Id</th>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Parent Id</th>
@@ -113,12 +131,14 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let sc of subCategories">
-                    <td>{{sc.id}}</td>
-                    <td>{{sc.name}}</td>
-                    <td>{{sc.description}}</td>
-                    <td>{{sc.parent_id}}</td>
+                    <td>{{ sc.category_id }}</td>
+                    <td>{{ sc.name }}</td>
+                    <td>{{ sc.description }}</td>
+                    <td>{{ sc.parent_id }}</td>
                     <td>
-                      <i class="material-icons" (click)="editCategory(sc)">edit</i>
+                      <i class="material-icons" (click)="editCategory(sc)"
+                        >edit</i
+                      >
                     </td>
                   </tr>
                 </tbody>

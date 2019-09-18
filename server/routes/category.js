@@ -177,9 +177,9 @@ router.post(
   [
     check("name").isString(),
     check("description").isString(),
-    check("parent_id").isNumeric(),
-    check("image_required").isBoolean(),
-    check("mobile_required").isBoolean()
+    check("parent_id").isNumeric()
+    // check("image_required").isBoolean(),
+    // check("mobile_required").isBoolean()
   ],
   verifyToken,
   (req, res) => {
@@ -189,16 +189,16 @@ router.post(
     } else {
       let category = req.body;
       let sql =
-        "insert into category(name,description,parent_id,image_required,mobile_required) values('" +
+        "insert into category(name,description,parent_id) values('" +
         category.name.replace("'", "''") +
         "','" +
         category.description.replace("'", "''") +
         "'," +
         category.parent_id +
-        "," +
-        category.image_required +
-        "," +
-        category.mobile_required +
+        // "," +
+        // category.image_required +
+        // "," +
+        // category.mobile_required +
         ")";
       con.query(sql, (err, result) => {
         if (err) {

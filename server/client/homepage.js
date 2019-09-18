@@ -43,28 +43,26 @@ router.get("/get-homepage-data", (req, res) => {
         } else {
           categories = category;
           sql =
-            "select v.variant_id,v.name,v.price,v.discount,v.tax_id,v.thumbnail from product p,product_variant v where p.product_id=v.product_id and p.category_id=5 and p.is_display=1 order by v.added_on limit 0,5 ";
+            "select v.variant_id,v.name,v.price,v.discount,t.tax,v.thumbnail from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.category_id=18 and p.is_display=1 order by v.added_on limit 0,5 ";
           con.query(sql, (err, products) => {
             if (err) {
               console.log(err);
             } else {
               products = products;
               sql =
-                "select v.variant_id,v.name,v.price,v.discount,v.tax_id,v.list_image from product p,product_variant v where p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by added_on DESC limit 0,5";
+                "select v.variant_id,v.name,v.price,v.discount,t.tax,v.list_image from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by added_on DESC limit 0,5";
               con.query(sql, (err, latest) => {
                 if (err) {
                   console.log(err);
                 }
-                res
-                  .status(200)
-                  .json({
-                    status: "1",
-                    message: "Getting homepage data successfully.",
-                    banners: banners,
-                    categories: categories,
-                    lotshot: products,
-                    latest: latest
-                  });
+                res.status(200).json({
+                  status: "1",
+                  message: "Getting homepage data successfully.",
+                  banners: banners,
+                  categories: categories,
+                  lotshot: products,
+                  latest: latest
+                });
               });
             }
           });

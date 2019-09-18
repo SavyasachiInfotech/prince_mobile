@@ -15,6 +15,26 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "dist/admin")));
 app.use("/images", express.static(path.join(__dirname, "dist/admin/assets")));
+app.use(
+  "/banners",
+  express.static(path.join(__dirname, "dist/admin/assets/banners"))
+);
+app.use(
+  "/thumbnail",
+  express.static(path.join(__dirname, "dist/admin/assets/thumbnail"))
+);
+app.use(
+  "/list-image",
+  express.static(path.join(__dirname, "dist/admin/assets/list_image"))
+);
+app.use(
+  "/view-image",
+  express.static(path.join(__dirname, "dist/admin/assets/view_image"))
+);
+app.use(
+  "/main-image",
+  express.static(path.join(__dirname, "dist/admin/assets/main_image"))
+);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 

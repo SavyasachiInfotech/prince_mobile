@@ -1,103 +1,116 @@
-import { Component, OnInit } from '@angular/core';
-import { CategoryService } from 'src/app/core/mock/category.service';
-import { Config } from 'src/app/core/data/config';
+import { Component, OnInit } from "@angular/core";
+import { CategoryService } from "src/app/core/mock/category.service";
+import { Config } from "src/app/core/data/config";
 
 @Component({
-  selector: 'app-add-sub-category',
-  templateUrl: './add-sub-category.component.html',
-  styleUrls: ['./add-sub-category.component.scss']
+  selector: "app-add-sub-category",
+  templateUrl: "./add-sub-category.component.html",
+  styleUrls: ["./add-sub-category.component.scss"]
 })
 export class AddSubCategoryComponent implements OnInit {
-
   categories;
   subCategories;
   category;
-  editBit=false;
-  
-  constructor(private _categoryService:CategoryService,
-              private _config:Config) {
-                this.setSubCategory();
-                this.cancelCategory();
-              }
+  editBit = false;
 
-  ngOnInit() {
+  constructor(
+    private _categoryService: CategoryService,
+    private _config: Config
+  ) {
+    this.setSubCategory();
+    this.cancelCategory();
   }
 
-  cancelCategory(){
-    this.category={name:"",description:"",parent_id:1}
-    this.editBit=false;
+  ngOnInit() {}
+
+  cancelCategory() {
+    this.category = { name: "", description: "", parent_id: 1 };
+    this.editBit = false;
   }
 
-  setSubCategory(){
+  setSubCategory() {
     this._categoryService.getCategory(0).subscribe(
-      res=>{
+      res => {
+        console.log(res);
         //@ts-ignore
-        if(res.status==200){
+        if (res.status == 200) {
           //@ts-ignore
-          this.categories=res.categories;
+          this.categories = res.categories;
         }
-      },err=>{
+      },
+      err => {
         alert(this._config.err);
       }
     );
-    this._categoryService.getSubCategory(1,0).subscribe(
-      res=>{
+    this._categoryService.getSubCategory(1, 0).subscribe(
+      res => {
+        console.log(res);
         //@ts-ignore
-        if(res.status==200){
+        if (res.status == 200) {
           //@ts-ignore
-          this.subCategories=res.categories;
+          this.subCategories = res.categories;
         }
-      },err=>{
-        alert(this._config.err);
-      }
-    );
-  }
-
-  changeCategory(){
-    this._categoryService.getSubCategory(this.category.parent_id,0).subscribe(
-      res=>{
-        //@ts-ignore
-        if(res.status==200){
-          //@ts-ignore
-          this.subCategories=res.categories;
-        }
-      },err=>{
+      },
+      err => {
         alert(this._config.err);
       }
     );
   }
 
-  editCategory(category){
-    this.category=category;
-    this.editBit=true;
+  changeCategory() {
+    this._categoryService.getSubCategory(this.category.parent_id, 0).subscribe(
+      res => {
+        //@ts-ignore
+        if (res.status == 200) {
+          //@ts-ignore
+          this.subCategories = res.categories;
+        }
+      },
+      err => {
+        alert(this._config.err);
+      }
+    );
   }
 
-  saveCategory(){
-    if(this.category.name!=''){
-      if(this.editBit){
+  editCategory(category) {
+    this.category = category;
+    this.editBit = true;
+  }
+
+  saveCategory() {
+    if (this.category.name != "") {
+      if (this.editBit) {
         this._categoryService.editSubCategory(this.category).subscribe(
-          res=>{
+          res => {
             alert("Sub category updated successfully");
             this.cancelCategory();
             this.setSubCategory();
-          },err=>{
+          },
+          err => {
             alert(this._config.err);
           }
-        )
+        );
       } else {
+        console.log(this.category);
         this._categoryService.addSubCategory(this.category).subscribe(
-          res=>{
-            alert("Sub category added successfully");
-            this.cancelCategory();
-            this.setSubCategory();
-          },err=>{
+          res => {
+            console.log(res);
+            //@ts-ignore
+            if (res.status == 200) {
+              alert("Sub category added successfully");
+              this.cancelCategory();
+              this.setSubCategory();
+            } else {
+              alert("Sub Category is not added. Please try again later.");
+            }
+          },
+          err => {
             alert(this._config.err);
           }
-        )
+        );
       }
     } else {
-      alert("Enter the data properly.")
+      alert("Enter the data properly.");
     }
   }
-
 }
