@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 16, 2019 at 05:29 PM
+-- Generation Time: Sep 19, 2019 at 04:55 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -80,6 +80,19 @@ CREATE TABLE `banners` (
   `banner_type` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `banners`
+--
+
+INSERT INTO `banners` (`id`, `image`, `category_id`, `banner_type`) VALUES
+(1, 'banner1.png', 2, 0),
+(2, 'banner2.png', 1, 0),
+(3, 'banner3.png', 3, 0),
+(4, 'banner4.jpg', 11, 0),
+(5, 'banner5.jpg', 11, 0),
+(6, 'banner6.jpg', 11, 0),
+(7, 'banner7.jpg', 11, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -111,6 +124,29 @@ CREATE TABLE `category` (
   `parent_id` int(11) DEFAULT NULL,
   `mobile_required` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `category`
+--
+
+INSERT INTO `category` (`category_id`, `name`, `description`, `image`, `image_required`, `parent_id`, `mobile_required`) VALUES
+(2, 'Design Print Soft Cover', 'Design Print Soft Cover', NULL, 0, 0, 1),
+(3, 'Design Print Hard Cover', 'Design Print Hard Cover', NULL, 0, 0, 1),
+(4, 'Photo Soft Cover', 'Photo Soft Cover', NULL, 1, 0, 1),
+(5, 'Photo Hard Cover', 'Photo Hard Cover', NULL, 1, 0, 1),
+(6, 'Earphone', 'Earphone', NULL, 0, 0, 0),
+(7, 'Cabel', 'Cabel', NULL, 0, 0, 0),
+(8, 'Charger', 'Charger', NULL, 0, 0, 0),
+(9, 'Speaker', 'Speaker', NULL, 0, 0, 0),
+(10, 'Design Print Soft Cover', '', NULL, 0, 2, NULL),
+(11, 'Soft Design Print Cover', '', NULL, 0, 2, NULL),
+(12, 'Design Print Hard Cover', '', NULL, 0, 3, NULL),
+(13, 'Hard Design Print Cover', '', NULL, 0, 3, NULL),
+(14, 'Rubber Photo Hard Cover', '', NULL, 1, 5, NULL),
+(15, 'Hard Photo Cover', '', NULL, 1, 5, NULL),
+(16, 'Rubber Photo Soft Cover', '', NULL, 1, 4, NULL),
+(17, 'Soft Photo Cover', '', NULL, 1, 4, NULL),
+(18, 'Lot Shot', '', NULL, 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -248,6 +284,14 @@ CREATE TABLE `product` (
   `category_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `product`
+--
+
+INSERT INTO `product` (`product_id`, `descripiton`, `is_display`, `category_id`) VALUES
+(1, 'Soft leather print back cover good quality Camera protection layer', 1, 11),
+(2, 'Soft leather print back cover good quality Camera protection layer', 1, 18);
+
 -- --------------------------------------------------------
 
 --
@@ -287,6 +331,20 @@ CREATE TABLE `product_variant` (
   `added_on` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `product_variant`
+--
+
+INSERT INTO `product_variant` (`variant_id`, `name`, `price`, `discount`, `tax_id`, `accept_promocode`, `min_qty`, `quantity`, `parent`, `avg_rating`, `attribute`, `thumbnail`, `list_image`, `view_image`, `main_image`, `product_id`, `admin_id`, `added_on`, `modified_date`) VALUES
+(1, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(2, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(3, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(4, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(5, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(6, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(7, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(8, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50');
 
 -- --------------------------------------------------------
 
@@ -346,6 +404,27 @@ CREATE TABLE `status` (
   `id` int(11) NOT NULL,
   `status` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tax`
+--
+
+CREATE TABLE `tax` (
+  `tax_id` int(11) NOT NULL,
+  `tax` float NOT NULL,
+  `name` varchar(20) COLLATE utf8mb4_bin NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Dumping data for table `tax`
+--
+
+INSERT INTO `tax` (`tax_id`, `tax`, `name`) VALUES
+(1, 2.5, 'CGST'),
+(2, 2.5, 'SGST'),
+(3, 5, 'IGST');
 
 -- --------------------------------------------------------
 
@@ -506,6 +585,12 @@ ALTER TABLE `status`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `tax`
+--
+ALTER TABLE `tax`
+  ADD PRIMARY KEY (`tax_id`);
+
+--
 -- Indexes for table `variant_attribute`
 --
 ALTER TABLE `variant_attribute`
@@ -537,7 +622,7 @@ ALTER TABLE `attribute_value`
 -- AUTO_INCREMENT for table `banners`
 --
 ALTER TABLE `banners`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `cart`
@@ -549,7 +634,7 @@ ALTER TABLE `cart`
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `customer`
@@ -597,13 +682,13 @@ ALTER TABLE `order_detail`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `product_variant`
 --
 ALTER TABLE `product_variant`
-  MODIFY `variant_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `variant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `return_reason`
@@ -634,6 +719,12 @@ ALTER TABLE `specification_type`
 --
 ALTER TABLE `status`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `tax`
+--
+ALTER TABLE `tax`
+  MODIFY `tax_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
