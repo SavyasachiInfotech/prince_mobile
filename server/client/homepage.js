@@ -55,6 +55,23 @@ router.get("/get-homepage-data", (req, res) => {
                 if (err) {
                   console.log(err);
                 }
+                let json = JSON.stringify(banners);
+                banners = JSON.parse(json, (key, val) =>
+                  typeof val !== "object" && val !== null ? String(val) : val
+                );
+                json = JSON.stringify(categories);
+                categories = JSON.parse(json, (key, val) =>
+                  typeof val !== "object" && val !== null ? String(val) : val
+                );
+                json = JSON.stringify(products);
+                products = JSON.parse(json, (key, val) =>
+                  typeof val !== "object" && val !== null ? String(val) : val
+                );
+                json = JSON.stringify(latest);
+                latest = JSON.parse(json, (key, val) =>
+                  typeof val !== "object" && val !== null ? String(val) : val
+                );
+
                 res.status(200).json({
                   status: "1",
                   message: "Getting homepage data successfully.",
