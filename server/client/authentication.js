@@ -89,7 +89,6 @@ router.post(
                     token: jwt_token
                   });
                 }
-                con.end();
               });
             } else {
               res

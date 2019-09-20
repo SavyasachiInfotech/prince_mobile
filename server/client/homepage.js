@@ -36,7 +36,8 @@ router.get("/get-homepage-data", (req, res) => {
       console.log(err);
     } else {
       banners = result;
-      sql = "select category_id,name,image,parent_id from category";
+      sql =
+        "select category_id,name,ifnull(image,'') as image,parent_id from category";
       con.query(sql, (err, category) => {
         if (err) {
           console.log(err);
@@ -55,19 +56,37 @@ router.get("/get-homepage-data", (req, res) => {
                 if (err) {
                   console.log(err);
                 }
+                let category = categories.filter(item => item.parent_id == 0);
+                for (let i = 0; i < category.length; i++) {
+                  category[i].subCategories = categories.filter(
+                    item => item.parent_id == category[i].category_id
+                  );
+                }
+                for (let i = 0; i < products.length; i++) {
+                  let data = JSON.parse(products[i].thumbnail);
+                  products[i].thumbnail = data[0];
+                }
+
+                for (let i = 0; i < latest.length; i++) {
+                  let data = JSON.parse(latest[i].list_image);
+                  latest[i].list_image = data[0];
+                }
+
                 let json = JSON.stringify(banners);
                 banners = JSON.parse(json, (key, val) =>
                   typeof val !== "object" && val !== null ? String(val) : val
                 );
-                json = JSON.stringify(categories);
-                categories = JSON.parse(json, (key, val) =>
+                json = JSON.stringify(category);
+                category = JSON.parse(json, (key, val) =>
                   typeof val !== "object" && val !== null ? String(val) : val
                 );
+
                 json = JSON.stringify(products);
                 products = JSON.parse(json, (key, val) =>
                   typeof val !== "object" && val !== null ? String(val) : val
                 );
                 json = JSON.stringify(latest);
+                let empty = "";
                 latest = JSON.parse(json, (key, val) =>
                   typeof val !== "object" && val !== null ? String(val) : val
                 );
@@ -76,7 +95,7 @@ router.get("/get-homepage-data", (req, res) => {
                   status: "1",
                   message: "Getting homepage data successfully.",
                   banners: banners,
-                  categories: categories,
+                  categories: category,
                   lotshot: products,
                   latest: latest
                 });
