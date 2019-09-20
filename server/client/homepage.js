@@ -64,12 +64,16 @@ router.get("/get-homepage-data", (req, res) => {
                 }
                 for (let i = 0; i < products.length; i++) {
                   let data = JSON.parse(products[i].thumbnail);
-                  products[i].thumbnail = data[0];
+                  products[i].thumbnail = process.env.THUMBNAIL + data[0];
+                }
+
+                for (let i = 0; i < banners.length; i++) {
+                  banners[i].image = process.env.BANNER + banners[i].image;
                 }
 
                 for (let i = 0; i < latest.length; i++) {
                   let data = JSON.parse(latest[i].list_image);
-                  latest[i].list_image = data[0];
+                  latest[i].list_image = process.env.LISTIMAGE + data[0];
                 }
 
                 let json = JSON.stringify(banners);
