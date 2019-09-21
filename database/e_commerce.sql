@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 19, 2019 at 04:55 PM
+-- Generation Time: Sep 21, 2019 at 05:35 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -163,19 +163,23 @@ CREATE TABLE `customer` (
   `password` varchar(40) DEFAULT NULL,
   `mobile1` bigint(20) DEFAULT NULL,
   `mobile2` bigint(20) DEFAULT NULL,
+  `profile_image` varchar(800) NOT NULL,
   `city` varchar(100) DEFAULT NULL,
   `state` varchar(100) DEFAULT NULL,
   `added_date` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp(),
-  `reset_token` text DEFAULT NULL
+  `reset_token` text DEFAULT NULL,
+  `register_otp` int(11) NOT NULL,
+  `mobile_verified` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `customer`
 --
 
-INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `city`, `state`, `added_date`, `modified_date`, `reset_token`) VALUES
-(5, NULL, NULL, 'Parth Dhankecha', 'pm3290@gail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9856563777, NULL, NULL, NULL, '2019-09-16 20:13:05', '2019-09-16 20:13:05', NULL);
+INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
+(5, NULL, NULL, 'Parth Dhankecha', 'pm3290@gail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9856563777, NULL, '', NULL, NULL, '2019-09-16 20:13:05', '2019-09-16 20:13:05', NULL, 0, 0),
+(6, NULL, NULL, 'A Xyz', 'A@c.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852685363, NULL, '', NULL, NULL, '2019-09-21 19:02:39', '2019-09-21 19:02:39', NULL, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -327,6 +331,7 @@ CREATE TABLE `product_variant` (
   `view_image` text DEFAULT NULL COMMENT 'JSON Array',
   `main_image` text DEFAULT NULL COMMENT 'JSON Array',
   `product_id` int(11) NOT NULL,
+  `order_count` int(11) NOT NULL,
   `admin_id` int(11) DEFAULT NULL,
   `added_on` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
@@ -336,15 +341,15 @@ CREATE TABLE `product_variant` (
 -- Dumping data for table `product_variant`
 --
 
-INSERT INTO `product_variant` (`variant_id`, `name`, `price`, `discount`, `tax_id`, `accept_promocode`, `min_qty`, `quantity`, `parent`, `avg_rating`, `attribute`, `thumbnail`, `list_image`, `view_image`, `main_image`, `product_id`, `admin_id`, `added_on`, `modified_date`) VALUES
-(1, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(2, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(3, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(4, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(5, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(6, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(7, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(8, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50');
+INSERT INTO `product_variant` (`variant_id`, `name`, `price`, `discount`, `tax_id`, `accept_promocode`, `min_qty`, `quantity`, `parent`, `avg_rating`, `attribute`, `thumbnail`, `list_image`, `view_image`, `main_image`, `product_id`, `order_count`, `admin_id`, `added_on`, `modified_date`) VALUES
+(1, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(2, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 50, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(3, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 20, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(4, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 100, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(5, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 11, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(6, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 20, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(7, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 55, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(8, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 0, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50');
 
 -- --------------------------------------------------------
 
@@ -640,7 +645,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `customer_address`
