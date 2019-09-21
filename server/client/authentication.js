@@ -7,20 +7,53 @@ const con = require("../database-connection");
 
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
-    return res.status(401).send("Unauthorized Request! Header Not Found");
+    return res
+      .status(200)
+      .json({ status: "0", message: "Unauthorized Request! Header Not Found" });
   }
   let token = req.headers.authorization.split(" ")[1];
   if (token === "null") {
-    return res.status(401).send("Unauthorized Request! Token Not Found");
+    return res
+      .status(200)
+      .json({ status: "0", message: "Unauthorized Request! Token Not Found" });
   }
   let payload = jwt.verify(token, "MysupersecreteKey");
 
   if (!payload) {
-    return res.status(401).send("Unauthorized Request! Token is not Correct");
+    return res.status(200).json({
+      status: "0",
+      message: "Unauthorized Request! Token is not Correct"
+    });
   }
   req.userId = payload.subject;
   next();
 }
+
+router.get("/user-data", verifyToken, (req, res) => {
+  let id = req.userId;
+  let sql =
+    "select username,email,mobile1,profile_image from customer where id=" + id;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(200).json({
+        status: "0",
+        message: "Cannot get user data. Please try again later."
+      });
+    } else {
+      json = JSON.stringify(result);
+      result = JSON.parse(json, (key, val) =>
+        typeof val !== "object" && val !== null ? String(val) : val
+      );
+      if (result[0].profile_image != "") {
+        result[0].profile_image = process.env.PROFILE + result[0].profile_image;
+      }
+      res
+        .status(200)
+        .json({ status: "1", message: "Getting user data", user: result[0] });
+    }
+  });
+});
 
 router.post(
   "/verify-otp",
@@ -152,10 +185,10 @@ router.post(
                     message: "User registered successfully",
                     token: jwt_token,
                     user: {
-                      id: result.insertId,
-                      username: user.full_name,
-                      email: user.email,
-                      mobile: user.mobile
+                      id: String(result.insertId),
+                      username: String(user.full_name),
+                      email: String(user.email),
+                      mobile: String(user.mobile)
                     },
                     otp: String(otp)
                   });
@@ -201,10 +234,10 @@ router.post("/login-user", (req, res) => {
             message: "Logged in successfully.",
             token: jwt_token,
             user: {
-              id: result[0].id,
-              username: result[0].username,
-              email: result[0].email,
-              mobile: result[0].mobile1
+              id: String(result[0].id),
+              username: String(result[0].username),
+              email: String(result[0].email),
+              mobile: String(result[0].mobile1)
             }
           });
         } else {
