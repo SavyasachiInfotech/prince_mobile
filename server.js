@@ -35,6 +35,7 @@ app.use(
   "/main-image",
   express.static(path.join(__dirname, "dist/admin/assets/main_image"))
 );
+console.log(path.join(__dirname, "dist/admin/assets/main_image"));
 app.use(
   "/profile",
   express.static(path.join(__dirname, "dist/admin/assets/profile"))
