@@ -23,6 +23,66 @@ function verifyToken(req, res, next) {
 }
 
 router.post(
+  "/verify-otp",
+  [
+    check("mobile").isNumeric({ min: 10, max: 10 }),
+    check("otp").isNumeric({ min: 6, max: 6 })
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      res.status(200).json({ status: "0", message: "Enter Valid Data" });
+    } else {
+      let data = req.body;
+      let sql =
+        "select register_otp,id from customer where mobile1=" + data.mobile;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(200)
+            .json({ status: "0", message: "Provide data properly." });
+        } else {
+          if (result.length > 0) {
+            if (result[0].register_otp == data.otp) {
+              con.query(
+                "update customer set register_otp=0, mobile_verified=1 where id=" +
+                  result[0].id,
+                (err, upData) => {
+                  if (err) {
+                    console.log(err);
+                    res.status(200).json({
+                      status: "0",
+                      message: "OTP is not verified. Please try again later."
+                    });
+                  } else {
+                    res.status(200).json({
+                      status: "1",
+                      message: "OTP is verified successfuly."
+                    });
+                  }
+                }
+              );
+            } else {
+              res.status(200).json({
+                status: "0",
+                message: "OTP is not matched.Provide valid OTP"
+              });
+            }
+          } else {
+            res.status(200).json({
+              status: "0",
+              message: "Mobile number is not registered."
+            });
+          }
+        }
+      });
+    }
+  }
+);
+
+router.post(
   "/register-user",
   [
     check("email").isEmail(),
@@ -63,8 +123,10 @@ router.post(
             }
           } else {
             if (user.email && user.password && user.full_name && user.mobile) {
+              let otp = Math.random();
+              otp = Math.ceil(otp * 1000000);
               let sql =
-                'insert into customer (username,email,password,mobile1) values("' +
+                'insert into customer (username,email,password,mobile1,register_otp) values("' +
                 user.full_name +
                 '","' +
                 user.email +
@@ -72,6 +134,8 @@ router.post(
                 user.password +
                 '",' +
                 user.mobile +
+                "," +
+                otp +
                 ")";
               con.query(sql, (err, result) => {
                 if (err) {
@@ -86,7 +150,14 @@ router.post(
                   res.status(200).send({
                     status: "1",
                     message: "User registered successfully",
-                    token: jwt_token
+                    token: jwt_token,
+                    user: {
+                      id: result.insertId,
+                      username: user.full_name,
+                      email: user.email,
+                      mobile: user.mobile
+                    },
+                    otp: String(otp)
                   });
                 }
               });

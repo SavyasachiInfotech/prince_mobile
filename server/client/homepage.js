@@ -56,52 +56,86 @@ router.get("/get-homepage-data", (req, res) => {
                 if (err) {
                   console.log(err);
                 }
-                let category = categories.filter(item => item.parent_id == 0);
-                for (let i = 0; i < category.length; i++) {
-                  category[i].subCategories = categories.filter(
-                    item => item.parent_id == category[i].category_id
-                  );
-                }
-                for (let i = 0; i < products.length; i++) {
-                  let data = JSON.parse(products[i].thumbnail);
-                  products[i].thumbnail = process.env.THUMBNAIL + data[0];
-                }
+                let trend;
+                sql =
+                  "select v.variant_id,v.name,v.price,v.discount,t.tax,v.list_image from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by order_count DESC limit 0,5";
+                con.query(sql, (err, trending) => {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    trend = trending;
+                    let category = categories.filter(
+                      item => item.parent_id == 0
+                    );
+                    for (let i = 0; i < category.length; i++) {
+                      category[i].subCategories = categories.filter(
+                        item => item.parent_id == category[i].category_id
+                      );
+                    }
 
-                for (let i = 0; i < banners.length; i++) {
-                  banners[i].image = process.env.BANNER + banners[i].image;
-                }
+                    for (let i = 0; i < products.length; i++) {
+                      let data = JSON.parse(products[i].thumbnail);
+                      products[i].thumbnail = process.env.THUMBNAIL + data[0];
+                    }
 
-                for (let i = 0; i < latest.length; i++) {
-                  let data = JSON.parse(latest[i].list_image);
-                  latest[i].list_image = process.env.LISTIMAGE + data[0];
-                }
+                    for (let i = 0; i < trend.length; i++) {
+                      let data = JSON.parse(trend[i].list_image);
+                      trend[i].list_image = process.env.LISTIMAGE + data[0];
+                    }
 
-                let json = JSON.stringify(banners);
-                banners = JSON.parse(json, (key, val) =>
-                  typeof val !== "object" && val !== null ? String(val) : val
-                );
-                json = JSON.stringify(category);
-                category = JSON.parse(json, (key, val) =>
-                  typeof val !== "object" && val !== null ? String(val) : val
-                );
+                    for (let i = 0; i < banners.length; i++) {
+                      banners[i].image = process.env.BANNER + banners[i].image;
+                    }
 
-                json = JSON.stringify(products);
-                products = JSON.parse(json, (key, val) =>
-                  typeof val !== "object" && val !== null ? String(val) : val
-                );
-                json = JSON.stringify(latest);
-                let empty = "";
-                latest = JSON.parse(json, (key, val) =>
-                  typeof val !== "object" && val !== null ? String(val) : val
-                );
+                    for (let i = 0; i < latest.length; i++) {
+                      let data = JSON.parse(latest[i].list_image);
+                      latest[i].list_image = process.env.LISTIMAGE + data[0];
+                    }
 
-                res.status(200).json({
-                  status: "1",
-                  message: "Getting homepage data successfully.",
-                  banners: banners,
-                  categories: category,
-                  lotshot: products,
-                  latest: latest
+                    let json = JSON.stringify(banners);
+                    banners = JSON.parse(json, (key, val) =>
+                      typeof val !== "object" && val !== null
+                        ? String(val)
+                        : val
+                    );
+
+                    json = JSON.stringify(trend);
+                    trend = JSON.parse(json, (key, val) =>
+                      typeof val !== "object" && val !== null
+                        ? String(val)
+                        : val
+                    );
+                    //  console.log(trend);
+                    json = JSON.stringify(category);
+                    category = JSON.parse(json, (key, val) =>
+                      typeof val !== "object" && val !== null
+                        ? String(val)
+                        : val
+                    );
+
+                    json = JSON.stringify(products);
+                    products = JSON.parse(json, (key, val) =>
+                      typeof val !== "object" && val !== null
+                        ? String(val)
+                        : val
+                    );
+                    json = JSON.stringify(latest);
+                    let empty = "";
+                    latest = JSON.parse(json, (key, val) =>
+                      typeof val !== "object" && val !== null
+                        ? String(val)
+                        : val
+                    );
+                    res.status(200).json({
+                      status: "1",
+                      message: "Getting homepage data successfully.",
+                      banners: banners,
+                      categories: category,
+                      lotshot: products,
+                      latest: latest,
+                      trending: trend
+                    });
+                  }
                 });
               });
             }
