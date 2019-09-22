@@ -4,6 +4,17 @@ const md5 = require("md5");
 const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const con = require("../database-connection");
+const nodemailer = require("nodemailer");
+var transporter = nodemailer.createTransport({
+  host: process.env.MAILHOST,
+  port: process.env.MAILPORT,
+  secure: process.env.MAILSECURE,
+  requireTLS: process.MAILREQUIRETLS,
+  auth: {
+    user: process.env.MAILUSER,
+    pass: process.env.MAILPASS
+  }
+});
 
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
@@ -254,5 +265,159 @@ router.post("/login-user", (req, res) => {
     }
   });
 });
+
+router.post("/forget-password", (req, res) => {
+  let data = req.body;
+  if (data.email.length > 400 && data.email.length < 1) {
+    res
+      .status(200)
+      .json({ status: "0", message: "Enter valid Email or Mobile" });
+  } else {
+    let mobile;
+    if (isNaN(data.email)) {
+      mobile = -4;
+    } else {
+      mobile = data.email;
+    }
+    let sql =
+      'select * from customer where email="' +
+      data.email +
+      '" or mobile1=' +
+      mobile;
+    con.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(200)
+          .json({ status: "0", message: "Enter proper email or mobile" });
+      } else {
+        if (result.length > 0) {
+          let pass = Math.ceil(Math.random() * 10000000000);
+          pass = md5(pass);
+          pass = pass.substr(0, 8);
+          var mailOptions = {
+            from: "youremail@gmail.com",
+            to: result[0].email,
+            subject: "Forget Password - Prince Mobile",
+            html:
+              "<h1>Forget Password</h1><br><br>You can use this password for temporary time. Once you getting login with this password, you can change this password with your new password.<br><br><br> <b>Temporary Passowrd :</b> &nbsp;&nbsp; " +
+              pass
+          };
+          transporter.sendMail(mailOptions, (err, info) => {
+            if (err) {
+              console.log(err);
+              res.status(200).json({
+                status: "0",
+                message: "Request not proceede. Please try again later."
+              });
+            }
+          });
+          pass = md5(pass);
+
+          sql =
+            "update customer set password='" +
+            pass +
+            "' where id=" +
+            result[0].id;
+          con.query(sql, (err, data) => {
+            if (err) {
+              res.status(200).json({
+                status: "0",
+                message: "Request can not proceed. Please try again later."
+              });
+            } else {
+              res.status(200).json({
+                status: "1",
+                message: "Request proceeded. Please check your email."
+              });
+            }
+          });
+        } else {
+          res.status(200).json({
+            status: "0",
+            message: "Your email/mobile is not registered."
+          });
+        }
+      }
+    });
+  }
+});
+
+router.post(
+  "/change-password",
+  [
+    check("currentPassword")
+      .isString()
+      .isLength({ min: 32, max: 32 }),
+    check("newPassword")
+      .isString()
+      .isLength({ min: 32, max: 32 }),
+    check("email")
+      .isString()
+      .isLength({ min: 1, max: 400 })
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      res.status(200).json({ status: "0", message: "Enter Valid Data" });
+    } else {
+      let data = req.body;
+      if (isNaN(data.email)) {
+        mobile = -4;
+      } else {
+        mobile = data.email;
+      }
+      let sql =
+        "select * from customer where email='" +
+        data.email +
+        "' or mobile1=" +
+        mobile;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({ status: "0", message: "Enter valid Data." });
+        } else {
+          if (result.length > 0) {
+            if (
+              result[0].password.toLowerCase() ==
+              data.currentPassword.toLowerCase()
+            ) {
+              sql =
+                "update customer set password='" +
+                data.newPassword +
+                "' where id=" +
+                result[0].id;
+              con.query(sql, (err, newPass) => {
+                if (err) {
+                  console.log(err);
+                  res.status(200).json({
+                    status: "0",
+                    message: "Password not changed. Please try again later."
+                  });
+                } else {
+                  res.status(200).json({
+                    status: "1",
+                    message: "Password changed successsfully."
+                  });
+                }
+              });
+            } else {
+              res.status(200).json({
+                status: "0",
+                message: "Please enter valid current password."
+              });
+            }
+          } else {
+            res.status(200).json({
+              status: "0",
+              message: "Email/Mobile provided by you is not registered."
+            });
+          }
+        }
+      });
+    }
+  }
+);
 
 module.exports = router;
