@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 21, 2019 at 05:35 PM
+-- Generation Time: Sep 22, 2019 at 11:36 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -85,9 +85,9 @@ CREATE TABLE `banners` (
 --
 
 INSERT INTO `banners` (`id`, `image`, `category_id`, `banner_type`) VALUES
-(1, 'banner1.png', 2, 0),
-(2, 'banner2.png', 1, 0),
-(3, 'banner3.png', 3, 0),
+(1, 'banner1.PNG', 2, 0),
+(2, 'banner2.PNG', 1, 0),
+(3, 'banner3.PNG', 3, 0),
 (4, 'banner4.jpg', 11, 0),
 (5, 'banner5.jpg', 11, 0),
 (6, 'banner6.jpg', 11, 0),
@@ -130,23 +130,23 @@ CREATE TABLE `category` (
 --
 
 INSERT INTO `category` (`category_id`, `name`, `description`, `image`, `image_required`, `parent_id`, `mobile_required`) VALUES
-(2, 'Design Print Soft Cover', 'Design Print Soft Cover', NULL, 0, 0, 1),
-(3, 'Design Print Hard Cover', 'Design Print Hard Cover', NULL, 0, 0, 1),
-(4, 'Photo Soft Cover', 'Photo Soft Cover', NULL, 1, 0, 1),
-(5, 'Photo Hard Cover', 'Photo Hard Cover', NULL, 1, 0, 1),
-(6, 'Earphone', 'Earphone', NULL, 0, 0, 0),
-(7, 'Cabel', 'Cabel', NULL, 0, 0, 0),
-(8, 'Charger', 'Charger', NULL, 0, 0, 0),
-(9, 'Speaker', 'Speaker', NULL, 0, 0, 0),
-(10, 'Design Print Soft Cover', '', NULL, 0, 2, NULL),
-(11, 'Soft Design Print Cover', '', NULL, 0, 2, NULL),
-(12, 'Design Print Hard Cover', '', NULL, 0, 3, NULL),
-(13, 'Hard Design Print Cover', '', NULL, 0, 3, NULL),
-(14, 'Rubber Photo Hard Cover', '', NULL, 1, 5, NULL),
-(15, 'Hard Photo Cover', '', NULL, 1, 5, NULL),
-(16, 'Rubber Photo Soft Cover', '', NULL, 1, 4, NULL),
-(17, 'Soft Photo Cover', '', NULL, 1, 4, NULL),
-(18, 'Lot Shot', '', NULL, 0, 0, 1);
+(2, 'Design Print Soft Cover', 'Design Print Soft Cover', 'cover.jpg', 0, 0, 1),
+(3, 'Design Print Hard Cover', 'Design Print Hard Cover', 'cover.jpg', 0, 0, 1),
+(4, 'Photo Soft Cover', 'Photo Soft Cover', 'cover.jpg', 1, 0, 1),
+(5, 'Photo Hard Cover', 'Photo Hard Cover', 'cover.jpg', 1, 0, 1),
+(6, 'Earphone', 'Earphone', 'headphone.jpg', 0, 0, 0),
+(7, 'Cabel', 'Cabel', 'electric.jpg', 0, 0, 0),
+(8, 'Charger', 'Charger', 'electric.jpg', 0, 0, 0),
+(9, 'Speaker', 'Speaker', 'speaker.jpg', 0, 0, 0),
+(10, 'Design Print Soft Cover', '', 'cover.jpg', 0, 2, NULL),
+(11, 'Soft Design Print Cover', '', 'cover.jpg', 0, 2, NULL),
+(12, 'Design Print Hard Cover', '', 'cover.jpg', 0, 3, NULL),
+(13, 'Hard Design Print Cover', '', 'cover.jpg', 0, 3, NULL),
+(14, 'Rubber Photo Hard Cover', '', 'cover.jpg', 1, 5, NULL),
+(15, 'Hard Photo Cover', '', 'cover.jpg', 1, 5, NULL),
+(16, 'Rubber Photo Soft Cover', '', 'cover.jpg', 1, 4, NULL),
+(17, 'Soft Photo Cover', '', 'cover.jpg', 1, 4, NULL),
+(18, 'Lot Shot', '', 'cover.jpg', 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -163,7 +163,7 @@ CREATE TABLE `customer` (
   `password` varchar(40) DEFAULT NULL,
   `mobile1` bigint(20) DEFAULT NULL,
   `mobile2` bigint(20) DEFAULT NULL,
-  `profile_image` varchar(800) NOT NULL,
+  `profile_image` varchar(800) DEFAULT NULL,
   `city` varchar(100) DEFAULT NULL,
   `state` varchar(100) DEFAULT NULL,
   `added_date` datetime DEFAULT current_timestamp(),
@@ -178,8 +178,10 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
-(5, NULL, NULL, 'Parth Dhankecha', 'pm3290@gail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9856563777, NULL, '', NULL, NULL, '2019-09-16 20:13:05', '2019-09-16 20:13:05', NULL, 0, 0),
-(6, NULL, NULL, 'A Xyz', 'A@c.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852685363, NULL, '', NULL, NULL, '2019-09-21 19:02:39', '2019-09-21 19:02:39', NULL, 0, 1);
+(5, NULL, NULL, 'Parth Dhankecha', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9856563777, NULL, '', NULL, NULL, '2019-09-16 20:13:05', '2019-09-16 20:13:05', NULL, 0, 1),
+(6, NULL, NULL, 'A Xyz', 'A@c.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852685363, NULL, '', NULL, NULL, '2019-09-21 19:02:39', '2019-09-21 19:02:39', NULL, 0, 1),
+(7, NULL, NULL, 'A Xyz', 'A@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852636363, NULL, '', NULL, NULL, '2019-09-22 23:23:07', '2019-09-22 23:23:07', NULL, 759730, 0),
+(8, NULL, NULL, 'A Xyz', 'A@sa.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852636367, NULL, NULL, NULL, NULL, '2019-09-23 02:46:15', '2019-09-23 02:46:15', NULL, 371532, 0);
 
 -- --------------------------------------------------------
 
@@ -645,7 +647,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `customer_address`

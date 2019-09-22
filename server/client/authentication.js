@@ -56,9 +56,14 @@ router.get("/user-data", verifyToken, (req, res) => {
       result = JSON.parse(json, (key, val) =>
         typeof val !== "object" && val !== null ? String(val) : val
       );
+      if (result[0].profile_image == null) {
+        result[0].profile_image = "";
+      }
+
       if (result[0].profile_image != "") {
         result[0].profile_image = process.env.PROFILE + result[0].profile_image;
       }
+
       res
         .status(200)
         .json({ status: "1", message: "Getting user data", user: result[0] });

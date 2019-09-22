@@ -20,6 +20,10 @@ app.use(
   express.static(path.join(__dirname, "dist/admin/assets/banners"))
 );
 app.use(
+  "/category",
+  express.static(path.join(__dirname, "dist/admin/assets/categories"))
+);
+app.use(
   "/thumbnail",
   express.static(path.join(__dirname, "dist/admin/assets/thumbnail"))
 );

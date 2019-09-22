@@ -64,6 +64,14 @@ router.get("/get-homepage-data", (req, res) => {
                     console.log(err);
                   } else {
                     trend = trending;
+                    for (let i = 0; i < categories.length; i++) {
+                      if (categories[i].image == null) {
+                        categories[i].image = "";
+                      } else {
+                        categories[i].image =
+                          process.env.CATEGORY + categories[i].image;
+                      }
+                    }
                     let category = categories.filter(
                       item => item.parent_id == 0
                     );
