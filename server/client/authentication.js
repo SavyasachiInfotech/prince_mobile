@@ -203,6 +203,7 @@ router.post(
                     user: {
                       id: String(result.insertId),
                       username: String(user.full_name),
+                      password: String(user.password),
                       email: String(user.email),
                       mobile: String(user.mobile)
                     },
@@ -252,6 +253,7 @@ router.post("/login-user", (req, res) => {
             user: {
               id: String(result[0].id),
               username: String(result[0].username),
+              password: String(result[0].password),
               email: String(result[0].email),
               mobile: String(result[0].mobile1)
             }
