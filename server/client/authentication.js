@@ -249,13 +249,13 @@ router.post("/login-user", (req, res) => {
           res.status(200).send({
             status: "1",
             message: "Logged in successfully.",
-            token: jwt_token,
             user: {
               id: String(result[0].id),
               username: String(result[0].username),
               password: String(result[0].password),
               email: String(result[0].email),
-              mobile: String(result[0].mobile1)
+              mobile: String(result[0].mobile1),
+              token: jwt_token
             }
           });
         } else {
