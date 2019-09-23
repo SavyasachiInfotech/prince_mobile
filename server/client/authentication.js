@@ -5,6 +5,35 @@ const router = express.Router();
 const { check, validationResult } = require("express-validator");
 const con = require("../database-connection");
 const nodemailer = require("nodemailer");
+const multer = require("multer");
+const sharp = require("sharp");
+const fs = require("fs");
+const path = require("path");
+var app = express();
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin,X-Requested-With,Content-Type,Accept"
+  );
+  next();
+});
+
+var storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../../dist/admin/assets/profile"));
+  },
+  filename: (req, file, cb) => {
+    file.originalname = new Date().getTime() + file.originalname;
+    cb(null, file.originalname);
+  }
+});
+
+var upload = multer({
+  storage: storage
+});
+
 var transporter = nodemailer.createTransport({
   host: process.env.MAILHOST,
   port: process.env.MAILPORT,
@@ -70,6 +99,79 @@ router.get("/user-data", verifyToken, (req, res) => {
     }
   });
 });
+
+// router.put("/update-profile",[(check("id").isNumeric(),check("")])
+
+router.post(
+  "/update-profile-image",
+  verifyToken,
+  upload.single("avatar"),
+  (req, res) => {
+    let sql = "select profile_image from customer where id=" + req.userId;
+    con.query(sql, (err, data) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(200)
+          .json({ status: "0", message: "Profile image is not uploaded." });
+      } else {
+        fs.unlink(
+          path.join(
+            __dirname,
+            "../../dist/admin/assets/profile/" + data[0].profile_image
+          ),
+          error => {}
+        );
+        sql =
+          'update customer set profile_image="' +
+          req.file.originalname +
+          '" where id=' +
+          req.userId;
+        con.query(sql, (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(200).json({
+              status: "0",
+              message: "Profile image is not updated. Please try again later."
+            });
+          } else {
+            res.status(200).json({
+              status: "1",
+              message: "Profile image is uploaded successfully."
+            });
+          }
+        });
+      }
+    });
+  }
+);
+
+router.post(
+  "/add-profile-image",
+  verifyToken,
+  upload.single("avatar"),
+  (req, res) => {
+    let sql =
+      'update customer set profile_image="' +
+      req.file.originalname +
+      '" where id=' +
+      req.userId;
+    con.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.status(200).json({
+          status: "0",
+          message: "Profile image is not updated. Please try again later."
+        });
+      } else {
+        res.status(200).json({
+          status: "1",
+          message: "Profile image is uploaded successfully."
+        });
+      }
+    });
+  }
+);
 
 router.post(
   "/verify-otp",
