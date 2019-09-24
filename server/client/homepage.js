@@ -143,10 +143,15 @@ router.get("/get-homepage-data", (req, res) => {
                         ? String(val)
                         : val
                     );
+                    let offers;
+                    offers = banners.filter(item => item.banner_type == "1");
+
+                    banners = banners.filter(item => item.banner_type == "0");
                     res.status(200).json({
                       status: "1",
                       message: "Getting homepage data successfully.",
                       banners: banners,
+                      offers: offers,
                       categories: category,
                       lotshot: products,
                       latest: latest,
