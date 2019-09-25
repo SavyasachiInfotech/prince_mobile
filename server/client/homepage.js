@@ -151,7 +151,7 @@ router.get("/get-homepage-data", (req, res) => {
                       status: "1",
                       message: "Getting homepage data successfully.",
                       banners: banners,
-                      offers: offers,
+                      offers: offers[0].image,
                       categories: category,
                       lotshot: products,
                       latest: latest,

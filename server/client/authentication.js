@@ -72,7 +72,8 @@ function verifyToken(req, res, next) {
 router.get("/user-data", verifyToken, (req, res) => {
   let id = req.userId;
   let sql =
-    "select username,email,mobile1,profile_image from customer where id=" + id;
+    "select username,email,mobile1,profile_image,address,pincode from customer where id=" +
+    id;
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -85,6 +86,12 @@ router.get("/user-data", verifyToken, (req, res) => {
       result = JSON.parse(json, (key, val) =>
         typeof val !== "object" && val !== null ? String(val) : val
       );
+      if (result[0].address == null) {
+        result[0].address = "";
+      }
+      if (result[0].pincode == null) {
+        result[0].pincode = "";
+      }
       if (result[0].profile_image == null) {
         result[0].profile_image = "";
       }

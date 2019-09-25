@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 24, 2019 at 05:31 PM
+-- Generation Time: Sep 25, 2019 at 05:02 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -167,6 +167,8 @@ CREATE TABLE `customer` (
   `password` varchar(40) DEFAULT NULL,
   `mobile1` bigint(20) DEFAULT NULL,
   `mobile2` bigint(20) DEFAULT NULL,
+  `address` varchar(800) DEFAULT NULL,
+  `pincode` varchar(6) DEFAULT NULL,
   `profile_image` varchar(800) DEFAULT NULL,
   `city` varchar(100) DEFAULT NULL,
   `state` varchar(100) DEFAULT NULL,
@@ -181,12 +183,12 @@ CREATE TABLE `customer` (
 -- Dumping data for table `customer`
 --
 
-INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
-(5, NULL, NULL, 'Parth Dhankecha', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9856563777, NULL, '', NULL, NULL, '2019-09-16 20:13:05', '2019-09-16 20:13:05', NULL, 0, 1),
-(6, NULL, NULL, 'A Xyz', 'A@c.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852685363, NULL, '', NULL, NULL, '2019-09-21 19:02:39', '2019-09-21 19:02:39', NULL, 0, 1),
-(7, NULL, NULL, 'A Xyz', 'A@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852636363, NULL, '1569252006653Radhika_Infotech.png', NULL, NULL, '2019-09-22 23:23:07', '2019-09-22 23:23:07', NULL, 759730, 0),
-(8, NULL, NULL, 'A Xyz', 'A@sa.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852636367, NULL, NULL, NULL, NULL, '2019-09-23 02:46:15', '2019-09-23 02:46:15', NULL, 371532, 0),
-(9, NULL, NULL, 'A Xyz', 'abc@df.com', 'E10ADC3949BA59ABBE56E057F20F883E', 8863255563, NULL, NULL, NULL, NULL, '2019-09-23 05:36:00', '2019-09-23 05:36:00', NULL, 0, 1);
+INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `address`, `pincode`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
+(5, NULL, NULL, 'Parth Dhankecha', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9856563777, NULL, '', '', '', NULL, NULL, '2019-09-16 20:13:05', '2019-09-16 20:13:05', NULL, 0, 1),
+(6, NULL, NULL, 'A Xyz', 'A@c.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852685363, NULL, '', '', '', NULL, NULL, '2019-09-21 19:02:39', '2019-09-21 19:02:39', NULL, 0, 1),
+(7, NULL, NULL, 'A Xyz', 'A@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852636363, NULL, '', '', '1569252006653Radhika_Infotech.png', NULL, NULL, '2019-09-22 23:23:07', '2019-09-22 23:23:07', NULL, 759730, 0),
+(8, NULL, NULL, 'A Xyz', 'A@sa.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852636367, NULL, '', '', NULL, NULL, NULL, '2019-09-23 02:46:15', '2019-09-23 02:46:15', NULL, 371532, 0),
+(9, NULL, NULL, 'A Xyz', 'abc@df.com', 'E10ADC3949BA59ABBE56E057F20F883E', 8863255563, NULL, '', '', NULL, NULL, NULL, '2019-09-23 05:36:00', '2019-09-23 05:36:00', NULL, 0, 1);
 
 -- --------------------------------------------------------
 
