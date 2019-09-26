@@ -158,23 +158,47 @@ router.post(
   verifyToken,
   upload.single("avatar"),
   (req, res) => {
-    let sql =
-      'update customer set profile_image="' +
-      req.file.originalname +
-      '" where id=' +
-      req.userId;
-    con.query(sql, (err, result) => {
+    let sql = "select profile_image from customer where id=" + req.userId;
+    con.query(sql, (err, data) => {
       if (err) {
         console.log(err);
         res.status(200).json({
           status: "0",
-          message: "Profile image is not updated. Please try again later."
+          message: "Please login again for upload profile image."
         });
       } else {
-        res.status(200).json({
-          status: "1",
-          message: "Profile image is uploaded successfully."
+        sql =
+          'update customer set profile_image="' +
+          req.file.originalname +
+          '" where id=' +
+          req.userId;
+        con.query(sql, (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(200).json({
+              status: "0",
+              message: "Profile image is not updated. Please try again later."
+            });
+          } else {
+            res.status(200).json({
+              status: "1",
+              message: "Profile image is uploaded successfully."
+            });
+          }
         });
+        if (
+          data.length > 0 &&
+          data[0].profile_image != null &&
+          data[0].profile_image.length > 0
+        ) {
+          fs.unlink(
+            path.join(
+              __dirname,
+              "../../dist/admin/assets/profile/" + data[0].profile_image
+            ),
+            error => {}
+          );
+        }
       }
     });
   }
