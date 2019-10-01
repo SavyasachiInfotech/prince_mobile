@@ -72,7 +72,7 @@ function verifyToken(req, res, next) {
 router.get("/user-data", verifyToken, (req, res) => {
   let id = req.userId;
   let sql =
-    "select username,email,mobile1,profile_image,address,pincode from customer where id=" +
+    "select username,email,mobile1,profile_image,flatno,colony,landmark,address,pincode,city,state from customer where id=" +
     id;
   con.query(sql, (err, result) => {
     if (err) {
@@ -106,6 +106,71 @@ router.get("/user-data", verifyToken, (req, res) => {
     }
   });
 });
+
+router.post(
+  "/update-profile",
+  [
+    check("username")
+      .isString()
+      .isLength({ min: 1, max: 100 }),
+    check("flatno")
+      .isString()
+      .isLength({ min: 1, max: 50 }),
+    check("colony")
+      .isString()
+      .isLength({ min: 1, max: 300 }),
+    check("landmark")
+      .isString()
+      .isLength({ min: 1, max: 100 }),
+    check("address").isString(),
+    check("pincode").isNumeric(),
+    check("city")
+      .isString()
+      .isLength({ max: 100 }),
+    check("state")
+      .isString()
+      .isLength({ max: 100 })
+  ],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({ status: "0", message: "Enter Valid Data" });
+    } else {
+      let data = req.body;
+      let sql =
+        'update customer set flatno="' +
+        data.flatno +
+        '", colony="' +
+        data.colony +
+        '", landmark="' +
+        data.landmark +
+        '",address="' +
+        data.address +
+        '",pincode="' +
+        data.pincode +
+        '",city="' +
+        data.city +
+        '",state="' +
+        data.state +
+        '",username="' +
+        data.username +
+        '" where id=' +
+        req.userId;
+      console.log(sql);
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({ status: "0", message: "Enter valid data." });
+        } else {
+          res
+            .status(200)
+            .json({ status: "1", message: "Profile updated successfully." });
+        }
+      });
+    }
+  }
+);
 
 // router.put("/update-profile",[(check("id").isNumeric(),check("")])
 

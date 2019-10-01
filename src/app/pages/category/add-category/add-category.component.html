@@ -135,6 +135,50 @@
                 </tbody>
               </table>
             </div>
+            <div class="card-footer">
+              <nav aria-label="Page">
+                <ul class="pagination justify-content-center">
+                  <li
+                    class="page-item"
+                    *ngIf="currentPage != 1"
+                    (click)="changePage(1)"
+                  >
+                    <a class="page-link">First</a>
+                  </li>
+                  <li
+                    class="page-item"
+                    *ngIf="currentPage != 1"
+                    (click)="changePage(currentPage - 1)"
+                  >
+                    <a class="page-link"
+                      ><i class="ion-md-skip-backward"></i
+                    ></a>
+                  </li>
+                  <li
+                    class="page-item"
+                    [class.active]="pageno == currentPage"
+                    (click)="changePage(pageno)"
+                    *ngFor="let pageno of displayPages"
+                  >
+                    <a class="page-link">{{ pageno }}</a>
+                  </li>
+                  <li
+                    class="page-item"
+                    *ngIf="currentPage != lastPage"
+                    (click)="changePage(currentPage + 1)"
+                  >
+                    <a class="page-link"><i class="ion-md-skip-forward"></i></a>
+                  </li>
+                  <li
+                    class="page-item"
+                    *ngIf="currentPage != lastPage"
+                    (click)="changePage(lastPage)"
+                  >
+                    <a class="page-link">Last</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
       </div>

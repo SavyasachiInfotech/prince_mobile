@@ -29,6 +29,24 @@ function verifyToken(req, res, next) {
   next();
 }
 
+/** Count the Categories */
+
+router.get("/count-category", verifyToken, (req, res) => {
+  let sql = "select count(*) as count from category where parent_id=0";
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(200).json({ status: 400, message: "" });
+    } else {
+      res.status(200).json({
+        status: 200,
+        message: "Getting total no. of categories.",
+        data: result
+      });
+    }
+  });
+});
+
 /** Fetch the Category within provided bounds API */
 
 router.get(

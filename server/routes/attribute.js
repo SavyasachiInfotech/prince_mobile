@@ -29,6 +29,26 @@ function verifyToken(req, res, next) {
   next();
 }
 
+router.get("/count-attribute", (req, res) => {
+  let sql = "select count(*) as count from attribute";
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res
+        .status(200)
+        .json({ status: 400, message: "Cannot getting total attribute" });
+    } else {
+      res
+        .status(200)
+        .json({
+          status: 200,
+          message: "Getting total attributes",
+          data: result
+        });
+    }
+  });
+});
+
 /** Fetch the Attributes within provided bounds API */
 
 router.get(
