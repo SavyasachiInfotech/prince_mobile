@@ -89,7 +89,22 @@ router.get("/user-data", verifyToken, (req, res) => {
       if (result[0].address == null) {
         result[0].address = "";
       }
-      if (result[0].pincode == null) {
+	  if (result[0].flatno == null) {
+        result[0].flatno = "";
+      }
+	  if (result[0].colony == null) {
+        result[0].colony = "";
+      }
+	  if (result[0].landmark == null) {
+        result[0].landmark = "";
+      }
+      if (result[0].city == null) {
+        result[0].city = "";
+      }
+	  if (result[0].state == null) {
+        result[0].state = "";
+      }
+	  if (result[0].pincode == null) {
         result[0].pincode = "";
       }
       if (result[0].profile_image == null) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 01, 2019 at 05:52 PM
+-- Generation Time: Oct 02, 2019 at 05:31 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -167,26 +167,26 @@ INSERT INTO `category` (`category_id`, `name`, `description`, `image`, `image_re
 
 CREATE TABLE `customer` (
   `id` int(11) NOT NULL,
-  `fname` varchar(100) NOT NULL,
-  `lname` varchar(100) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `email` varchar(400) NOT NULL,
-  `password` varchar(40) NOT NULL,
-  `mobile1` bigint(20) NOT NULL,
-  `mobile2` bigint(20) NOT NULL,
-  `flatno` varchar(50) NOT NULL,
-  `colony` varchar(300) NOT NULL,
-  `landmark` varchar(100) NOT NULL,
-  `address` varchar(800) NOT NULL,
-  `pincode` varchar(6) NOT NULL,
-  `profile_image` varchar(800) NOT NULL,
-  `city` varchar(100) NOT NULL,
-  `state` varchar(100) NOT NULL,
+  `fname` varchar(100) DEFAULT NULL,
+  `lname` varchar(100) DEFAULT NULL,
+  `username` varchar(100) DEFAULT NULL,
+  `email` varchar(400) DEFAULT NULL,
+  `password` varchar(40) DEFAULT NULL,
+  `mobile1` bigint(20) DEFAULT NULL,
+  `mobile2` bigint(20) DEFAULT NULL,
+  `flatno` varchar(50) DEFAULT NULL,
+  `colony` varchar(300) DEFAULT NULL,
+  `landmark` varchar(100) DEFAULT NULL,
+  `address` varchar(800) DEFAULT NULL,
+  `pincode` varchar(6) DEFAULT NULL,
+  `profile_image` varchar(800) DEFAULT NULL,
+  `city` varchar(100) DEFAULT NULL,
+  `state` varchar(100) DEFAULT NULL,
   `added_date` datetime NOT NULL DEFAULT current_timestamp(),
   `modified_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `reset_token` text NOT NULL,
-  `register_otp` int(11) NOT NULL,
-  `mobile_verified` tinyint(1) NOT NULL DEFAULT 0
+  `reset_token` text DEFAULT NULL,
+  `register_otp` int(11) DEFAULT NULL,
+  `mobile_verified` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -194,12 +194,7 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `flatno`, `colony`, `landmark`, `address`, `pincode`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
-(5, '', '', 'Parth Dhankecha', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9856563777, 0, '', '', '', '', '', '', '', '', '2019-09-16 20:13:05', '2019-09-16 20:13:05', '', 0, 1),
-(6, '', '', 'A Xyz', 'A@c.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852685363, 0, '', '', '', '', '', '', '', '', '2019-09-21 19:02:39', '2019-09-21 19:02:39', '', 0, 1),
-(7, '', '', 'A Xyz', 'A@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852636363, 0, '', '', '', '', '', '1569510862563indian-rupee-symbol.jpg', '', '', '2019-09-22 23:23:07', '2019-09-22 23:23:07', '', 759730, 0),
-(8, '', '', 'A Xyz', 'A@sa.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9852636367, 0, '', '', '', '', '', '', '', '', '2019-09-23 02:46:15', '2019-09-23 02:46:15', '', 371532, 0),
-(9, '', '', 'A Xyz', 'abc@df.com', 'E10ADC3949BA59ABBE56E057F20F883E', 8863255563, 0, '', '', '', '', '', '1569511026682indian-rupee-symbol.jpg', '', '', '2019-09-23 05:36:00', '2019-09-23 05:36:00', '', 0, 1),
-(10, '', '', 'Parth Dhankecha', 'b@b.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9858636363, 0, 'c-18', 'Shivdarshan society', 'Yogichowk', '', '395010', '', 'Surat', 'Gujarat', '2019-10-01 20:52:13', '2019-10-01 20:52:13', '', 657882, 0);
+(12, NULL, NULL, 'A Xyz', 'b@cb.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9858633363, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-02 08:59:52', '2019-10-02 08:59:52', NULL, 715426, 0);
 
 -- --------------------------------------------------------
 
@@ -665,7 +660,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `customer_address`
