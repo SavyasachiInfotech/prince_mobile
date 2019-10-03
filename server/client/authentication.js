@@ -132,7 +132,7 @@ router.post(
     check("landmark")
       .isString()
       .isLength({ max: 100 }),
-    check("pincode").isString({ max: 6 })
+    check("pincode").isString().isLength({ max: 6 })
   ],
   verifyToken,
   (req, res) => {
