@@ -31,6 +31,7 @@ export class AddAttributeValueComponent implements OnInit {
       res => {
         //@ts-ignore
         if (res.status == 200) {
+          console.log(res);
           //@ts-ignore
           this.attributes = res.attributes;
         }
@@ -73,7 +74,7 @@ export class AddAttributeValueComponent implements OnInit {
     } else {
       if (this.editBit) {
         this._attributeValueService
-          .editAttribute(this.attribute, this.attribute.id)
+          .editAttribute(this.attribute, this.attribute.attribute_value_id)
           .subscribe(
             res => {
               //@ts-ignore

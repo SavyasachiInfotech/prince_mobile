@@ -48,8 +48,10 @@
                         name="attribute"
                         (change)="changeAttribute()"
                       >
-                        <option *ngFor="let attribute of attributes" [value]="attribute.id"
-                          >{{attribute.name}}</option
+                        <option
+                          *ngFor="let attribute of attributes"
+                          [value]="attribute.attribute_id"
+                          >{{ attribute.name }}</option
                         >
                       </select>
                     </div>
@@ -77,8 +79,20 @@
                 <hr />
               </div>
               <div class="form-actions m-t-40">
-                <button type="submit" class="btn btn-success" (click)="saveAttribute()">Save</button>
-                <button type="button" class="btn btn-dark" (click)="cancelAttribute()">Cancel</button>
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  (click)="saveAttribute()"
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-dark"
+                  (click)="cancelAttribute()"
+                >
+                  Cancel
+                </button>
               </div>
             </form>
             <hr />
@@ -98,11 +112,21 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let value of values">
-                    <td>{{value.id}}</td>
-                    <td>{{value.value}}</td>
-                    <td>{{value.attribute_id}}</td>
+                    <td>{{ value.attribute_value_id }}</td>
+                    <td>{{ value.value }}</td>
                     <td>
-                      <i class="material-icons" (click)="editAttributeRequest(value)">edit</i>
+                      <span *ngFor="let att of attributes"
+                        ><span *ngIf="att.attribute_id == value.attribute_id">{{
+                          att.name
+                        }}</span></span
+                      >
+                    </td>
+                    <td>
+                      <i
+                        class="material-icons"
+                        (click)="editAttributeRequest(value)"
+                        >edit</i
+                      >
                     </td>
                   </tr>
                 </tbody>

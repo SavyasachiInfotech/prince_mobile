@@ -36,6 +36,7 @@ export class AddAttributeComponent implements OnInit {
   setAttributes() {
     this._attributeService.getAttributes(0).subscribe(
       res => {
+        console.log(res);
         //@ts-ignore
         if (res.status == 200) {
           //@ts-ignore
@@ -61,10 +62,9 @@ export class AddAttributeComponent implements OnInit {
         this._attributeService
           .editAttribute(
             {
-              name: this.attribute.name,
-              description: this.attribute.description
+              name: this.attribute.name
             },
-            this.attribute.id
+            this.attribute.attribute_id
           )
           .subscribe(
             res => {

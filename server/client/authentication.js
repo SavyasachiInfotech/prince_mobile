@@ -72,7 +72,7 @@ function verifyToken(req, res, next) {
 router.get("/user-data", verifyToken, (req, res) => {
   let id = req.userId;
   let sql =
-    "select username,email,mobile1,profile_image,flatno,colony,landmark,address,pincode,city,state from customer where id=" +
+    "select username,email,mobile1,profile_image,flatno,colony,landmark,pincode from customer where id=" +
     id;
   con.query(sql, (err, result) => {
     if (err) {
@@ -82,38 +82,33 @@ router.get("/user-data", verifyToken, (req, res) => {
         message: "Cannot get user data. Please try again later."
       });
     } else {
+      if (result.length > 0) {
+        if (result[0].flatno == null) {
+          result[0].flatno = "";
+        }
+        if (result[0].colony == null) {
+          result[0].colony = "";
+        }
+        if (result[0].landmark == null) {
+          result[0].landmark = "";
+        }
+        if (result[0].pincode == null) {
+          result[0].pincode = "";
+        }
+        if (result[0].profile_image == null) {
+          result[0].profile_image = "";
+        }
+
+        if (result[0].profile_image != "") {
+          result[0].profile_image =
+            process.env.PROFILE + result[0].profile_image;
+        }
+      }
+
       json = JSON.stringify(result);
       result = JSON.parse(json, (key, val) =>
         typeof val !== "object" && val !== null ? String(val) : val
       );
-      if (result[0].address == null) {
-        result[0].address = "";
-      }
-	  if (result[0].flatno == null) {
-        result[0].flatno = "";
-      }
-	  if (result[0].colony == null) {
-        result[0].colony = "";
-      }
-	  if (result[0].landmark == null) {
-        result[0].landmark = "";
-      }
-      if (result[0].city == null) {
-        result[0].city = "";
-      }
-	  if (result[0].state == null) {
-        result[0].state = "";
-      }
-	  if (result[0].pincode == null) {
-        result[0].pincode = "";
-      }
-      if (result[0].profile_image == null) {
-        result[0].profile_image = "";
-      }
-
-      if (result[0].profile_image != "") {
-        result[0].profile_image = process.env.PROFILE + result[0].profile_image;
-      }
 
       res
         .status(200)
@@ -137,14 +132,7 @@ router.post(
     check("landmark")
       .isString()
       .isLength({ min: 1, max: 100 }),
-    check("address").isString(),
-    check("pincode").isNumeric(),
-    check("city")
-      .isString()
-      .isLength({ max: 100 }),
-    check("state")
-      .isString()
-      .isLength({ max: 100 })
+    check("pincode").isNumeric()
   ],
   verifyToken,
   (req, res) => {
@@ -160,14 +148,8 @@ router.post(
         data.colony +
         '", landmark="' +
         data.landmark +
-        '",address="' +
-        data.address +
         '",pincode="' +
         data.pincode +
-        '",city="' +
-        data.city +
-        '",state="' +
-        data.state +
         '",username="' +
         data.username +
         '" where id=' +

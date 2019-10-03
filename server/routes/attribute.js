@@ -38,13 +38,11 @@ router.get("/count-attribute", (req, res) => {
         .status(200)
         .json({ status: 400, message: "Cannot getting total attribute" });
     } else {
-      res
-        .status(200)
-        .json({
-          status: 200,
-          message: "Getting total attributes",
-          data: result
-        });
+      res.status(200).json({
+        status: 200,
+        message: "Getting total attributes",
+        data: result
+      });
     }
   });
 });
@@ -189,6 +187,7 @@ router.post(
   [check("value").isString(), check("attribute_id").isNumeric()],
   verifyToken,
   (req, res) => {
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res
@@ -238,7 +237,10 @@ router.put(
       let attribute = req.body;
       let id = req.params.id;
       let sql =
-        "update attribute set name='" + attribute.name + "' where id=" + id;
+        "update attribute set name='" +
+        attribute.name +
+        "' where attribute_id=" +
+        id;
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {
@@ -283,7 +285,7 @@ router.put(
         attributeValue.value +
         "',attribute_id=" +
         attributeValue.attribute_id +
-        " where id=" +
+        " where attribute_value_id=" +
         id;
       con.query(sql, (err, result) => {
         if (err) {
