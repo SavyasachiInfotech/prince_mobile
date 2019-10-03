@@ -122,17 +122,17 @@ router.post(
   [
     check("username")
       .isString()
-      .isLength({ min: 1, max: 100 }),
+      .isLength({ max: 100 }),
     check("flatno")
       .isString()
-      .isLength({ min: 1, max: 50 }),
+      .isLength({ max: 50 }),
     check("colony")
       .isString()
-      .isLength({ min: 1, max: 300 }),
+      .isLength({ max: 300 }),
     check("landmark")
       .isString()
-      .isLength({ min: 1, max: 100 }),
-    check("pincode").isNumeric()
+      .isLength({ max: 100 }),
+    check("pincode").isString({ max: 6 })
   ],
   verifyToken,
   (req, res) => {
@@ -154,7 +154,6 @@ router.post(
         data.username +
         '" where id=' +
         req.userId;
-      console.log(sql);
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);

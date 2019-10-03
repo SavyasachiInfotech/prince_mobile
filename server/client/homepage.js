@@ -83,7 +83,12 @@ router.get("/get-homepage-data", (req, res) => {
 
                     for (let i = 0; i < products.length; i++) {
                       let data = JSON.parse(products[i].thumbnail);
-                      products[i].thumbnail = process.env.THUMBNAIL + data[0];
+                      if (data.length > 0) {
+                        products[i].thumbnail = process.env.THUMBNAIL + data[0];
+                      } else {
+                        products[i].thumbnail = "";
+                      }
+
                       products[i].mrp =
                         products[i].price +
                         (products[i].price * products[i].discount) / 100;
@@ -91,7 +96,11 @@ router.get("/get-homepage-data", (req, res) => {
 
                     for (let i = 0; i < trend.length; i++) {
                       let data = JSON.parse(trend[i].list_image);
-                      trend[i].list_image = process.env.LISTIMAGE + data[0];
+                      if (data.length > 0) {
+                        trend[i].list_image = process.env.LISTIMAGE + data[0];
+                      } else {
+                        trend[i].list_image = "";
+                      }
                       trend[i].mrp =
                         trend[i].price +
                         (trend[i].price * trend[i].discount) / 100;
@@ -103,7 +112,11 @@ router.get("/get-homepage-data", (req, res) => {
 
                     for (let i = 0; i < latest.length; i++) {
                       let data = JSON.parse(latest[i].list_image);
-                      latest[i].list_image = process.env.LISTIMAGE + data[0];
+                      if (data.length > 0) {
+                        latest[i].list_image = process.env.LISTIMAGE + data[0];
+                      } else {
+                        latest[i].list_image = "";
+                      }
                       latest[i].mrp =
                         latest[i].price +
                         (latest[i].price * latest[i].discount) / 100;

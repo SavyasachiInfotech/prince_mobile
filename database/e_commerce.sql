@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 02, 2019 at 05:31 AM
+-- Generation Time: Oct 03, 2019 at 05:18 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -60,7 +60,8 @@ CREATE TABLE `attribute` (
 --
 
 INSERT INTO `attribute` (`attribute_id`, `name`, `date_time`) VALUES
-(1, 'Size', '2019-09-30 20:44:20');
+(1, 'Size1', '2019-09-30 20:44:20'),
+(2, 'Color', '2019-10-02 20:56:55');
 
 -- --------------------------------------------------------
 
@@ -73,6 +74,13 @@ CREATE TABLE `attribute_value` (
   `value` varchar(100) DEFAULT NULL,
   `attribute_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `attribute_value`
+--
+
+INSERT INTO `attribute_value` (`attribute_value_id`, `value`, `attribute_id`) VALUES
+(1, 'XXL', 1);
 
 -- --------------------------------------------------------
 
@@ -92,9 +100,9 @@ CREATE TABLE `banners` (
 --
 
 INSERT INTO `banners` (`id`, `image`, `category_id`, `banner_type`) VALUES
-(1, 'banner1.png', 2, 0),
-(2, 'banner2.png', 1, 0),
-(3, 'banner3.png', 3, 0),
+(1, 'banner1.jpg', 2, 0),
+(2, 'banner2.jpg', 1, 0),
+(3, 'banner3.jpg', 3, 0),
 (4, 'banner4.jpg', 11, 0),
 (5, 'banner5.jpg', 11, 0),
 (6, 'banner6.jpg', 11, 0),
@@ -141,23 +149,23 @@ CREATE TABLE `category` (
 --
 
 INSERT INTO `category` (`category_id`, `name`, `description`, `image`, `image_required`, `parent_id`, `mobile_required`) VALUES
-(2, 'Design Print Soft Cover', 'Design Print Soft Cover', 'case.png', 0, 0, 1),
-(3, 'Design Print Hard Cover', 'Design Print Hard Cover', 'case.png', 0, 0, 1),
-(4, 'Photo Soft Cover', 'Photo Soft Cover', 'case.png', 1, 0, 1),
-(5, 'Photo Hard Cover', 'Photo Hard Cover', 'case.png', 1, 0, 1),
-(6, 'Earphone', 'Earphone', 'case.png', 0, 0, 0),
-(7, 'Cabel', 'Cabel', 'case.png', 0, 0, 0),
-(8, 'Charger', 'Charger', 'case.png', 0, 0, 0),
-(9, 'Speaker', 'Speaker', 'case.png', 0, 0, 0),
-(10, 'Design Print Soft Cover', '', 'case.png', 0, 2, NULL),
-(11, 'Soft Design Print Cover', '', 'case.png', 0, 2, NULL),
-(12, 'Design Print Hard Cover', '', 'case.png', 0, 3, NULL),
-(13, 'Hard Design Print Cover', '', 'case.png', 0, 3, NULL),
-(14, 'Rubber Photo Hard Cover', '', 'case.png', 1, 5, NULL),
-(15, 'Hard Photo Cover', '', 'case.png', 1, 5, NULL),
-(16, 'Rubber Photo Soft Cover', '', 'case.png', 1, 4, NULL),
-(17, 'Soft Photo Cover', '', 'case.png', 1, 4, NULL),
-(18, 'Lot Shot', '', 'case.png', 0, 0, 1);
+(2, 'Design Print Soft Cover', 'Design Print Soft Cover', 'design-hard-cover.png', 0, 0, 1),
+(3, 'Design Print Hard Cover', 'Design Print Hard Cover', 'design-hard-cover.png', 0, 0, 1),
+(4, 'Photo Soft Cover', 'Photo Soft Cover', 'photo-covor.png', 1, 0, 1),
+(5, 'Photo Hard Cover', 'Photo Hard Cover', 'photo-hard-cover.png', 1, 0, 1),
+(6, 'Earphone', 'Earphone', 'ear-phone.png', 0, 0, 0),
+(7, 'Cabel', 'Cabel', 'cabel.png', 0, 0, 0),
+(8, 'Charger', 'Charger', 'charger.png', 0, 0, 0),
+(9, 'Speaker', 'Speaker', 'speaker.png', 0, 0, 0),
+(10, 'Design Print Soft Cover', '', 'soft-cover.png', 0, 2, NULL),
+(11, 'Soft Design Print Cover', '', 'soft-cover.png', 0, 2, NULL),
+(12, 'Design Print Hard Cover', '', 'design-hard-cover.png', 0, 3, NULL),
+(13, 'Hard Design Print Cover', '', 'design-hard-cover.png', 0, 3, NULL),
+(14, 'Rubber Photo Hard Cover', '', 'photo-covor.png', 1, 5, NULL),
+(15, 'Hard Photo Cover', '', 'photo-covor.png', 1, 5, NULL),
+(16, 'Rubber Photo Soft Cover', '', 'photo-covor.png', 1, 4, NULL),
+(17, 'Soft Photo Cover', '', 'photo-covor.png', 1, 4, NULL),
+(18, 'Lot Shot', '', 'lotshot.png', 0, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -194,7 +202,7 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `flatno`, `colony`, `landmark`, `address`, `pincode`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
-(12, NULL, NULL, 'A Xyz', 'b@cb.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9858633363, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-02 08:59:52', '2019-10-02 08:59:52', NULL, 715426, 0);
+(12, NULL, NULL, 'Parth Dhankecha', 'b@cb.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9858633363, NULL, '', '', '', NULL, '', NULL, NULL, NULL, '2019-10-02 08:59:52', '2019-10-02 08:59:52', NULL, 715426, 0);
 
 -- --------------------------------------------------------
 
@@ -348,6 +356,7 @@ CREATE TABLE `product_variant` (
   `product_id` int(11) NOT NULL,
   `order_count` int(11) NOT NULL,
   `admin_id` int(11) DEFAULT NULL,
+  `sale_count` int(11) DEFAULT NULL,
   `added_on` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -356,15 +365,15 @@ CREATE TABLE `product_variant` (
 -- Dumping data for table `product_variant`
 --
 
-INSERT INTO `product_variant` (`variant_id`, `name`, `price`, `discount`, `tax_id`, `accept_promocode`, `min_qty`, `quantity`, `parent`, `avg_rating`, `attribute`, `thumbnail`, `list_image`, `view_image`, `main_image`, `product_id`, `order_count`, `admin_id`, `added_on`, `modified_date`) VALUES
-(1, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(2, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 50, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(3, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 20, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(4, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 100, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(5, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 11, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(6, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 20, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(7, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 55, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(8, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 0, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50');
+INSERT INTO `product_variant` (`variant_id`, `name`, `price`, `discount`, `tax_id`, `accept_promocode`, `min_qty`, `quantity`, `parent`, `avg_rating`, `attribute`, `thumbnail`, `list_image`, `view_image`, `main_image`, `product_id`, `order_count`, `admin_id`, `sale_count`, `added_on`, `modified_date`) VALUES
+(1, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, NULL, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(2, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 50, 1, NULL, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(3, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 20, 1, NULL, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(4, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 100, 1, NULL, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(5, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 11, 1, NULL, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(6, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 20, 1, NULL, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(7, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 55, 1, NULL, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(8, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 0, 1, NULL, '2019-09-18 20:43:50', '2019-09-18 20:43:50');
 
 -- --------------------------------------------------------
 
@@ -630,13 +639,13 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `attribute`
 --
 ALTER TABLE `attribute`
-  MODIFY `attribute_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `attribute_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `attribute_value`
 --
 ALTER TABLE `attribute_value`
-  MODIFY `attribute_value_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `attribute_value_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `banners`

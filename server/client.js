@@ -8,8 +8,10 @@ router.get("/", (req, res) => {
 
 const authentication = require("./client/authentication");
 const home = require("./client/homepage");
+const product = require("./client/product");
 
 app.use("/authentication", authentication);
 app.use("/home", home);
+app.use("/product", product);
 
 module.exports = app;
