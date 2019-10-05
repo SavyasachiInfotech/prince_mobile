@@ -45,13 +45,13 @@ router.post(
      *    1 - For give product of latest
      *    2 - For give product of trending
      *    3 - For All Product
+     *    4 - For Lotshot Product
      */
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({ status: "0", message: "Give the valid data" });
     } else {
       let data = req.body;
-
       let sql;
       let status = true;
       let countSql;
@@ -71,7 +71,7 @@ router.post(
               "," +
               limit;
             countSql =
-              "select count(v.variant_id) as total from product p,product_variant v where p.product_id=v.product_id and p.is_display=1 and v.parent=1 and p.category_id=" +
+              "select count(v.variant_id) as total from product p,product_variant v where p.product_id=v.product_id and p.is_display=1 and v.parent=1 and v.parent=1 and p.category_id=" +
               data.category_id;
           } else {
             status = false;
@@ -107,9 +107,20 @@ router.post(
                 countSql =
                   "select count(v.variant_id) as total from product_variant v,product p where p.product_id=v.product_id and p.is_display=1 and v.parent=1";
               } else {
-                res
-                  .status(200)
-                  .json({ status: "0", message: "Please provide valid data" });
+                if (data.flag == 4) {
+                  sql =
+                    "select v.variant_id,v.name,v.price,v.discount,t.tax,v.thumbnail from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.category_id=18 and p.is_display=1 order by v.added_on limit " +
+                    data.pageno +
+                    "," +
+                    limit;
+                  countSql =
+                    "select count(v.variant_id) as total from product_variant v, product p where p.product_id=v.product_id and p.category_id=18";
+                } else {
+                  res.status(200).json({
+                    status: "0",
+                    message: "Please provide valid data"
+                  });
+                }
               }
             }
           }
