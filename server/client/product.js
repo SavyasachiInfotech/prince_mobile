@@ -109,7 +109,7 @@ router.post(
               } else {
                 if (data.flag == 4) {
                   sql =
-                    "select v.variant_id,v.name,v.price,v.discount,t.tax,v.thumbnail from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.category_id=18 and p.is_display=1 order by v.added_on limit " +
+                    "select v.variant_id,v.name,v.price,v.discount,t.tax,v.list_image from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.category_id=18 and p.is_display=1 order by v.added_on limit " +
                     data.pageno +
                     "," +
                     limit;
@@ -174,5 +174,30 @@ router.post(
     }
   }
 );
+
+router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(200).json({
+      status: process.env.ERROR,
+      message: "Invalid Input Found",
+      errors: errors.array()
+    });
+  } else {
+    let sql =
+      "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.avg_rating,v.list_image,v.view_image,v.main_image from variant v, product p where p.product_id=v.product_id";
+    con.query(sql, (err, products) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(200)
+          .json({ status: "0", message: "Provide valid product id" });
+      } else {
+        sql = "select a.name,av.value,v.";
+        res.status(200).json({ status: 0 });
+      }
+    });
+  }
+});
 
 module.exports = router;
