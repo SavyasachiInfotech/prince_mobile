@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 04, 2019 at 06:05 AM
+-- Generation Time: Oct 06, 2019 at 07:58 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -80,7 +80,15 @@ CREATE TABLE `attribute_value` (
 --
 
 INSERT INTO `attribute_value` (`attribute_value_id`, `value`, `attribute_id`) VALUES
-(1, 'XXL', 1);
+(1, 'XXL', 1),
+(2, 'XL', 1),
+(3, 'RED', 2),
+(4, 'BLUE', 2),
+(5, 'YELLOW', 2),
+(6, 'PINK', 2),
+(7, 'PURPlE', 2),
+(8, 'ORANGE', 2),
+(9, 'WHITE', 2);
 
 -- --------------------------------------------------------
 
@@ -139,9 +147,9 @@ CREATE TABLE `category` (
   `name` varchar(60) DEFAULT NULL,
   `description` text DEFAULT NULL,
   `image` varchar(700) DEFAULT NULL,
-  `image_required` tinyint(1) DEFAULT NULL,
+  `image_required` tinyint(1) DEFAULT 0,
   `parent_id` int(11) DEFAULT NULL,
-  `mobile_required` tinyint(1) DEFAULT NULL
+  `mobile_required` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -157,14 +165,14 @@ INSERT INTO `category` (`category_id`, `name`, `description`, `image`, `image_re
 (7, 'Cabel', 'Cabel', 'cabel.png', 0, 0, 0),
 (8, 'Charger', 'Charger', 'charger.png', 0, 0, 0),
 (9, 'Speaker', 'Speaker', 'speaker.png', 0, 0, 0),
-(10, 'Design Print Soft Cover', '', 'soft-cover.png', 0, 2, NULL),
-(11, 'Soft Design Print Cover', '', 'soft-cover.png', 0, 2, NULL),
-(12, 'Design Print Hard Cover', '', 'design-hard-cover.png', 0, 3, NULL),
-(13, 'Hard Design Print Cover', '', 'design-hard-cover.png', 0, 3, NULL),
-(14, 'Rubber Photo Hard Cover', '', 'photo-covor.png', 1, 5, NULL),
-(15, 'Hard Photo Cover', '', 'photo-covor.png', 1, 5, NULL),
-(16, 'Rubber Photo Soft Cover', '', 'photo-covor.png', 1, 4, NULL),
-(17, 'Soft Photo Cover', '', 'photo-covor.png', 1, 4, NULL),
+(10, 'Design Print Soft Cover', '', 'soft-cover.png', 0, 2, 0),
+(11, 'Soft Design Print Cover', '', 'soft-cover.png', 0, 2, 0),
+(12, 'Design Print Hard Cover', '', 'design-hard-cover.png', 0, 3, 0),
+(13, 'Hard Design Print Cover', '', 'design-hard-cover.png', 0, 3, 0),
+(14, 'Rubber Photo Hard Cover', '', 'photo-covor.png', 1, 5, 0),
+(15, 'Hard Photo Cover', '', 'photo-covor.png', 1, 5, 0),
+(16, 'Rubber Photo Soft Cover', '', 'photo-covor.png', 1, 4, 0),
+(17, 'Soft Photo Cover', '', 'photo-covor.png', 1, 4, 0),
 (18, 'Lot Shot', '', 'lotshot.png', 0, 0, 1);
 
 -- --------------------------------------------------------
@@ -260,10 +268,18 @@ CREATE TABLE `mobile_brand` (
 --
 
 CREATE TABLE `mobile_models` (
-  `mdel_id` int(11) NOT NULL,
+  `model_id` int(11) NOT NULL,
   `model_name` varchar(100) DEFAULT NULL,
   `brand_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `mobile_models`
+--
+
+INSERT INTO `mobile_models` (`model_id`, `model_name`, `brand_id`) VALUES
+(1, 'Redmi 7 pro', NULL),
+(2, 'Redmi 6 pro', NULL);
 
 -- --------------------------------------------------------
 
@@ -306,7 +322,7 @@ CREATE TABLE `order_detail` (
 
 CREATE TABLE `product` (
   `product_id` int(11) NOT NULL,
-  `descripiton` text DEFAULT NULL,
+  `description` text DEFAULT NULL,
   `is_display` tinyint(1) DEFAULT NULL,
   `category_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -315,9 +331,15 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`product_id`, `descripiton`, `is_display`, `category_id`) VALUES
+INSERT INTO `product` (`product_id`, `description`, `is_display`, `category_id`) VALUES
 (1, 'Soft leather print back cover good quality Camera protection layer', 1, 11),
-(2, 'Soft leather print back cover good quality Camera protection layer', 1, 18);
+(2, 'Soft leather print back cover good quality Camera protection layer', 1, 18),
+(3, 'Soft leather print back cover good quality Camera protection layer', 1, 2),
+(4, 'Soft leather print back cover good quality Camera protection layer', 1, 3),
+(5, 'Soft leather print back cover good quality Camera protection layer', 1, 4),
+(6, 'Soft leather print back cover good quality Camera protection layer', 1, 5),
+(7, 'Soft leather print back cover good quality Camera protection layer', 1, 6),
+(8, 'Soft leather print back cover good quality Camera protection layer', 1, 18);
 
 -- --------------------------------------------------------
 
@@ -326,10 +348,319 @@ INSERT INTO `product` (`product_id`, `descripiton`, `is_display`, `category_id`)
 --
 
 CREATE TABLE `product_specification` (
-  `product_id` int(11) NOT NULL,
-  `specification_id` int(11) NOT NULL,
-  `value` int(11) DEFAULT NULL
+  `variant_id` int(11) NOT NULL,
+  `specification_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `product_specification`
+--
+
+INSERT INTO `product_specification` (`variant_id`, `specification_id`) VALUES
+(1, 1),
+(1, 2),
+(1, 3),
+(1, 4),
+(1, 5),
+(1, 6),
+(1, 7),
+(1, 8),
+(2, 1),
+(2, 2),
+(2, 3),
+(2, 4),
+(2, 5),
+(2, 6),
+(2, 7),
+(2, 8),
+(3, 1),
+(3, 2),
+(3, 3),
+(3, 4),
+(3, 5),
+(3, 6),
+(3, 7),
+(3, 8),
+(4, 1),
+(4, 2),
+(4, 3),
+(4, 4),
+(4, 5),
+(4, 6),
+(4, 7),
+(4, 8),
+(5, 1),
+(5, 2),
+(5, 3),
+(5, 4),
+(5, 5),
+(5, 6),
+(5, 7),
+(5, 8),
+(6, 1),
+(6, 2),
+(6, 3),
+(6, 4),
+(6, 5),
+(6, 6),
+(6, 7),
+(6, 8),
+(7, 1),
+(7, 2),
+(7, 3),
+(7, 4),
+(7, 5),
+(7, 6),
+(7, 7),
+(7, 8),
+(8, 1),
+(8, 2),
+(8, 3),
+(8, 4),
+(8, 5),
+(8, 6),
+(8, 7),
+(8, 8),
+(9, 1),
+(9, 2),
+(9, 3),
+(9, 4),
+(9, 5),
+(9, 6),
+(9, 7),
+(9, 8),
+(10, 1),
+(10, 2),
+(10, 3),
+(10, 4),
+(10, 5),
+(10, 6),
+(10, 7),
+(10, 8),
+(11, 1),
+(11, 2),
+(11, 3),
+(11, 4),
+(11, 5),
+(11, 6),
+(11, 7),
+(11, 8),
+(12, 1),
+(12, 2),
+(12, 3),
+(12, 4),
+(12, 5),
+(12, 6),
+(12, 7),
+(12, 8),
+(13, 1),
+(13, 2),
+(13, 3),
+(13, 4),
+(13, 5),
+(13, 6),
+(13, 7),
+(13, 8),
+(14, 1),
+(14, 2),
+(14, 3),
+(14, 4),
+(14, 5),
+(14, 6),
+(14, 7),
+(14, 8),
+(15, 1),
+(15, 2),
+(15, 3),
+(15, 4),
+(15, 5),
+(15, 6),
+(15, 7),
+(15, 8),
+(16, 1),
+(16, 2),
+(16, 3),
+(16, 4),
+(16, 5),
+(16, 6),
+(16, 7),
+(16, 8),
+(17, 1),
+(17, 2),
+(17, 3),
+(17, 4),
+(17, 5),
+(17, 6),
+(17, 7),
+(17, 8),
+(18, 1),
+(18, 2),
+(18, 3),
+(18, 4),
+(18, 5),
+(18, 6),
+(18, 7),
+(18, 8),
+(19, 1),
+(19, 2),
+(19, 3),
+(19, 4),
+(19, 5),
+(19, 6),
+(19, 7),
+(19, 8),
+(20, 1),
+(20, 2),
+(20, 3),
+(20, 4),
+(20, 5),
+(20, 6),
+(20, 7),
+(20, 8),
+(21, 1),
+(21, 2),
+(21, 3),
+(21, 4),
+(21, 5),
+(21, 6),
+(21, 7),
+(21, 8),
+(22, 1),
+(22, 2),
+(22, 3),
+(22, 4),
+(22, 5),
+(22, 6),
+(22, 7),
+(22, 8),
+(23, 1),
+(23, 2),
+(23, 3),
+(23, 4),
+(23, 5),
+(23, 6),
+(23, 7),
+(23, 8),
+(24, 1),
+(24, 2),
+(24, 3),
+(24, 4),
+(24, 5),
+(24, 6),
+(24, 7),
+(24, 8),
+(25, 1),
+(25, 2),
+(25, 3),
+(25, 4),
+(25, 5),
+(25, 6),
+(25, 7),
+(25, 8),
+(26, 1),
+(26, 2),
+(26, 3),
+(26, 4),
+(26, 5),
+(26, 6),
+(26, 7),
+(26, 8),
+(27, 1),
+(27, 2),
+(27, 3),
+(27, 4),
+(27, 5),
+(27, 6),
+(27, 7),
+(27, 8),
+(28, 1),
+(28, 2),
+(28, 3),
+(28, 4),
+(28, 5),
+(28, 6),
+(28, 7),
+(28, 8),
+(29, 1),
+(29, 2),
+(29, 3),
+(29, 4),
+(29, 5),
+(29, 6),
+(29, 7),
+(29, 8),
+(30, 1),
+(30, 2),
+(30, 3),
+(30, 4),
+(30, 5),
+(30, 6),
+(30, 7),
+(30, 8),
+(31, 1),
+(31, 2),
+(31, 3),
+(31, 4),
+(31, 5),
+(31, 6),
+(31, 7),
+(31, 8),
+(32, 1),
+(32, 2),
+(32, 3),
+(32, 4),
+(32, 5),
+(32, 6),
+(32, 7),
+(32, 8),
+(33, 1),
+(33, 2),
+(33, 3),
+(33, 4),
+(33, 5),
+(33, 6),
+(33, 7),
+(33, 8),
+(34, 1),
+(34, 2),
+(34, 3),
+(34, 4),
+(34, 5),
+(34, 6),
+(34, 7),
+(34, 8),
+(35, 1),
+(35, 2),
+(35, 3),
+(35, 4),
+(35, 5),
+(35, 6),
+(35, 7),
+(35, 8),
+(36, 1),
+(36, 2),
+(36, 3),
+(36, 4),
+(36, 5),
+(36, 6),
+(36, 7),
+(36, 8),
+(37, 1),
+(37, 2),
+(37, 3),
+(37, 4),
+(37, 5),
+(37, 6),
+(37, 7),
+(37, 8),
+(38, 1),
+(38, 2),
+(38, 3),
+(38, 4),
+(38, 5),
+(38, 6),
+(38, 7),
+(38, 8);
 
 -- --------------------------------------------------------
 
@@ -373,36 +704,36 @@ INSERT INTO `product_variant` (`variant_id`, `name`, `price`, `discount`, `tax_i
 (6, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 20, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
 (7, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 55, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
 (8, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 0, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(9, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(10, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(11, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(12, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(13, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(14, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(15, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(16, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(17, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(18, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(19, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(20, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(21, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(22, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(23, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(24, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(25, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(26, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 1, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(9, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 3, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(10, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 3, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(11, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 3, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(12, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 3, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(13, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 3, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(14, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 3, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(15, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 4, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(16, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 4, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(17, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 4, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(18, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 4, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(19, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 4, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(20, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 5, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(21, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 5, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(22, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 5, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(23, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 6, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(24, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 6, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(25, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 6, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(26, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 7, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
 (27, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
 (28, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
 (29, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(30, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(31, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(32, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(33, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(34, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(35, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(36, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(37, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(38, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 2, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50');
+(30, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 7, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(31, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 7, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(32, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 7, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(33, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 7, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(34, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 7, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(35, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 8, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(36, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 8, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(37, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 8, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(38, 'Soft leather print back cover good quality Camera protection layer\r\n\r\n', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', '[\"product1_main.jpg\"]', 8, 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50');
 
 -- --------------------------------------------------------
 
@@ -436,10 +767,23 @@ CREATE TABLE `shipping` (
 CREATE TABLE `specification` (
   `specification_id` int(11) NOT NULL,
   `specification_key` varchar(80) DEFAULT NULL,
-  `category_id` int(11) DEFAULT NULL,
-  `type` int(11) DEFAULT NULL,
+  `specification_value` varchar(300) NOT NULL,
   `date_time` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `specification`
+--
+
+INSERT INTO `specification` (`specification_id`, `specification_key`, `specification_value`, `date_time`) VALUES
+(1, 'Compatibility Type', 'Back Case', '2019-10-05 20:57:09'),
+(2, 'Built Type and Surface', '\r\nSoft Case Fancy, \r\nSoft Case Logo, \r\nSoft Case Printed, ', '2019-10-05 20:57:09'),
+(3, 'Warranty Period', '1 Month', '2019-10-05 20:58:24'),
+(4, 'Material', 'TPU,Plastic,Hard Plastic,Rubber, ', '2019-10-05 20:58:24'),
+(5, 'Theme', 'Colourful', '2019-10-05 20:59:55'),
+(6, 'color', 'Black', '2019-10-05 20:59:55'),
+(7, 'Built Type and Surface', 'Soft Case 360', '2019-10-05 21:00:53'),
+(8, 'Model Number', 'Aspgkk_Red_Mei_7_Blue1', '2019-10-05 21:02:52');
 
 -- --------------------------------------------------------
 
@@ -494,6 +838,62 @@ CREATE TABLE `variant_attribute` (
   `variant_id` int(11) NOT NULL,
   `attribute_value_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `variant_attribute`
+--
+
+INSERT INTO `variant_attribute` (`variant_id`, `attribute_value_id`) VALUES
+(1, 3),
+(2, 4),
+(3, 5),
+(4, 6),
+(5, 3),
+(6, 4),
+(7, 5),
+(8, 6),
+(9, 3),
+(10, 4),
+(11, 5),
+(12, 6),
+(13, 7),
+(14, 9),
+(15, 3),
+(16, 4),
+(17, 5),
+(18, 6),
+(19, 7),
+(20, 3),
+(21, 3),
+(22, 5),
+(23, 3),
+(24, 4),
+(25, 7),
+(26, 3),
+(27, 7),
+(28, 8),
+(29, 9),
+(30, 4),
+(31, 5),
+(32, 6),
+(33, 7),
+(34, 8),
+(35, 3),
+(36, 4),
+(37, 5),
+(38, 6);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `variant_mobile`
+--
+
+CREATE TABLE `variant_mobile` (
+  `variant_id` int(11) NOT NULL,
+  `mobile_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Indexes for dumped tables
@@ -570,7 +970,7 @@ ALTER TABLE `mobile_brand`
 -- Indexes for table `mobile_models`
 --
 ALTER TABLE `mobile_models`
-  ADD PRIMARY KEY (`mdel_id`),
+  ADD PRIMARY KEY (`model_id`),
   ADD KEY `brand_id` (`brand_id`);
 
 --
@@ -599,7 +999,7 @@ ALTER TABLE `product`
 -- Indexes for table `product_specification`
 --
 ALTER TABLE `product_specification`
-  ADD PRIMARY KEY (`product_id`,`specification_id`);
+  ADD PRIMARY KEY (`variant_id`,`specification_id`);
 
 --
 -- Indexes for table `product_variant`
@@ -626,9 +1026,7 @@ ALTER TABLE `shipping`
 -- Indexes for table `specification`
 --
 ALTER TABLE `specification`
-  ADD PRIMARY KEY (`specification_id`),
-  ADD KEY `category_id` (`category_id`),
-  ADD KEY `specification type` (`type`);
+  ADD PRIMARY KEY (`specification_id`);
 
 --
 -- Indexes for table `specification_type`
@@ -655,6 +1053,12 @@ ALTER TABLE `variant_attribute`
   ADD PRIMARY KEY (`variant_id`,`attribute_value_id`);
 
 --
+-- Indexes for table `variant_mobile`
+--
+ALTER TABLE `variant_mobile`
+  ADD PRIMARY KEY (`variant_id`,`mobile_id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -674,7 +1078,7 @@ ALTER TABLE `attribute`
 -- AUTO_INCREMENT for table `attribute_value`
 --
 ALTER TABLE `attribute_value`
-  MODIFY `attribute_value_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `attribute_value_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `banners`
@@ -722,7 +1126,7 @@ ALTER TABLE `mobile_brand`
 -- AUTO_INCREMENT for table `mobile_models`
 --
 ALTER TABLE `mobile_models`
-  MODIFY `mdel_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `model_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `offer`
@@ -740,7 +1144,7 @@ ALTER TABLE `order_detail`
 -- AUTO_INCREMENT for table `product`
 --
 ALTER TABLE `product`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `product_variant`
@@ -764,7 +1168,7 @@ ALTER TABLE `shipping`
 -- AUTO_INCREMENT for table `specification`
 --
 ALTER TABLE `specification`
-  MODIFY `specification_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `specification_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `specification_type`
