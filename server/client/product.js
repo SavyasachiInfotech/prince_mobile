@@ -185,7 +185,7 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
     });
   } else {
     let sql =
-      "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.avg_rating,v.list_image,v.view_image,v.main_image,t.tax from product_variant v, product p, tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.product_id=" +
+      "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.avg_rating,v.list_image,v.view_image,v.main_image,t.tax,c.image_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=" +
       req.params.id;
     con.query(sql, (err, products) => {
       if (err) {
