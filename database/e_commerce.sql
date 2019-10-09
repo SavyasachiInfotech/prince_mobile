@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2019 at 05:00 AM
+-- Generation Time: Oct 09, 2019 at 05:54 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -55,18 +55,19 @@ CREATE TABLE `announcement` (
   `added_on` datetime NOT NULL DEFAULT current_timestamp(),
   `modified_date` datetime NOT NULL DEFAULT current_timestamp(),
   `title` varchar(100) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
-  `image_url` varchar(1000) COLLATE utf8mb4_bin NOT NULL DEFAULT ''
+  `image_url` varchar(1000) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `is_read` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `announcement`
 --
 
-INSERT INTO `announcement` (`id`, `description`, `added_on`, `modified_date`, `title`, `image_url`) VALUES
-(1, 'Use promocode NEW50 for 50% cashback upto 150 Rs. for new User', '2019-10-08 07:15:27', '2019-10-08 07:15:27', 'Flat 50 % off', ''),
-(2, 'Flat 30% off in all case-cover.', '2019-10-08 07:15:27', '2019-10-08 07:15:27', 'Flat 30 % off', ''),
-(3, 'Get 25 Rs. cashback at your first UPI transaction.', '2019-10-08 07:16:33', '2019-10-08 07:16:33', '25 off on UPI Transaction', ''),
-(4, '15% off on JBL Ultra Sound HeadPhone', '2019-10-08 07:16:33', '2019-10-08 07:16:33', '15 % Off on Sound', '');
+INSERT INTO `announcement` (`id`, `description`, `added_on`, `modified_date`, `title`, `image_url`, `is_read`) VALUES
+(1, 'Use promocode NEW50 for 50% cashback upto 150 Rs. for new User', '2019-10-08 07:15:27', '2019-10-08 07:15:27', 'Flat 50 % off', '', 0),
+(2, 'Flat 30% off in all case-cover.', '2019-10-08 07:15:27', '2019-10-08 07:15:27', 'Flat 30 % off', '', 0),
+(3, 'Get 25 Rs. cashback at your first UPI transaction.', '2019-10-08 07:16:33', '2019-10-08 07:16:33', '25 off on UPI Transaction', '', 1),
+(4, '15% off on JBL Ultra Sound HeadPhone', '2019-10-08 07:16:33', '2019-10-08 07:16:33', '15 % Off on Sound', '', 0);
 
 -- --------------------------------------------------------
 
@@ -157,9 +158,23 @@ CREATE TABLE `cart` (
   `variant_id` int(11) DEFAULT NULL,
   `attributes` text DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
+  `mobile_required` tinyint(1) NOT NULL,
   `added_date` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cart_mobile`
+--
+
+CREATE TABLE `cart_mobile` (
+  `item_id` int(11) NOT NULL,
+  `variant_id` int(11) NOT NULL,
+  `mobile_id` int(11) NOT NULL,
+  `quantity` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 -- --------------------------------------------------------
 
@@ -305,6 +320,27 @@ CREATE TABLE `mobile_models` (
 INSERT INTO `mobile_models` (`model_id`, `model_name`, `brand_id`) VALUES
 (1, 'Redmi 7 pro', NULL),
 (2, 'Redmi 6 pro', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_bin NOT NULL,
+  `description` varchar(2000) COLLATE utf8mb4_bin NOT NULL,
+  `added_on` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `title`, `description`, `added_on`) VALUES
+(1, 'Order confirmed', 'Your order for Watch is confirmed by seller.', '2019-10-09 21:23:34'),
+(2, 'Order Dispatched', 'Your order is dispatched today.', '2019-10-09 21:23:34');
 
 -- --------------------------------------------------------
 
@@ -1071,6 +1107,12 @@ ALTER TABLE `mobile_models`
   ADD KEY `brand_id` (`brand_id`);
 
 --
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `offer`
 --
 ALTER TABLE `offer`
@@ -1230,6 +1272,12 @@ ALTER TABLE `mobile_brand`
 --
 ALTER TABLE `mobile_models`
   MODIFY `model_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `offer`

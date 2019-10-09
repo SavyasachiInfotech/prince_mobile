@@ -6,8 +6,7 @@ const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 
 router.get("/get-announcement", (req, res) => {
-  let sql =
-    "select title,description,image_url,added_on from announcement order by added_on desc";
+  let sql = "select * from announcement order by added_on desc";
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -27,6 +26,26 @@ router.get("/get-announcement", (req, res) => {
       });
     }
   });
+});
+
+router.put("/read-announcement/:id", (req, res) => {
+  if (isNaN(req.params.id)) {
+    res.status(200).json({ status: "0", message: "Enter valid announcement" });
+  } else {
+    let sql = "update announcement set is_read=1 where id=" + req.params.id;
+    con.query(sql, (err, data) => {
+      if (err) {
+        console.log(err);
+        res
+          .status(200)
+          .json({ status: "0", message: "Enter valid announcement" });
+      } else {
+        res
+          .status(200)
+          .json({ status: "1", message: "Announcement updated properly." });
+      }
+    });
+  }
 });
 
 module.exports = router;
