@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 08, 2019 at 04:03 AM
+-- Generation Time: Oct 09, 2019 at 04:29 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -51,20 +51,22 @@ INSERT INTO `admin` (`admin_id`, `name`, `email`, `password`, `added_date`) VALU
 
 CREATE TABLE `announcement` (
   `id` int(11) NOT NULL,
-  `announcement` varchar(2000) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `description` varchar(2000) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
   `added_on` datetime NOT NULL DEFAULT current_timestamp(),
-  `modified_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `modified_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `title` varchar(100) COLLATE utf8mb4_bin NOT NULL DEFAULT '',
+  `image_url` varchar(1000) COLLATE utf8mb4_bin NOT NULL DEFAULT ''
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `announcement`
 --
 
-INSERT INTO `announcement` (`id`, `announcement`, `added_on`, `modified_date`) VALUES
-(1, 'Use promocode NEW50 for 50% cashback upto 150 Rs. for new User', '2019-10-08 07:15:27', '2019-10-08 07:15:27'),
-(2, 'Flat 30% off in all case-cover.', '2019-10-08 07:15:27', '2019-10-08 07:15:27'),
-(3, 'Get 25 Rs. cashback at your first UPI transaction.', '2019-10-08 07:16:33', '2019-10-08 07:16:33'),
-(4, '15% off on JBL Ultra Sound HeadPhone', '2019-10-08 07:16:33', '2019-10-08 07:16:33');
+INSERT INTO `announcement` (`id`, `description`, `added_on`, `modified_date`, `title`, `image_url`) VALUES
+(1, 'Use promocode NEW50 for 50% cashback upto 150 Rs. for new User', '2019-10-08 07:15:27', '2019-10-08 07:15:27', '', ''),
+(2, 'Flat 30% off in all case-cover.', '2019-10-08 07:15:27', '2019-10-08 07:15:27', '', ''),
+(3, 'Get 25 Rs. cashback at your first UPI transaction.', '2019-10-08 07:16:33', '2019-10-08 07:16:33', '', ''),
+(4, '15% off on JBL Ultra Sound HeadPhone', '2019-10-08 07:16:33', '2019-10-08 07:16:33', '', '');
 
 -- --------------------------------------------------------
 
@@ -915,8 +917,74 @@ INSERT INTO `variant_attribute` (`variant_id`, `attribute_value_id`) VALUES
 CREATE TABLE `variant_mobile` (
   `variant_id` int(11) NOT NULL,
   `mobile_id` int(11) NOT NULL,
-  `quantity` int(11) NOT NULL
+  `quantity` int(11) NOT NULL,
+  `price` float NOT NULL,
+  `discount` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Dumping data for table `variant_mobile`
+--
+
+INSERT INTO `variant_mobile` (`variant_id`, `mobile_id`, `quantity`, `price`, `discount`) VALUES
+(1, 1, 80, 0, 0),
+(1, 2, 50, 0, 0),
+(2, 1, 80, 0, 0),
+(2, 2, 50, 0, 0),
+(3, 1, 80, 0, 0),
+(3, 2, 50, 0, 0),
+(4, 1, 80, 0, 0),
+(4, 2, 50, 0, 0),
+(5, 1, 80, 0, 0),
+(5, 2, 50, 0, 0),
+(6, 1, 80, 0, 0),
+(6, 2, 50, 0, 0),
+(7, 1, 80, 0, 0),
+(7, 2, 50, 0, 0),
+(8, 1, 80, 0, 0),
+(8, 2, 50, 0, 0),
+(9, 1, 80, 0, 0),
+(9, 2, 50, 0, 0),
+(10, 1, 80, 0, 0),
+(10, 2, 50, 0, 0),
+(11, 1, 80, 0, 0),
+(11, 2, 50, 0, 0),
+(12, 1, 80, 0, 0),
+(12, 2, 50, 0, 0),
+(13, 1, 80, 0, 0),
+(13, 2, 50, 0, 0),
+(14, 1, 80, 0, 0),
+(14, 2, 50, 0, 0),
+(15, 1, 80, 0, 0),
+(15, 2, 50, 0, 0),
+(16, 1, 80, 0, 0),
+(16, 2, 50, 0, 0),
+(17, 1, 80, 0, 0),
+(17, 2, 50, 0, 0),
+(18, 1, 80, 0, 0),
+(18, 2, 50, 0, 0),
+(19, 1, 80, 0, 0),
+(19, 2, 50, 0, 0),
+(20, 1, 80, 0, 0),
+(20, 2, 50, 0, 0),
+(21, 1, 80, 0, 0),
+(21, 2, 50, 0, 0),
+(22, 1, 80, 0, 0),
+(22, 2, 50, 0, 0),
+(23, 1, 80, 0, 0),
+(23, 2, 50, 0, 0),
+(24, 1, 80, 0, 0),
+(24, 2, 50, 0, 0),
+(25, 1, 80, 0, 0),
+(25, 2, 50, 0, 0),
+(26, 1, 80, 0, 0),
+(26, 2, 50, 0, 0),
+(27, 1, 80, 0, 0),
+(27, 2, 50, 0, 0),
+(28, 1, 80, 0, 0),
+(28, 2, 50, 0, 0),
+(29, 1, 80, 0, 0),
+(29, 2, 50, 0, 0);
 
 --
 -- Indexes for dumped tables

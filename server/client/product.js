@@ -185,7 +185,7 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
     });
   } else {
     let sql =
-      "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.avg_rating,v.list_image,v.view_image,v.main_image,t.tax,c.image_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=" +
+      "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
       req.params.id;
     con.query(sql, (err, products) => {
       if (err) {
@@ -196,14 +196,8 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
       } else {
         if (products.length > 0) {
           sql =
-            "select a.attribute_id,a.name,av.value,v.variant_id from attribute a,attribute_value av,variant_attribute v where a.attribute_id=av.attribute_id and av.attribute_value_id=v.attribute_value_id and v.variant_id in(";
-          for (let i = 0; i < products.length; i++) {
-            if (i == products.length - 1) {
-              sql += products[i].variant_id + ")";
-            } else {
-              sql += products[i].variant_id + ",";
-            }
-          }
+            "select a.attribute_id,a.name,av.value,v.variant_id from attribute a,attribute_value av,variant_attribute v where a.attribute_id=av.attribute_id and av.attribute_value_id=v.attribute_value_id and v.variant_id =" +
+            req.params.id;
           con.query(sql, (err, attributes) => {
             if (err) {
               console.log(err);
@@ -212,14 +206,8 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
                 .json({ status: "0", message: "Enter valid Product." });
             } else {
               sql =
-                "select s.specification_key,s.specification_value,p.variant_id from product_specification p,specification s where s.specification_id=p.specification_id and p.variant_id in(";
-              for (let i = 0; i < products.length; i++) {
-                if (i == products.length - 1) {
-                  sql += products[i].variant_id + ")";
-                } else {
-                  sql += products[i].variant_id + ",";
-                }
-              }
+                "select s.specification_key,s.specification_value,p.variant_id from product_specification p,specification s where s.specification_id=p.specification_id and p.variant_id=" +
+                req.params.id;
               con.query(sql, (err, specifications) => {
                 if (err) {
                   console.log(err);
@@ -227,36 +215,69 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
                     .status(200)
                     .json({ status: "0", message: "Enter valid Product." });
                 } else {
-                  for (let i = 0; i < products.length; i++) {
-                    products[i].mrp =
-                      products[i].price +
-                      (products[i].price * products[i].discount) / 100;
-                    products[i].list_image = JSON.parse(products[i].list_image);
-                    products[i].view_image = JSON.parse(products[i].view_image);
-                    products[i].main_image = JSON.parse(products[i].main_image);
-                    for (let j = 0; j < products[i].list_image.length; j++) {
-                      products[i].list_image[j] =
-                        process.env.LISTIMAGE + products[i].list_image[j];
-                      products[i].view_image[j] =
-                        process.env.VIEWIMAGE + products[i].view_image[j];
-                      products[i].main_image[j] =
-                        process.env.MAINIMAGE + products[i].main_image[j];
+                  sql =
+                    "select vm.variant_id,vm.mobile_id,vm.quantity,m.model_name,vm.price,vm.discount from variant_mobile vm,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
+                    req.params.id;
+                  con.query(sql, (err, mobiles) => {
+                    if (err) {
+                      console.log(err);
+                    } else {
+                      sql =
+                        "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +
+                        req.params.id +
+                        " and v.product_id=(select product_id from product_variant where variant_id=" +
+                        req.params.id +
+                        ")";
+                      con.query(sql, (err, variant) => {
+                        if (err) {
+                          console.log(err);
+                        } else {
+                          for (let i = 0; i < products.length; i++) {
+                            products[i].mobiles = mobiles.filter(
+                              item => item.variant_id == products[i].variant_id
+                            );
+                            products[i].mrp =
+                              products[i].price +
+                              (products[i].price * products[i].discount) / 100;
+                            products[i].main_image = JSON.parse(
+                              products[i].main_image
+                            );
+                            for (
+                              let j = 0;
+                              j < products[i].main_image.length;
+                              j++
+                            ) {
+                              products[i].main_image[j] =
+                                process.env.MAINIMAGE +
+                                products[i].main_image[j];
+                            }
+                            products[i].attributes = attributes.filter(
+                              item => item.variant_id == products[i].variant_id
+                            );
+                            products[i].specifications = specifications.filter(
+                              item => item.variant_id == products[i].variant_id
+                            );
+                          }
+                          products[0].colors = variant;
+                          for (let i = 0; i < variant.length; i++) {
+                            let data = JSON.parse(variant[i].thumbnail);
+                            variant[i].thumbnail =
+                              process.env.THUMBNAIL + data[0];
+                          }
+                          json = JSON.stringify(products);
+                          products = JSON.parse(json, (key, val) =>
+                            typeof val !== "object" && val !== null
+                              ? String(val)
+                              : val
+                          );
+                          res.status(200).json({
+                            status: "1",
+                            message: "Getting product detail successfully.",
+                            products: products
+                          });
+                        }
+                      });
                     }
-                    products[i].attributes = attributes.filter(
-                      item => item.variant_id == products[i].variant_id
-                    );
-                    products[i].specifications = specifications.filter(
-                      item => item.variant_id == products[i].variant_id
-                    );
-                  }
-                  json = JSON.stringify(products);
-                  products = JSON.parse(json, (key, val) =>
-                    typeof val !== "object" && val !== null ? String(val) : val
-                  );
-                  res.status(200).json({
-                    status: "1",
-                    message: "Getting product detail successfully.",
-                    products: products
                   });
                 }
               });
