@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2019 at 05:54 PM
+-- Generation Time: Oct 10, 2019 at 05:15 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -156,12 +156,19 @@ CREATE TABLE `cart` (
   `item_id` int(11) NOT NULL,
   `cart_id` int(11) DEFAULT NULL,
   `variant_id` int(11) DEFAULT NULL,
-  `attributes` text DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL,
   `mobile_required` tinyint(1) NOT NULL,
   `added_date` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`item_id`, `cart_id`, `variant_id`, `quantity`, `mobile_required`, `added_date`, `modified_date`) VALUES
+(19, 12, 1, 20, 1, '2019-10-10 08:43:53', '2019-10-10 08:43:53'),
+(20, 12, 1, 20, 0, '2019-10-10 08:44:45', '2019-10-10 08:44:45');
 
 -- --------------------------------------------------------
 
@@ -175,6 +182,14 @@ CREATE TABLE `cart_mobile` (
   `mobile_id` int(11) NOT NULL,
   `quantity` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Dumping data for table `cart_mobile`
+--
+
+INSERT INTO `cart_mobile` (`item_id`, `variant_id`, `mobile_id`, `quantity`) VALUES
+(19, 1, 1, 1),
+(19, 1, 2, 2);
 
 -- --------------------------------------------------------
 
@@ -1067,6 +1082,12 @@ ALTER TABLE `cart`
   ADD KEY `variant_id` (`variant_id`);
 
 --
+-- Indexes for table `cart_mobile`
+--
+ALTER TABLE `cart_mobile`
+  ADD PRIMARY KEY (`item_id`,`mobile_id`);
+
+--
 -- Indexes for table `category`
 --
 ALTER TABLE `category`
@@ -1235,7 +1256,7 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `category`
