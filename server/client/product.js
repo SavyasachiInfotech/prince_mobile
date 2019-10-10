@@ -175,7 +175,7 @@ router.post(
   }
 );
 
-router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
+router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     res.status(200).json({
@@ -184,9 +184,10 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
       errors: errors.array()
     });
   } else {
+    let id=req.body.id;
     let sql =
       "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
-      req.params.id;
+      id;
     con.query(sql, (err, products) => {
       if (err) {
         console.log(err);
@@ -197,7 +198,7 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
         if (products.length > 0) {
           sql =
             "select a.attribute_id,a.name,av.value,v.variant_id from attribute a,attribute_value av,variant_attribute v where a.attribute_id=av.attribute_id and av.attribute_value_id=v.attribute_value_id and v.variant_id =" +
-            req.params.id;
+            id;
           con.query(sql, (err, attributes) => {
             if (err) {
               console.log(err);
@@ -207,7 +208,7 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
             } else {
               sql =
                 "select s.specification_key,s.specification_value,p.variant_id from product_specification p,specification s where s.specification_id=p.specification_id and p.variant_id=" +
-                req.params.id;
+                id;
               con.query(sql, (err, specifications) => {
                 if (err) {
                   console.log(err);
@@ -217,16 +218,16 @@ router.get("/get-product-detail/:id", [param("id").isNumeric()], (req, res) => {
                 } else {
                   sql =
                     "select vm.variant_id,vm.mobile_id,vm.quantity,m.model_name,vm.price,vm.discount from variant_mobile vm,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
-                    req.params.id;
+                    id;
                   con.query(sql, (err, mobiles) => {
                     if (err) {
                       console.log(err);
                     } else {
                       sql =
                         "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +
-                        req.params.id +
+                        id +
                         " and v.product_id=(select product_id from product_variant where variant_id=" +
-                        req.params.id +
+                        id +
                         ")";
                       con.query(sql, (err, variant) => {
                         if (err) {
