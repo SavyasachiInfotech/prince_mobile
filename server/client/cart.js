@@ -34,7 +34,7 @@ router.post(
     check("variant_id").isNumeric(),
     check("quantity").isNumeric(),
     check("mobile_required").isBoolean(),
-    check("mobiles").isArray()
+    check("mobile_id").isArray()
   ],
   verifyToken,
   (req, res) => {
@@ -47,124 +47,59 @@ router.post(
       });
     } else {
       let cart = req.body;
-      if (cart.mobile_required == 1 && cart.mobiles.length < 1) {
-        res
-          .status(200)
-          .json({ status: "0", message: "Please select the mobiles." });
-      } else {
-        let sql =
-          "insert into cart(cart_id,variant_id,quantity,mobile_required) values(" +
-          req.userId +
-          "," +
-          cart.variant_id +
-          "," +
-          cart.quantity +
-          "," +
-          cart.mobile_required +
-          ")";
-        con.query(sql, (err, result) => {
-          if (err) {
-            console.log(err);
-            res.status(200).json({
-              status: "0",
-              message: "Cart is not added. Please try again later."
-            });
-          } else {
-            if (cart.mobile_required) {
-              let valid = 1;
-              try {
-                sql = "insert into cart_mobile values";
-                for (let i = 0; i < cart.mobiles.length; i++) {
-                  if (
-                    cart.mobiles[i].mobile_id &&
-                    cart.mobiles[i].quantity &&
-                    !isNaN(cart.mobiles[i].mobile_id) &&
-                    !isNaN(cart.mobiles[i].quantity)
-                  ) {
-                    sql +=
-                      "(" +
-                      result.insertId +
-                      "," +
-                      cart.variant_id +
-                      "," +
-                      cart.mobiles[i].mobile_id +
-                      "," +
-                      cart.mobiles[i].quantity +
-                      ")";
-                    if (i == cart.mobiles.length - 1) {
-                      con.query(sql, (err, data) => {
-                        if (err) {
-                          console.log(err);
-                          sql =
-                            "delete from cart where item_id=" + result.insertId;
-                          con.query(sql, (err, del) => {
-                            if (del) {
-                              res.status(200).json({
-                                status: "0",
-                                message: "Select valid mobiles1"
-                              });
-                            } else {
-                              res.status(200).json({
-                                status: "0",
-                                message:
-                                  "Cart is not added. Please try again later."
-                              });
-                            }
-                          });
-                        } else {
-                          res.status(200).json({
-                            status: "1",
-                            message: "Cart is added successfully."
-                          });
-                        }
-                      });
-                    } else {
-                      sql += ",";
-                    }
-                  } else {
-                    valid = 0;
-                    sql = "delete from cart where item_id=" + result.insertId;
-                    con.query(sql, (err, del) => {
-                      if (del) {
-                        res.status(200).json({
-                          status: "0",
-                          message: "Select valid mobiles1"
-                        });
-                      } else {
-                        res.status(200).json({
-                          status: "0",
-                          message: "Cart is not added. Please try again later."
-                        });
-                      }
-                    });
-                  }
-                }
-              } catch {
-                sql = "delete from cart where item_id=" + result.insertId;
-                con.query(sql, (err, del) => {
-                  if (del) {
-                    res
-                      .status(200)
-                      .json({ status: "0", message: "Select valid mobiles" });
-                  } else {
-                    res.status(200).json({
-                      status: "0",
-                      message: "Cart is not added. Please try again later."
-                    });
-                  }
-                });
-              }
-            } else {
-              res.status(200).json({
-                status: "1",
-                message: "Product is added to cart successfully."
-              });
-            }
-          }
-        });
+      let sql =
+        "insert into cart(cart_id,variant_id,quantity,mobile_required,mobile_id) values";
+      for (let i = 0; i < cart.length; i++) {
+        if (i == cart.length - 1) {
+          sql +=
+            "(" +
+            req.userId +
+            "," +
+            cart.variant_id +
+            "," +
+            cart.quantity +
+            "," +
+            cart.mobile_required +
+            "," +
+            cart.mobile_id +
+            ");";
+        } else {
+          sql +=
+            "(" +
+            req.userId +
+            "," +
+            cart.variant_id +
+            "," +
+            cart.quantity +
+            "," +
+            cart.mobile_required +
+            "," +
+            cart.mobile_id +
+            "),";
+        }
       }
+
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({
+            status: "0",
+            message: "Cart is not added. Please try again later."
+          });
+        } else {
+          res.status(200).json({
+            status: "1",
+            message: "Cart is added successfully."
+          });
+        }
+      });
     }
   }
 );
+
+router.get("/get-cart-detail", verifyToken, (req, res) => {
+  let sql = "select * from cart where cart_id=" + req.userId;
+  con.query(sql, (err, result) => {});
+});
 
 module.exports = router;

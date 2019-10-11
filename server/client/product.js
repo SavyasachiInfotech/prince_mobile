@@ -184,9 +184,9 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
       errors: errors.array()
     });
   } else {
-    let id=req.body.id;
+    let id = req.body.id;
     let sql =
-      "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
+      "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.offer_code,v.offer_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
       id;
     con.query(sql, (err, products) => {
       if (err) {
@@ -234,6 +234,12 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                           console.log(err);
                         } else {
                           for (let i = 0; i < products.length; i++) {
+                            products[i].offers = [
+                              {
+                                offer_code: products[i].offer_code,
+                                offer_detail: products[i].offer_detail
+                              }
+                            ];
                             products[i].mobiles = mobiles.filter(
                               item => item.variant_id == products[i].variant_id
                             );
@@ -248,9 +254,11 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                               j < products[i].main_image.length;
                               j++
                             ) {
-                              products[i].main_image[j] =
-                                process.env.MAINIMAGE +
-                                products[i].main_image[j];
+                              products[i].main_image[j] = {
+                                image:
+                                  process.env.MAINIMAGE +
+                                  products[i].main_image[j]
+                              };
                             }
                             products[i].attributes = attributes.filter(
                               item => item.variant_id == products[i].variant_id
