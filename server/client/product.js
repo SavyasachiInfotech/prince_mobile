@@ -253,6 +253,8 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                                 (products[i].mobiles[j].price * products[i],
                                 mobiles[j].discount) /
                                   100;
+                              products[i].mobiles[j].category =
+                                products[i].category;
                             }
                             products[i].mrp =
                               products[i].price +
