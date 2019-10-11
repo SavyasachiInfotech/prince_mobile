@@ -186,7 +186,7 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
   } else {
     let id = req.body.id;
     let sql =
-      "select v.variant_id,v.name,p.description,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.offer_code,v.offer_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
+      "select v.variant_id,v.name,p.description,c.name as category,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.offer_code,v.offer_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
       id;
     con.query(sql, (err, products) => {
       if (err) {
@@ -243,6 +243,17 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                             products[i].mobiles = mobiles.filter(
                               item => item.variant_id == products[i].variant_id
                             );
+                            for (
+                              let j = 0;
+                              j < products[i].mobiles.length;
+                              j++
+                            ) {
+                              products[i].mobiles[j].mrp =
+                                products[i].mobiles[j].price +
+                                (products[i].mobiles[j].price * products[i],
+                                mobiles[j].discount) /
+                                  100;
+                            }
                             products[i].mrp =
                               products[i].price +
                               (products[i].price * products[i].discount) / 100;
