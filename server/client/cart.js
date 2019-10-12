@@ -125,9 +125,9 @@ router.put(
   }
 );
 
-router.delete(
-  "/remove-cart-item/:item_id",
-  [param("item_id").isNumeric()],
+router.post(
+  "/remove-cart-item",
+  [check("item_id").isNumeric()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -138,9 +138,10 @@ router.delete(
         errors: errors.array()
       });
     } else {
+      let item_id = req.body.item_id;
       let sql =
         "delete from cart where item_id=" +
-        req.params.item_id +
+        item_id +
         " and cart_id=" +
         req.userId;
       con.query(sql, (err, result) => {
@@ -167,25 +168,36 @@ router.get("/get-cart-detail", verifyToken, (req, res) => {
       console.log(err);
       res.status(200).json({ status: "0", message: "Enter valid user token" });
     } else {
-      let image;
-      for (let i = 0; i < result.length; i++) {
-        result[i].mrp =
-          result[i].price + (result[i].price * result[i].discount) / 100;
-        image = JSON.parse(result[i].list_image);
-        if (image.length > 0) {
-          result[i].list_image = process.env.LISTIMAGE + image[0];
-        } else {
-          result[i].list_image = "";
+      sql = "select * from promocode where type=1";
+      con.query(sql, (err, promo) => {
+        if (err) {
+          console.log(err);
         }
-      }
-      json = JSON.stringify(result);
-      result = JSON.parse(json, (key, val) =>
-        typeof val !== "object" && val !== null ? String(val) : val
-      );
-      res.status(200).json({
-        status: "1",
-        message: "Getting Cart Details Successfully.",
-        data: result
+        let image;
+        for (let i = 0; i < result.length; i++) {
+          result[i].mrp =
+            result[i].price + (result[i].price * result[i].discount) / 100;
+          image = JSON.parse(result[i].list_image);
+          if (image.length > 0) {
+            result[i].list_image = process.env.LISTIMAGE + image[0];
+          } else {
+            result[i].list_image = "";
+          }
+        }
+        json = JSON.stringify(result);
+        result = JSON.parse(json, (key, val) =>
+          typeof val !== "object" && val !== null ? String(val) : val
+        );
+        json = JSON.stringify(promo);
+        promo = JSON.parse(json, (key, val) =>
+          typeof val !== "object" && val !== null ? String(val) : val
+        );
+        res.status(200).json({
+          status: "1",
+          message: "Getting Cart Details Successfully.",
+          data: result,
+          offers: promo
+        });
       });
     }
   });

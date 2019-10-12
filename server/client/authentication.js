@@ -132,7 +132,9 @@ router.post(
     check("landmark")
       .isString()
       .isLength({ max: 100 }),
-    check("pincode").isString().isLength({ max: 6 })
+    check("pincode")
+      .isString()
+      .isLength({ max: 6 })
   ],
   verifyToken,
   (req, res) => {
@@ -437,7 +439,10 @@ router.post("/login-user", (req, res) => {
         .json({ status: "0", message: "Enter valid Email/Mobile." });
     } else {
       if (result.length > 0) {
-        if (result[0].password == data.password) {
+        if (
+          result[0].password.toString().toLowerCase() ==
+          data.password.toString().toLowerCase()
+        ) {
           let payload = { subject: result[0].id };
           let jwt_token = jwt.sign(payload, "MysupersecreteKey");
           res.status(200).send({
@@ -449,6 +454,7 @@ router.post("/login-user", (req, res) => {
               password: String(result[0].password),
               email: String(result[0].email),
               mobile: String(result[0].mobile1),
+              pincode: String(result[0].pincode),
               token: jwt_token
             }
           });
