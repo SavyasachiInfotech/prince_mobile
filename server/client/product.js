@@ -240,7 +240,7 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                           con.query(sql, (err, promo) => {
                             if (err) {
                               res.status(200).json({
-                                status: "1",
+                                status: "0",
                                 message: "Offers not detected"
                               });
                             } else {
