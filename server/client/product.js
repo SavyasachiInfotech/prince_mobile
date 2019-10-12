@@ -186,7 +186,7 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
   } else {
     let id = req.body.id;
     let sql =
-      "select v.variant_id,v.name,p.description,c.name as category,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.offer_code,v.offer_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
+      "select v.variant_id,v.name,p.description,c.name as category,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
       id;
     con.query(sql, (err, products) => {
       if (err) {
@@ -233,69 +233,93 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                         if (err) {
                           console.log(err);
                         } else {
-                          for (let i = 0; i < products.length; i++) {
-                            products[i].offers = [
-                              {
-                                offer_code: products[i].offer_code,
-                                offer_detail: products[i].offer_detail
+                          sql =
+                            "select p.code,p.description from promocode p,product_variant v where v.variant_id=" +
+                            products[0].variant_id +
+                            " and (p.id=v.promo_id or p.type=1 )";
+                          con.query(sql, (err, promo) => {
+                            if (err) {
+                              res.status(200).json({
+                                status: "1",
+                                message: "Offers not detected"
+                              });
+                            } else {
+                              if (promo.length > 0) {
+                                products[0].offers = new Array();
+                                for (let i = 0; i < promo.length; i++) {
+                                  products[0].offers.push({
+                                    offer_code: promo[i].code,
+                                    offer_detail: promo[i].description
+                                  });
+                                }
+                              } else {
+                                products[0].offers = [];
                               }
-                            ];
-                            products[i].mobiles = mobiles.filter(
-                              item => item.variant_id == products[i].variant_id
-                            );
-                            for (
-                              let j = 0;
-                              j < products[i].mobiles.length;
-                              j++
-                            ) {
-                              products[i].mobiles[j].mrp =
-                                products[i].mobiles[j].price +
-                                (products[i].mobiles[j].price * products[i],
-                                mobiles[j].discount) /
-                                  100;
-                              products[i].mobiles[j].category =
-                                products[i].category;
+                              for (let i = 0; i < products.length; i++) {
+                                products[i].mobiles = mobiles.filter(
+                                  item =>
+                                    item.variant_id == products[i].variant_id
+                                );
+                                for (
+                                  let j = 0;
+                                  j < products[i].mobiles.length;
+                                  j++
+                                ) {
+                                  products[i].mobiles[j].mrp =
+                                    products[i].mobiles[j].price +
+                                    (products[i].mobiles[j].price * products[i],
+                                    mobiles[j].discount) /
+                                      100;
+                                  products[i].mobiles[j].category =
+                                    products[i].category;
+                                }
+                                products[i].mrp =
+                                  products[i].price +
+                                  (products[i].price * products[i].discount) /
+                                    100;
+                                products[i].main_image = JSON.parse(
+                                  products[i].main_image
+                                );
+                                for (
+                                  let j = 0;
+                                  j < products[i].main_image.length;
+                                  j++
+                                ) {
+                                  products[i].main_image[j] = {
+                                    image:
+                                      process.env.MAINIMAGE +
+                                      products[i].main_image[j]
+                                  };
+                                }
+                                products[i].attributes = attributes.filter(
+                                  item =>
+                                    item.variant_id == products[i].variant_id
+                                );
+                                products[
+                                  i
+                                ].specifications = specifications.filter(
+                                  item =>
+                                    item.variant_id == products[i].variant_id
+                                );
+                              }
+                              products[0].colors = variant;
+                              for (let i = 0; i < variant.length; i++) {
+                                let data = JSON.parse(variant[i].thumbnail);
+                                variant[i].thumbnail =
+                                  process.env.THUMBNAIL + data[0];
+                              }
+                              json = JSON.stringify(products);
+                              products = JSON.parse(json, (key, val) =>
+                                typeof val !== "object" && val !== null
+                                  ? String(val)
+                                  : val
+                              );
+                              res.status(200).json({
+                                status: "1",
+                                message: "Getting product detail successfully.",
+                                products: products
+                              });
                             }
-                            products[i].mrp =
-                              products[i].price +
-                              (products[i].price * products[i].discount) / 100;
-                            products[i].main_image = JSON.parse(
-                              products[i].main_image
-                            );
-                            for (
-                              let j = 0;
-                              j < products[i].main_image.length;
-                              j++
-                            ) {
-                              products[i].main_image[j] = {
-                                image:
-                                  process.env.MAINIMAGE +
-                                  products[i].main_image[j]
-                              };
-                            }
-                            products[i].attributes = attributes.filter(
-                              item => item.variant_id == products[i].variant_id
-                            );
-                            products[i].specifications = specifications.filter(
-                              item => item.variant_id == products[i].variant_id
-                            );
-                          }
-                          products[0].colors = variant;
-                          for (let i = 0; i < variant.length; i++) {
-                            let data = JSON.parse(variant[i].thumbnail);
-                            variant[i].thumbnail =
-                              process.env.THUMBNAIL + data[0];
-                          }
-                          json = JSON.stringify(products);
-                          products = JSON.parse(json, (key, val) =>
-                            typeof val !== "object" && val !== null
-                              ? String(val)
-                              : val
-                          );
-                          res.status(200).json({
-                            status: "1",
-                            message: "Getting product detail successfully.",
-                            products: products
                           });
                         }
                       });

@@ -173,8 +173,7 @@ router.get("/get-cart-detail", verifyToken, (req, res) => {
           result[i].price + (result[i].price * result[i].discount) / 100;
         image = JSON.parse(result[i].list_image);
         if (image.length > 0) {
-          result[i].list_image =
-            process.env.LISTIMAGE + result[i].list_image[0];
+          result[i].list_image = process.env.LISTIMAGE + image[0];
         } else {
           result[i].list_image = "";
         }
