@@ -27,7 +27,6 @@ function verifyToken(req, res, next) {
   req.userId = payload.subject;
   next();
 }
-
 router.post("/add-cart", verifyToken, (req, res) => {
   let cart = req.body.cart;
   let sql =
@@ -160,7 +159,7 @@ router.delete(
 
 router.get("/get-cart-detail", verifyToken, (req, res) => {
   let sql =
-    "select c.item_id,c.variant_id,v.name,v.list_image,v.price,v.discount,t.tax,c.mobile_required,m.model_name from cart c, product_variant v,tax t,mobile_models m where c.cart_id=" +
+    "select c.item_id,c.variant_id,v.name,c.quantity,v.list_image,v.price,v.discount,t.tax,c.mobile_required,m.model_name from cart c, product_variant v,tax t,mobile_models m where c.cart_id=" +
     req.userId +
     " and  c.variant_id=v.variant_id and v.tax_id=t.tax_id and c.mobile_id=m.model_id";
   con.query(sql, (err, result) => {

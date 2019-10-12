@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 11, 2019 at 06:21 AM
+-- Generation Time: Oct 12, 2019 at 04:36 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -155,13 +155,21 @@ INSERT INTO `banners` (`id`, `image`, `category_id`, `banner_type`) VALUES
 CREATE TABLE `cart` (
   `item_id` int(11) NOT NULL,
   `cart_id` int(11) DEFAULT NULL,
-  `variant_id` int(11) DEFAULT NULL,
+  `variant_id` int(11) NOT NULL,
   `quantity` int(11) DEFAULT NULL,
   `mobile_required` tinyint(1) NOT NULL,
   `mobile_id` int(11) NOT NULL,
   `added_date` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`item_id`, `cart_id`, `variant_id`, `quantity`, `mobile_required`, `mobile_id`, `added_date`, `modified_date`) VALUES
+(31, 12, 1, 20, 1, 1, '2019-10-12 08:04:32', '2019-10-12 08:04:32'),
+(32, 12, 1, 20, 1, 2, '2019-10-12 08:04:32', '2019-10-12 08:04:32');
 
 -- --------------------------------------------------------
 
@@ -1075,10 +1083,9 @@ ALTER TABLE `banners`
 -- Indexes for table `cart`
 --
 ALTER TABLE `cart`
-  ADD PRIMARY KEY (`item_id`),
+  ADD PRIMARY KEY (`variant_id`,`mobile_id`),
   ADD KEY `cart_id` (`cart_id`),
-  ADD KEY `variant_id` (`variant_id`),
-  ADD KEY `mobile_id` (`mobile_id`);
+  ADD KEY `item_id` (`item_id`);
 
 --
 -- Indexes for table `cart_mobile`
@@ -1256,7 +1263,7 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `category`
