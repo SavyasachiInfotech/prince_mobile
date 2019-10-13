@@ -196,7 +196,7 @@ router.get("/get-cart-detail", verifyToken, (req, res) => {
           status: "1",
           message: "Getting Cart Details Successfully.",
           data: result,
-          offers: promo
+          offers_detail: promo
         });
       });
     }
