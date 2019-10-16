@@ -203,4 +203,59 @@ router.get("/get-cart-detail", verifyToken, (req, res) => {
   });
 });
 
+router.post(
+  "/apply-promocode",
+  [check("promo_id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let promo = req.body.promo_id;
+      let sql =
+        "select count(promo_id) as count,(select max_attempt from promocode where id=" +
+        promo +
+        ") as max_attempt from customer_order where promo_id=" +
+        promo +
+        " and user_id=" +
+        req.userId;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(200)
+            .json({ status: "0", message: "Promocode not applied." });
+        } else {
+          if (result.length > 0) {
+            if (result[0].count < result[0].max_attempt) {
+              res
+                .status(200)
+                .json({
+                  status: "1",
+                  message: "Promocode applied successfully."
+                });
+            } else {
+              res
+                .status(200)
+                .json({
+                  status: "0",
+                  message: "You already used this promocode"
+                });
+            }
+          } else {
+            res
+              .status(200)
+              .json({ status: "0", message: "Please enter valid promocode." });
+          }
+        }
+      });
+    }
+  }
+);
+
 module.exports = router;

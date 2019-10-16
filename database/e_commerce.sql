@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 12, 2019 at 08:10 AM
+-- Generation Time: Oct 16, 2019 at 02:34 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -168,7 +168,6 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`item_id`, `cart_id`, `variant_id`, `quantity`, `mobile_required`, `mobile_id`, `added_date`, `modified_date`) VALUES
-(31, 12, 1, 20, 1, 1, '2019-10-12 08:04:32', '2019-10-12 08:04:32'),
 (32, 12, 1, 20, 1, 2, '2019-10-12 08:04:32', '2019-10-12 08:04:32');
 
 -- --------------------------------------------------------
@@ -276,6 +275,9 @@ INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`,
 
 CREATE TABLE `customer_address` (
   `address_id` int(11) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `email` varchar(400) NOT NULL,
   `add1` text DEFAULT NULL,
   `add2` text DEFAULT NULL,
   `add3` text DEFAULT NULL,
@@ -295,13 +297,14 @@ CREATE TABLE `customer_address` (
 
 CREATE TABLE `customer_order` (
   `order_id` int(11) NOT NULL,
-  `customer_id` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   `address_id` int(11) DEFAULT NULL,
   `shipment_id` varchar(100) DEFAULT NULL,
   `awbno` varchar(100) DEFAULT NULL,
   `comment` text DEFAULT NULL,
   `apx_shipped_date` date DEFAULT NULL,
   `status_id` int(11) DEFAULT NULL,
+  `promo_id` int(11) NOT NULL,
   `added_date` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -403,6 +406,11 @@ CREATE TABLE `product` (
   `product_id` int(11) NOT NULL,
   `description` text DEFAULT NULL,
   `is_display` tinyint(1) DEFAULT NULL,
+  `total_weight` float NOT NULL,
+  `dimention_length` float NOT NULL,
+  `dimention_breadth` float NOT NULL,
+  `dimention_height` float NOT NULL,
+  `hsncode` int(11) NOT NULL,
   `category_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -410,15 +418,15 @@ CREATE TABLE `product` (
 -- Dumping data for table `product`
 --
 
-INSERT INTO `product` (`product_id`, `description`, `is_display`, `category_id`) VALUES
-(1, 'Soft leather print back cover good quality Camera protection layer', 1, 11),
-(2, 'Soft leather print back cover good quality Camera protection layer', 1, 18),
-(3, 'Soft leather print back cover good quality Camera protection layer', 1, 2),
-(4, 'Soft leather print back cover good quality Camera protection layer', 1, 3),
-(5, 'Soft leather print back cover good quality Camera protection layer', 1, 4),
-(6, 'Soft leather print back cover good quality Camera protection layer', 1, 5),
-(7, 'Soft leather print back cover good quality Camera protection layer', 1, 6),
-(8, 'Soft leather print back cover good quality Camera protection layer', 1, 18);
+INSERT INTO `product` (`product_id`, `description`, `is_display`, `total_weight`, `dimention_length`, `dimention_breadth`, `dimention_height`, `hsncode`, `category_id`) VALUES
+(1, 'Soft leather print back cover good quality Camera protection layer', 1, 0, 0, 0, 0, 0, 11),
+(2, 'Soft leather print back cover good quality Camera protection layer', 1, 0, 0, 0, 0, 0, 18),
+(3, 'Soft leather print back cover good quality Camera protection layer', 1, 0, 0, 0, 0, 0, 2),
+(4, 'Soft leather print back cover good quality Camera protection layer', 1, 0, 0, 0, 0, 0, 3),
+(5, 'Soft leather print back cover good quality Camera protection layer', 1, 0, 0, 0, 0, 0, 4),
+(6, 'Soft leather print back cover good quality Camera protection layer', 1, 0, 0, 0, 0, 0, 5),
+(7, 'Soft leather print back cover good quality Camera protection layer', 1, 0, 0, 0, 0, 0, 6),
+(8, 'Soft leather print back cover good quality Camera protection layer', 1, 0, 0, 0, 0, 0, 18);
 
 -- --------------------------------------------------------
 
@@ -830,16 +838,17 @@ CREATE TABLE `promocode` (
   `discount` float NOT NULL,
   `min_limit` int(11) NOT NULL,
   `max_discount` int(11) NOT NULL,
-  `discount_type` int(11) NOT NULL COMMENT '1 - Rs. , 2.- Percentage'
+  `discount_type` int(11) NOT NULL COMMENT '1 - Rs. , 2.- Percentage',
+  `max_attempt` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
 -- Dumping data for table `promocode`
 --
 
-INSERT INTO `promocode` (`id`, `code`, `description`, `type`, `discount`, `min_limit`, `max_discount`, `discount_type`) VALUES
-(1, 'MS50', 'Flat 50% off on purchase of covers where total amount is more than 500 Rs.', 2, 50, 100, 150, 2),
-(2, 'NEW50', 'Flat 50% off on purchase of any product for new users only.', 1, 0, 50, 200, 2);
+INSERT INTO `promocode` (`id`, `code`, `description`, `type`, `discount`, `min_limit`, `max_discount`, `discount_type`, `max_attempt`) VALUES
+(1, 'MS50', 'Flat 50% off on purchase of covers where total amount is more than 500 Rs.', 2, 50, 100, 150, 2, 2),
+(2, 'NEW50', 'Flat 50% off on purchase of any product for new users only.', 1, 0, 50, 200, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -1141,8 +1150,9 @@ ALTER TABLE `customer_address`
 --
 ALTER TABLE `customer_order`
   ADD PRIMARY KEY (`order_id`),
-  ADD KEY `customer_id` (`customer_id`),
-  ADD KEY `address_id` (`address_id`);
+  ADD KEY `customer_id` (`user_id`),
+  ADD KEY `address_id` (`address_id`),
+  ADD KEY `promocode` (`promo_id`);
 
 --
 -- Indexes for table `mobile_brand`
