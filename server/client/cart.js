@@ -258,4 +258,23 @@ router.post(
   }
 );
 
+
+router.post("/get-delivery-charge",[check("product").isArray()],verifyToken,(req,res)=>{
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let product=req.body.product;
+      if(product.length>0){
+        res.status(200).json({status:"1",message:"Getting the delivery charge successfully.",deliveryCharge:70});
+      } else {
+        res.status(200).json({status:"0",message:"Please enter the products"});
+      }
+    }
+});
+
 module.exports = router;
