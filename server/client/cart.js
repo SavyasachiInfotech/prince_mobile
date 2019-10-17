@@ -27,6 +27,7 @@ function verifyToken(req, res, next) {
   req.userId = payload.subject;
   next();
 }
+
 router.post("/add-cart", verifyToken, (req, res) => {
   let cart = req.body.cart;
   let sql =
@@ -233,19 +234,15 @@ router.post(
         } else {
           if (result.length > 0) {
             if (result[0].count < result[0].max_attempt) {
-              res
-                .status(200)
-                .json({
-                  status: "1",
-                  message: "Promocode applied successfully."
-                });
+              res.status(200).json({
+                status: "1",
+                message: "Promocode applied successfully."
+              });
             } else {
-              res
-                .status(200)
-                .json({
-                  status: "0",
-                  message: "You already used this promocode"
-                });
+              res.status(200).json({
+                status: "0",
+                message: "You already used this promocode"
+              });
             }
           } else {
             res
@@ -258,9 +255,12 @@ router.post(
   }
 );
 
-
-router.post("/get-delivery-charge",[check("product").isArray()],verifyToken,(req,res)=>{
-  const errors = validationResult(req);
+router.post(
+  "/get-delivery-charge",
+  [check("product").isArray()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({
         status: "0",
@@ -268,13 +268,22 @@ router.post("/get-delivery-charge",[check("product").isArray()],verifyToken,(req
         errors: errors.array()
       });
     } else {
-      let product=req.body.product;
-      if(product.length>0){
-        res.status(200).json({status:"1",message:"Getting the delivery charge successfully.",deliveryCharge:70});
+      let product = req.body.product;
+      if (product.length > 0) {
+        res
+          .status(200)
+          .json({
+            status: "1",
+            message: "Getting the delivery charge successfully.",
+            deliveryCharge: "70"
+          });
       } else {
-        res.status(200).json({status:"0",message:"Please enter the products"});
+        res
+          .status(200)
+          .json({ status: "0", message: "Please enter the products" });
       }
     }
-});
+  }
+);
 
 module.exports = router;

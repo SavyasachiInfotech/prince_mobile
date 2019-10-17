@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 16, 2019 at 02:34 PM
+-- Generation Time: Oct 17, 2019 at 05:39 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -281,13 +281,20 @@ CREATE TABLE `customer_address` (
   `add1` text DEFAULT NULL,
   `add2` text DEFAULT NULL,
   `add3` text DEFAULT NULL,
-  `landmark` int(11) DEFAULT NULL,
-  `city` int(11) DEFAULT NULL,
-  `state` int(11) DEFAULT NULL,
+  `landmark` varchar(100) DEFAULT '',
+  `city` varchar(100) DEFAULT '',
+  `state` varchar(100) DEFAULT '',
   `pincode` int(11) DEFAULT NULL,
-  `mobile` int(11) DEFAULT NULL,
+  `mobile` bigint(11) DEFAULT NULL,
   `customer_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `customer_address`
+--
+
+INSERT INTO `customer_address` (`address_id`, `first_name`, `last_name`, `email`, `add1`, `add2`, `add3`, `landmark`, `city`, `state`, `pincode`, `mobile`, `customer_id`) VALUES
+(1, 'Parth', 'Dhankecha', 'pmdhankecha.18@gmail.com', 'c-18, shivdarshan socity', 'yogichowk', '', 'Yogichowk', 'Surat', 'Surat', 395010, 9737156062, 12);
 
 -- --------------------------------------------------------
 
@@ -297,14 +304,25 @@ CREATE TABLE `customer_address` (
 
 CREATE TABLE `customer_order` (
   `order_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `address_id` int(11) DEFAULT NULL,
-  `shipment_id` varchar(100) DEFAULT NULL,
-  `awbno` varchar(100) DEFAULT NULL,
-  `comment` text DEFAULT NULL,
+  `user_id` int(11) DEFAULT 0,
+  `address_id` int(11) DEFAULT 0,
+  `shipment_id` varchar(100) DEFAULT '',
+  `awbno` varchar(100) DEFAULT '',
+  `comment` text DEFAULT '',
   `apx_shipped_date` date DEFAULT NULL,
-  `status_id` int(11) DEFAULT NULL,
-  `promo_id` int(11) NOT NULL,
+  `status_id` int(11) DEFAULT 0,
+  `promo_id` int(11) NOT NULL DEFAULT 0,
+  `iscod` tinyint(1) NOT NULL,
+  `collectable_amount` float DEFAULT NULL,
+  `total_weight` float DEFAULT NULL,
+  `dm_length` float NOT NULL,
+  `dm_breadth` float DEFAULT NULL,
+  `dm_height` float DEFAULT NULL,
+  `ewaybillno` varchar(20) NOT NULL DEFAULT '',
+  `taxable_value` float DEFAULT 0,
+  `sgst` float NOT NULL DEFAULT 0,
+  `cgst` float NOT NULL DEFAULT 0,
+  `igst` float NOT NULL DEFAULT 0,
   `added_date` datetime DEFAULT current_timestamp(),
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1321,13 +1339,13 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `customer_address`
 --
 ALTER TABLE `customer_address`
-  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `mobile_brand`
