@@ -33,8 +33,7 @@ router.post(
   [
     check("address_id").isNumeric(),
     check("promo_id").isNumeric(),
-    check("iscod").isBoolean(),
-    check("products").isArray()
+    check("iscod").isBoolean()
   ],
   verifyToken,
   (req, res) => {
@@ -64,28 +63,86 @@ router.post(
           res.status(200).json({ status: "0", message: "Order not placed." });
         } else {
           order_id = result.insertId;
-          sql = "select * from product_variant where variant_id in(";
-          for (let i = 0; i < data.products.length; i++) {
-            if (i == data.products.length - 1) {
-              sql += data.products[i] + ")";
-            } else {
-              sql += data.products[i] + ",";
-            }
-          }
-          con.query(sql, (err, variants) => {
+          sql =
+            "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.* from cart c, product_variant v where c.variant_id=v.variant_id and cart_id=" +
+            req.userId;
+          con.query(sql, (err, cart) => {
             if (err) {
-              console.log(err);
-              sql = "delete from customer_order where order_id=" + order_id;
-              con.query(sql, (err, data) => {
-                res
-                  .status(200)
-                  .json({
-                    status: "0",
-                    message: "Order not placed. Select valid products."
-                  });
+              deleteOrder(order_id);
+              res.status(200).json({
+                status: "0",
+                message: "Order not placed. Select valid products."
               });
             } else {
-              let daa;
+              if (cart.length > 0) {
+                sql =
+                  "insert into order_detail(order_id,variant_id,variant,quantity,mobile_required,mobile_id) values";
+                for (let i = 0; i < cart.length; i++) {
+                  if (cart[i].cart_quantity > cart[i].quantity) {
+                    deleteOrder(order_id);
+                    res.status(200).json({
+                      status: "0",
+                      message: "Not enough stock to complete your order."
+                    });
+                  } else {
+                    sql +=
+                      "(" +
+                      order_id +
+                      "," +
+                      cart[i].variant_id +
+                      ",'" +
+                      JSON.stringify(cart[i]) +
+                      "'," +
+                      cart[i].cart_quantity +
+                      "," +
+                      cart[i].mobile_required +
+                      "," +
+                      cart[i].mobile_id +
+                      ")";
+                    if (i != cart.length - 1) {
+                      sql += ", ";
+                    } else {
+                      sql += ";";
+                    }
+                  }
+                }
+                con.query(sql, (err, order) => {
+                  if (err) {
+                    console.log(err);
+                    deleteOrder(order_id);
+                    res.status(200).json({
+                      status: "0",
+                      message: "Order not placed. Try again later"
+                    });
+                  } else {
+                    sql = "";
+                    for (let i = 0; i < cart.length; i++) {
+                      sql =
+                        "update product_variant set quantity=quantity-" +
+                        cart[i].cart_quantity +
+                        ", order_count=order_count+" +
+                        cart[i].cart_quantity +
+                        " where variant_id=" +
+                        cart[i].variant_id +
+                        ";";
+                      con.query(sql, (err, result) => {});
+                    }
+                    sql = "delete from cart where cart_id=" + req.userId;
+                    con.query(sql, (err, result) => {
+                      res.status(200).json({
+                        status: 1,
+                        message: "Order placed successfully."
+                      });
+                    });
+                  }
+                });
+              } else {
+                deleteOrder(order_id);
+                res.status(200).json({
+                  status: "0",
+                  message: "Please add products in Cart."
+                });
+              }
             }
           });
         }
@@ -93,5 +150,10 @@ router.post(
     }
   }
 );
+
+function deleteOrder(order_id) {
+  let sql = "delete from customer_order where order_id=" + order_id;
+  con.query(sql, (err, data) => {});
+}
 
 module.exports = router;

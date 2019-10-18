@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 17, 2019 at 05:39 AM
+-- Generation Time: Oct 18, 2019 at 06:03 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -163,13 +163,6 @@ CREATE TABLE `cart` (
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `cart`
---
-
-INSERT INTO `cart` (`item_id`, `cart_id`, `variant_id`, `quantity`, `mobile_required`, `mobile_id`, `added_date`, `modified_date`) VALUES
-(32, 12, 1, 20, 1, 2, '2019-10-12 08:04:32', '2019-10-12 08:04:32');
-
 -- --------------------------------------------------------
 
 --
@@ -327,6 +320,14 @@ CREATE TABLE `customer_order` (
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `customer_order`
+--
+
+INSERT INTO `customer_order` (`order_id`, `user_id`, `address_id`, `shipment_id`, `awbno`, `comment`, `apx_shipped_date`, `status_id`, `promo_id`, `iscod`, `collectable_amount`, `total_weight`, `dm_length`, `dm_breadth`, `dm_height`, `ewaybillno`, `taxable_value`, `sgst`, `cgst`, `igst`, `added_date`, `modified_date`) VALUES
+(12, 12, 1, '', '', '', NULL, 0, 1, 1, NULL, NULL, 0, NULL, NULL, '', 0, 0, 0, 0, '2019-10-18 08:39:31', '2019-10-18 08:39:31'),
+(13, 12, 1, '', '', '', NULL, 0, 1, 1, NULL, NULL, 0, NULL, NULL, '', 0, 0, 0, 0, '2019-10-18 08:45:43', '2019-10-18 08:45:43');
+
 -- --------------------------------------------------------
 
 --
@@ -411,8 +412,22 @@ CREATE TABLE `order_detail` (
   `quantity` int(11) DEFAULT NULL,
   `cancel_bit` tinyint(1) DEFAULT NULL,
   `unit_cost` int(11) DEFAULT NULL,
-  `promocode` int(11) DEFAULT NULL
+  `mobile_required` tinyint(1) NOT NULL,
+  `mobile_id` int(11) NOT NULL,
+  `promocode` int(11) DEFAULT NULL,
+  `added_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `modified_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `order_detail`
+--
+
+INSERT INTO `order_detail` (`item_id`, `order_id`, `variant_id`, `attributes`, `variant`, `quantity`, `cancel_bit`, `unit_cost`, `mobile_required`, `mobile_id`, `promocode`, `added_date`, `modified_date`) VALUES
+(6, 12, 2, NULL, '{\"item_id\":34,\"cart_quantity\":20,\"mobile_required\":1,\"mobile_id\":1,\"cart_date\":\"2019-10-18T03:08:55.000Z\",\"variant_id\":2,\"name\":\"Soft leather print back cover good quality Camera protection layer\",\"price\":120,\"discount\":20,\"tax_id\":1,\"accept_promocode\":1,\"min_qty\":10,\"quantity\":80,\"parent\":1,\"avg_rating\":4.2,\"attribute\":null,\"thumbnail\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"list_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"view_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"main_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"product_id\":1,\"promo_id\":1,\"extra_detail\":\"Further Description which admin want to display to the user\",\"order_count\":50,\"admin_id\":1,\"added_on\":\"2019-09-18T15:13:50.000Z\",\"modified_date\":\"2019-09-18T15:13:50.000Z\"}', 20, NULL, NULL, 1, 1, NULL, '2019-10-18 08:39:31', '2019-10-18 08:39:31'),
+(7, 12, 2, NULL, '{\"item_id\":35,\"cart_quantity\":20,\"mobile_required\":1,\"mobile_id\":2,\"cart_date\":\"2019-10-18T03:08:55.000Z\",\"variant_id\":2,\"name\":\"Soft leather print back cover good quality Camera protection layer\",\"price\":120,\"discount\":20,\"tax_id\":1,\"accept_promocode\":1,\"min_qty\":10,\"quantity\":80,\"parent\":1,\"avg_rating\":4.2,\"attribute\":null,\"thumbnail\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"list_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"view_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"main_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"product_id\":1,\"promo_id\":1,\"extra_detail\":\"Further Description which admin want to display to the user\",\"order_count\":50,\"admin_id\":1,\"added_on\":\"2019-09-18T15:13:50.000Z\",\"modified_date\":\"2019-09-18T15:13:50.000Z\"}', 20, NULL, NULL, 1, 2, NULL, '2019-10-18 08:39:31', '2019-10-18 08:39:31'),
+(8, 13, 2, NULL, '{\"item_id\":36,\"cart_quantity\":20,\"mobile_required\":1,\"mobile_id\":1,\"cart_date\":\"2019-10-18T03:15:15.000Z\",\"variant_id\":2,\"name\":\"Soft leather print back cover good quality Camera protection layer\",\"price\":120,\"discount\":20,\"tax_id\":1,\"accept_promocode\":1,\"min_qty\":10,\"quantity\":40,\"parent\":1,\"avg_rating\":4.2,\"attribute\":null,\"thumbnail\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"list_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"view_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"main_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"product_id\":1,\"promo_id\":1,\"extra_detail\":\"Further Description which admin want to display to the user\",\"order_count\":90,\"admin_id\":1,\"added_on\":\"2019-09-18T15:13:50.000Z\",\"modified_date\":\"2019-09-18T15:13:50.000Z\"}', 20, NULL, NULL, 1, 1, NULL, '2019-10-18 08:45:43', '2019-10-18 08:45:43'),
+(9, 13, 2, NULL, '{\"item_id\":37,\"cart_quantity\":20,\"mobile_required\":1,\"mobile_id\":2,\"cart_date\":\"2019-10-18T03:15:15.000Z\",\"variant_id\":2,\"name\":\"Soft leather print back cover good quality Camera protection layer\",\"price\":120,\"discount\":20,\"tax_id\":1,\"accept_promocode\":1,\"min_qty\":10,\"quantity\":40,\"parent\":1,\"avg_rating\":4.2,\"attribute\":null,\"thumbnail\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"list_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"view_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"main_image\":\"[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]\",\"product_id\":1,\"promo_id\":1,\"extra_detail\":\"Further Description which admin want to display to the user\",\"order_count\":90,\"admin_id\":1,\"added_on\":\"2019-09-18T15:13:50.000Z\",\"modified_date\":\"2019-09-18T15:13:50.000Z\"}', 20, NULL, NULL, 1, 2, NULL, '2019-10-18 08:45:43', '2019-10-18 08:45:43');
 
 -- --------------------------------------------------------
 
@@ -803,8 +818,8 @@ CREATE TABLE `product_variant` (
 --
 
 INSERT INTO `product_variant` (`variant_id`, `name`, `price`, `discount`, `tax_id`, `accept_promocode`, `min_qty`, `quantity`, `parent`, `avg_rating`, `attribute`, `thumbnail`, `list_image`, `view_image`, `main_image`, `product_id`, `promo_id`, `extra_detail`, `order_count`, `admin_id`, `added_on`, `modified_date`) VALUES
-(1, 'Soft leather print back cover good quality Camera protection layer', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', 1, 1, 'Further Description which admin want to display to the user', 10, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
-(2, 'Soft leather print back cover good quality Camera protection layer', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', 1, 1, 'Further Description which admin want to display to the user', 50, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(1, 'Soft leather print back cover good quality Camera protection layer', 120, 20, 1, 1, 10, 40, 1, 4.2, NULL, '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', 1, 1, 'Further Description which admin want to display to the user', 50, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
+(2, 'Soft leather print back cover good quality Camera protection layer', 120, 20, 1, 1, 10, 0, 1, 4.2, NULL, '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', 1, 1, 'Further Description which admin want to display to the user', 130, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
 (3, 'Soft leather print back cover good quality Camera protection layer', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', 1, 1, 'Further Description which admin want to display to the user', 20, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
 (4, 'Soft leather print back cover good quality Camera protection layer', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', 1, 1, 'Further Description which admin want to display to the user', 100, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
 (5, 'Soft leather print back cover good quality Camera protection layer', 120, 20, 1, 1, 10, 80, 1, 4.2, NULL, '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', '[\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\",\"product1_main.jpg\"]', 2, 1, 'Further Description which admin want to display to the user', 11, 1, '2019-09-18 20:43:50', '2019-09-18 20:43:50'),
@@ -1205,7 +1220,8 @@ ALTER TABLE `offer`
 ALTER TABLE `order_detail`
   ADD PRIMARY KEY (`item_id`),
   ADD KEY `order_id` (`order_id`),
-  ADD KEY `variant_id` (`variant_id`);
+  ADD KEY `variant_id` (`variant_id`),
+  ADD KEY `mobile_id` (`mobile_id`);
 
 --
 -- Indexes for table `product`
@@ -1321,7 +1337,7 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -1345,7 +1361,7 @@ ALTER TABLE `customer_address`
 -- AUTO_INCREMENT for table `customer_order`
 --
 ALTER TABLE `customer_order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `mobile_brand`
@@ -1375,7 +1391,7 @@ ALTER TABLE `offer`
 -- AUTO_INCREMENT for table `order_detail`
 --
 ALTER TABLE `order_detail`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `product`

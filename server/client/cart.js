@@ -257,7 +257,7 @@ router.post(
 
 router.post(
   "/get-delivery-charge",
-  [check("product").isArray()],
+  [check("pincode").isNumeric()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -269,19 +269,12 @@ router.post(
       });
     } else {
       let product = req.body.product;
-      if (product.length > 0) {
-        res
-          .status(200)
-          .json({
-            status: "1",
-            message: "Getting the delivery charge successfully.",
-            deliveryCharge: "70"
-          });
-      } else {
-        res
-          .status(200)
-          .json({ status: "0", message: "Please enter the products" });
-      }
+
+      res.status(200).json({
+        status: "1",
+        message: "Getting the delivery charge successfully.",
+        deliveryCharge: "70"
+      });
     }
   }
 );
