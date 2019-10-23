@@ -31,6 +31,91 @@ function verifyToken(req, res, next) {
 }
 
 router.post(
+  "/search-products",
+  [check("search").isString(), check("pageno").isNumeric()],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({ status: "0", message: "Give the valid data" });
+    } else {
+      let search = req.body.search;
+      let pageno = req.body.pageno;
+      pageno = pageno - 1;
+      let sql =
+        "select v.variant_id,v.name,v.price,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 and p.category_id=c.category_id  and (c.name like '" +
+        search +
+        "%' or p.description like '%" +
+        search +
+        "%' or v.name like '%" +
+        search +
+        "%') limit " +
+        pageno +
+        "," +
+        limit;
+      let countSql =
+        "select count(v.variant_id) as total from product p,product_variant v,category c where p.product_id=v.product_id and p.is_display=1 and v.parent=1 and v.parent=1 and p.category_id=c.category_id and (c.name like '" +
+        search +
+        "%' or  p.description like '%" +
+        search +
+        "%' or v.name like '%" +
+        search +
+        "%')";
+      con.query(countSql, (err, data) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({
+            status: "0",
+            message: "No items found for searched value."
+          });
+        } else {
+          if (data[0].total == 0) {
+            res.status(200).json({
+              status: "0",
+              message: "No items found for searched value."
+            });
+          } else {
+            con.query(sql, (err, result) => {
+              if (err) {
+                console.log(err);
+                res.status(200).json({
+                  status: "0",
+                  message: "No items found for searched value."
+                });
+              } else {
+                for (let i = 0; i < result.length; i++) {
+                  let image = JSON.parse(result[i].list_image);
+                  if (image.length > 0) {
+                    result[i].list_image = process.env.LISTIMAGE + image[0];
+                  } else {
+                    result[i].list_image = "";
+                  }
+                  result[i].mrp =
+                    result[i].price +
+                    (result[i].price * result[i].discount) / 100;
+                }
+                json = JSON.stringify(result);
+                result = JSON.parse(json, (key, val) =>
+                  typeof val !== "object" && val !== null ? String(val) : val
+                );
+                let totalPages = Math.ceil(data[0].total / limit);
+                res.status(200).json({
+                  status: "1",
+                  message: "Getting Products successfully.",
+                  products: result,
+                  currentPage: (pageno + 1).toString(),
+                  totalPages: totalPages.toString(),
+                  totalProduct: data[0].total.toString()
+                });
+              }
+            });
+          }
+        }
+      });
+    }
+  }
+);
+
+router.post(
   "/get-products",
   [
     check("category_id").isNumeric(),

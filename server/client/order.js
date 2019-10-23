@@ -64,7 +64,7 @@ router.post(
         } else {
           order_id = result.insertId;
           sql =
-            "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.* from cart c, product_variant v where c.variant_id=v.variant_id and cart_id=" +
+            "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.*,t.tax,p.total_weight,p.dimention_length,p.dimention_breadth,p.dimention_height,p.hsncode,m.quantity as mquantity,m.price as mprice, m.discount as mdiscount from cart c, product_variant v, tax t,product p,variant_mobile m where v.variant_id=m.variant_id and m.mobile_id=c.mobile_id and  p.product_id=v.product_id and v.tax_id=t.tax_id and c.variant_id=v.variant_id and cart_id=" +
             req.userId;
           con.query(sql, (err, cart) => {
             if (err) {
@@ -75,21 +75,67 @@ router.post(
               });
             } else {
               if (cart.length > 0) {
+                let orderdata = {
+                  dm_height: 0,
+                  dm_length: 0,
+                  dm_breadth: 0,
+                  total_weight: 0,
+                  collectable_amount: 0,
+                  taxable_amount: 0,
+                  sgst: 0,
+                  cgst: 0,
+                  igst: 0,
+                  order_amount: 0
+                };
+                let queryBit = 0;
                 sql =
-                  "insert into order_detail(order_id,variant_id,variant,quantity,mobile_required,mobile_id) values";
+                  "insert into order_detail(order_id,variant_id,user_id,variant,quantity,mobile_required,mobile_id) values";
                 for (let i = 0; i < cart.length; i++) {
-                  if (cart[i].cart_quantity > cart[i].quantity) {
+                  if (
+                    (cart[i].mobile_required == 0 &&
+                      cart[i].cart_quantity > cart[i].quantity) ||
+                    (cart[i].mobile_required == 1 &&
+                      cart[i].cart_quantity > cart[i].mquantity)
+                  ) {
+                    queryBit = 1;
                     deleteOrder(order_id);
                     res.status(200).json({
                       status: "0",
                       message: "Not enough stock to complete your order."
                     });
+                    break;
                   } else {
+                    orderdata.dm_height =
+                      orderdata.dm_height + cart[i].dimention_height;
+                    orderdata.dm_length = cart[i].dimention_length;
+                    orderdata.dm_breadth = cart[i].dimention_breadth;
+                    orderdata.total_weight =
+                      orderdata.total_weight + cart[i].total_weight;
+                    if (cart[i].mobile_required == 1) {
+                      orderdata.collectable_amount =
+                        orderdata.collectable_amount + cart[i].mprice;
+                    } else {
+                      orderdata.collectable_amount =
+                        orderdata.collectable_amount + cart[i].price;
+                    }
+
+                    cart[i].thumbnail = JSON.parse(cart[i].thumbnail);
+                    if (cart[i].thumbnail.length > 0) {
+                      cart[i].thumbnail =
+                        process.env.THUMBNAIL + cart[i].thumbnail[0];
+                    } else {
+                      cart[i].thumbnail = "";
+                    }
+                    cart[i].list_image = "";
+                    cart[i].view_image = "";
+                    cart[i].main_image = "";
                     sql +=
                       "(" +
                       order_id +
                       "," +
                       cart[i].variant_id +
+                      "," +
+                      req.userId +
                       ",'" +
                       JSON.stringify(cart[i]) +
                       "'," +
@@ -106,36 +152,143 @@ router.post(
                     }
                   }
                 }
-                con.query(sql, (err, order) => {
-                  if (err) {
-                    console.log(err);
-                    deleteOrder(order_id);
-                    res.status(200).json({
-                      status: "0",
-                      message: "Order not placed. Try again later"
-                    });
-                  } else {
-                    sql = "";
-                    for (let i = 0; i < cart.length; i++) {
-                      sql =
-                        "update product_variant set quantity=quantity-" +
-                        cart[i].cart_quantity +
-                        ", order_count=order_count+" +
-                        cart[i].cart_quantity +
-                        " where variant_id=" +
-                        cart[i].variant_id +
-                        ";";
-                      con.query(sql, (err, result) => {});
-                    }
-                    sql = "delete from cart where cart_id=" + req.userId;
-                    con.query(sql, (err, result) => {
+                if (queryBit == 0) {
+                  con.query(sql, (err, order) => {
+                    if (err) {
+                      console.log(err);
+                      deleteOrder(order_id);
                       res.status(200).json({
-                        status: 1,
-                        message: "Order placed successfully."
+                        status: "0",
+                        message: "Order not placed. Try again later"
                       });
-                    });
-                  }
-                });
+                    } else {
+                      sql = "";
+                      orderdata.order_amount = orderdata.collectable_amount;
+                      if (data.iscod == 0) {
+                        orderdata.collectable_amount = 0;
+                      }
+                      orderdata.taxable_amount =
+                        (orderdata.collectable_amount * cart[0].tax) / 100 +
+                        cart[0].tax;
+                      orderdata.cgst = orderdata.taxable_amount / 2;
+                      orderdata.sgst = orderdata.taxable_amount / 2;
+                      orderdata.igst = 0;
+                      orderdata.taxable_amount =
+                        orderdata.collectable_amount - orderdata.taxable_amount;
+                      sql = "select * from promocode where id=" + data.promo_id;
+                      con.query(sql, (err, promo) => {
+                        if (err) {
+                          console.log(err);
+                          deleteOrder(order_id);
+                          res.status(200).json({
+                            status: "0",
+                            message:
+                              "Order not placed. Please apply valid promocode."
+                          });
+                        } else {
+                          if (promo.length > 0) {
+                            if (promo[0].min_limit <= orderdata.order_amount) {
+                              let discount;
+                              if (promo[0].discount_type == 1) {
+                                discount = promo[0].max_discount;
+                              } else {
+                                discount =
+                                  (orderdata.order_amount * promo[0].discount) /
+                                  100;
+                                if (discount > promo[0].max_discount) {
+                                  discount = promo[0].max_discount;
+                                }
+                              }
+                              orderdata.order_amount =
+                                orderdata.order_amount - discount;
+                              sql =
+                                "update customer_order set collectable_amount=" +
+                                orderdata.collectable_amount +
+                                ", total_weight=" +
+                                orderdata.total_weight +
+                                ", dm_length=" +
+                                orderdata.dm_length +
+                                ", dm_breadth=" +
+                                orderdata.dm_breadth +
+                                ", dm_height=" +
+                                orderdata.dm_height +
+                                ", taxable_value=" +
+                                orderdata.taxable_amount +
+                                ",sgst=" +
+                                orderdata.sgst +
+                                ", cgst=" +
+                                orderdata.cgst +
+                                ", igst=" +
+                                orderdata.igst +
+                                ",order_amount=" +
+                                orderdata.order_amount +
+                                " where order_id=" +
+                                order_id;
+                              con.query(sql, (err, orderinfo) => {
+                                if (err) {
+                                  console.log(err);
+                                  deleteOrder(order_id);
+                                  res.status(200).json({
+                                    status: "0",
+                                    message:
+                                      "Order is not placed. Try again later."
+                                  });
+                                } else {
+                                  for (let i = 0; i < cart.length; i++) {
+                                    if (cart[i].mobile_required == 1) {
+                                      sql =
+                                        "update variant_mobile set quantity=quantity-" +
+                                        cart[i].cart_quantity +
+                                        " where  variant_id=" +
+                                        cart[i].variant_id;
+                                      con.query(sql, (err, result) => {});
+                                      sql =
+                                        "update product_variant set order_count=order_count+" +
+                                        cart[i].cart_quantity +
+                                        " where variant_id=" +
+                                        cart[i].variant_id;
+                                    } else {
+                                      sql =
+                                        "update product_variant set quantity=quantity-" +
+                                        cart[i].cart_quantity +
+                                        ", order_count=order_count+" +
+                                        cart[i].cart_quantity +
+                                        " where variant_id=" +
+                                        cart[i].variant_id +
+                                        ";";
+                                    }
+                                    con.query(sql, (err, result) => {});
+                                  }
+                                  sql =
+                                    "delete from cart where cart_id=" +
+                                    req.userId;
+                                  con.query(sql, (err, result) => {
+                                    res.status(200).json({
+                                      status: 1,
+                                      message: "Order placed successfully."
+                                    });
+                                  });
+                                }
+                              });
+                            } else {
+                              deleteOrder(order_id);
+                              res.status(200).json({
+                                status: "0",
+                                message:
+                                  "Order not placed. Your order amount is not eligible for promocode"
+                              });
+                            }
+                          } else {
+                            res.status(200).json({
+                              status: "0",
+                              message: "Please apply valid promocode."
+                            });
+                          }
+                        }
+                      });
+                    }
+                  });
+                }
               } else {
                 deleteOrder(order_id);
                 res.status(200).json({
@@ -150,6 +303,53 @@ router.post(
     }
   }
 );
+
+router.get("/get-all-order", verifyToken, (req, res) => {
+  let id = req.userId;
+  let sql =
+    "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and d.user_id=" +
+    req.userId +
+    " order by d.added_date desc";
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(200).json({ status: "0", message: "No Orders found." });
+    } else {
+      sql = "select * from status";
+      con.query(sql, (err, statusdata) => {
+        if (err) {
+          res.status(200).json({ status: "0", message: "No orders found" });
+        } else {
+          let data = new Array();
+          let order;
+          let json;
+          console.log(statusdata);
+          for (let i = 0; i < result.length; i++) {
+            order = {
+              order_id: result[i].order_id,
+              item_id: result[i].item_id,
+              status: statusdata.find(item => item.id == result[i].status_id)
+                .status
+            };
+            json = JSON.parse(result[i].variant.toString());
+            order.name = json.name;
+            order.image = json.thumbnail;
+            data.push(order);
+          }
+          json = JSON.stringify(data);
+          data = JSON.parse(json, (key, val) =>
+            typeof val !== "object" && val !== null ? String(val) : val
+          );
+          res.status(200).json({
+            status: "1",
+            message: "Getting Order list successfully.",
+            data: data
+          });
+        }
+      });
+    }
+  });
+});
 
 function deleteOrder(order_id) {
   let sql = "delete from customer_order where order_id=" + order_id;

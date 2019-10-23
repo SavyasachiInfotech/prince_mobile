@@ -390,7 +390,24 @@ router.post(
                     message: "User is not registered. Please try agian later."
                   });
                 } else {
+                  let http = require("http");
+                  let path =
+                    process.env.SMSPARAMS +
+                    user.mobile +
+                    "&sid=" +
+                    process.env.SMSSENDERID +
+                    "&msg=Your mobile number verification OTP is " +
+                    String(otp) +
+                    process.env.SMSLAST;
+                  // let options = {
+                  //   hostname: process.env.SMSHOST,
+                  //   port: 80,
+                  //   path: encodeURI(path),
+                  //   agent: false
+                  // };
+                  http.get(process.env.SMSHOST + path, res => {});
                   let payload = { subject: result.insertId };
+
                   let jwt_token = jwt.sign(payload, "MysupersecreteKey");
                   res.status(200).send({
                     status: "1",
