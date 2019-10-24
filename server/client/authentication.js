@@ -436,6 +436,57 @@ router.post(
   }
 );
 
+router.post(
+  "/resend-otp",
+  /*[check("user_id").isNumeric()]*/ verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({ status: "0", message: "Enter Valid Data" });
+    } else {
+      let otp = Math.random();
+      otp = Math.ceil(otp * 1000000);
+      let sql =
+        "update customer set register_otp=" + otp + " where id=" + req.userId;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(200)
+            .json({ status: "0", message: "OTP not sent. Please try again" });
+        } else {
+          sql="select * from customer where id="+req.userId;
+          con.query(sql,(err,data)=>{
+            if(err){
+              console.log(err);
+              res.status(200).json({status:"0",message:"OTP not sent. Please try again later."});
+            }else {
+              if(data.length>0){
+                let http = require("http");
+          let path =
+            process.env.SMSPARAMS +
+            data[0].mobile1 +
+            "&sid=" +
+            process.env.SMSSENDERID +
+            "&msg=Your mobile number verification OTP is " +
+            String(otp) +
+            process.env.SMSLAST;
+          http.get(process.env.SMSHOST + path, res => {});
+          res
+            .status(200)
+            .json({ status: "1", message: "OTP send successfully." });
+              } else {
+                res.status(200).json({status:"0",message:"OTP not sent. Please try again later."});
+              }
+            }
+          });
+          
+        }
+      });
+    }
+  }
+);
+
 router.post("/login-user", (req, res) => {
   let data = req.body;
   let mobile;
