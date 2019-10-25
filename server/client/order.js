@@ -374,6 +374,11 @@ router.post(
   }
 );
 
+// 0  - For getting on transist orders
+// 5  - For getting cancelled orders
+// -1 - For all orders
+// 6- For return orders
+
 router.post(
   "/get-all-order",
   [check("status").isNumeric()],
@@ -391,16 +396,25 @@ router.post(
       let id = req.userId;
       if (req.body.status >= 0 && req.body.status < 4) {
         sql =
-          "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and o.status_id<4 and d.user_id= " +
+          "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and d.status_id<4 and d.user_id= " +
           req.userId +
           " order by d.added_date desc";
       } else {
-        sql =
-          "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and  o.status_id=" +
-          req.body.status +
-          " and d.user_id=" +
-          req.userId +
-          " order by d.added_date desc";
+        if (req.body.status == 6) {
+          sql =
+            "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and  d.status_id=" +
+            req.body.status +
+            " and d.user_id=" +
+            req.userId +
+            " order by d.added_date desc";
+        } else {
+          sql =
+            "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and  d.status_id=" +
+            req.body.status +
+            " and d.user_id=" +
+            req.userId +
+            " order by d.added_date desc";
+        }
       }
       if (req.body.status == -1) {
         sql =

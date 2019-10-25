@@ -335,13 +335,18 @@ router.post(
       .isString()
       .isLength({ min: 5 }),
     check("mobile").isNumeric({ min: 10 }),
-    check("full_name").isString()
+    check("full_name").isString(),
+    check("otp").isString()
   ],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({ status: "0", message: "Enter Valid Data" });
     } else {
+      if (req.body.otp == "") {
+        let query = "select * from user_otp";
+      } else {
+      }
       let user = req.body;
       let sql =
         "select * from customer where email='" +
@@ -455,32 +460,37 @@ router.post(
             .status(200)
             .json({ status: "0", message: "OTP not sent. Please try again" });
         } else {
-          sql="select * from customer where id="+req.userId;
-          con.query(sql,(err,data)=>{
-            if(err){
+          sql = "select * from customer where id=" + req.userId;
+          con.query(sql, (err, data) => {
+            if (err) {
               console.log(err);
-              res.status(200).json({status:"0",message:"OTP not sent. Please try again later."});
-            }else {
-              if(data.length>0){
+              res.status(200).json({
+                status: "0",
+                message: "OTP not sent. Please try again later."
+              });
+            } else {
+              if (data.length > 0) {
                 let http = require("http");
-          let path =
-            process.env.SMSPARAMS +
-            data[0].mobile1 +
-            "&sid=" +
-            process.env.SMSSENDERID +
-            "&msg=Your mobile number verification OTP is " +
-            String(otp) +
-            process.env.SMSLAST;
-          http.get(process.env.SMSHOST + path, res => {});
-          res
-            .status(200)
-            .json({ status: "1", message: "OTP send successfully." });
+                let path =
+                  process.env.SMSPARAMS +
+                  data[0].mobile1 +
+                  "&sid=" +
+                  process.env.SMSSENDERID +
+                  "&msg=Your mobile number verification OTP is " +
+                  String(otp) +
+                  process.env.SMSLAST;
+                http.get(process.env.SMSHOST + path, res => {});
+                res
+                  .status(200)
+                  .json({ status: "1", message: "OTP send successfully." });
               } else {
-                res.status(200).json({status:"0",message:"OTP not sent. Please try again later."});
+                res.status(200).json({
+                  status: "0",
+                  message: "OTP not sent. Please try again later."
+                });
               }
             }
           });
-          
         }
       });
     }
