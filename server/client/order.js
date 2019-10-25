@@ -113,10 +113,12 @@ router.post(
                       orderdata.total_weight + cart[i].total_weight;
                     if (cart[i].mobile_required == 1) {
                       orderdata.collectable_amount =
-                        orderdata.collectable_amount + cart[i].mprice;
+                        orderdata.collectable_amount +
+                        cart[i].mprice * cart[i].cart_quantity;
                     } else {
                       orderdata.collectable_amount =
-                        orderdata.collectable_amount + cart[i].price;
+                        orderdata.collectable_amount +
+                        cart[i].price * cart[i].cart_quantity;
                     }
 
                     cart[i].thumbnail = JSON.parse(cart[i].thumbnail);
@@ -168,8 +170,8 @@ router.post(
                         orderdata.collectable_amount = 0;
                       }
                       orderdata.taxable_amount =
-                        (orderdata.collectable_amount * cart[0].tax) / 100 +
-                        cart[0].tax;
+                        (orderdata.collectable_amount * cart[0].tax) /
+                        (100 + cart[0].tax);
                       orderdata.cgst = orderdata.taxable_amount / 2;
                       orderdata.sgst = orderdata.taxable_amount / 2;
                       orderdata.igst = 0;
@@ -304,52 +306,153 @@ router.post(
   }
 );
 
-router.get("/get-all-order", verifyToken, (req, res) => {
-  let id = req.userId;
-  let sql =
-    "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and d.user_id=" +
-    req.userId +
-    " order by d.added_date desc";
-  con.query(sql, (err, result) => {
-    if (err) {
-      console.log(err);
-      res.status(200).json({ status: "0", message: "No Orders found." });
+router.post(
+  "/order-detail",
+  [check("item_id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
     } else {
-      sql = "select * from status";
-      con.query(sql, (err, statusdata) => {
+      let item = req.body.item_id;
+      let sql =
+        "select co.*,od.*,ca.*,s.status from customer_order co,order_detail od,customer_address ca,status s where od.item_id=" +
+        item +
+        " and co.order_id=od.order_id and co.address_id=ca.address_id and s.id=co.status_id";
+      con.query(sql, (err, result) => {
         if (err) {
-          res.status(200).json({ status: "0", message: "No orders found" });
+          console.log(err);
+          res
+            .status(200)
+            .json({ status: "0", message: "Order detail not found." });
         } else {
-          let data = new Array();
-          let order;
-          let json;
-          console.log(statusdata);
-          for (let i = 0; i < result.length; i++) {
-            order = {
-              order_id: result[i].order_id,
-              item_id: result[i].item_id,
-              status: statusdata.find(item => item.id == result[i].status_id)
-                .status
-            };
-            json = JSON.parse(result[i].variant.toString());
-            order.name = json.name;
-            order.image = json.thumbnail;
-            data.push(order);
-          }
-          json = JSON.stringify(data);
+          result = result[0];
+          let data = {
+            order_id: result.order_id,
+            iscod: result.iscod,
+            add1: result.add1,
+            add2: result.add2,
+            add3: result.add3,
+            landmark: result.landmark,
+            city: result.city,
+            state: result.state,
+            pincode: result.pincode,
+            status: result.status,
+            added_date: result.added_date
+          };
+          let product = JSON.parse(result.variant);
+          data.quantity = product.cart_quantity;
+          data.name = product.name;
+          data.postage_packing = 0.0;
+          let mrp =
+            product.price * product.cart_quantity -
+            (product.price * product.cart_quantity * product.tax) /
+              (100 + product.tax);
+          data.taxable_amount = mrp.toFixed(2);
+          data.tax = ((mrp * product.tax) / 100).toFixed(2);
+          data.total = (
+            Number.parseInt(data.taxable_amount) + Number.parseInt(data.tax)
+          ).toFixed(2);
+
+          let json = JSON.stringify(data);
           data = JSON.parse(json, (key, val) =>
             typeof val !== "object" && val !== null ? String(val) : val
           );
           res.status(200).json({
             status: "1",
-            message: "Getting Order list successfully.",
+            message: "Getting order detail successfully.",
             data: data
           });
         }
       });
     }
-  });
-});
+  }
+);
+
+router.post(
+  "/get-all-order",
+  [check("status").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let sql;
+      let id = req.userId;
+      if (req.body.status >= 0 && req.body.status < 4) {
+        sql =
+          "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and o.status_id<4 and d.user_id= " +
+          req.userId +
+          " order by d.added_date desc";
+      } else {
+        sql =
+          "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and  o.status_id=" +
+          req.body.status +
+          " and d.user_id=" +
+          req.userId +
+          " order by d.added_date desc";
+      }
+      if (req.body.status == -1) {
+        sql =
+          "select d.*,o.status_id from order_detail d, customer_order o where o.order_id=d.order_id and d.user_id=" +
+          req.userId +
+          " order by d.added_date desc";
+      }
+      if (req.body.status)
+        con.query(sql, (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(200).json({ status: "0", message: "No Orders found." });
+          } else {
+            sql = "select * from status";
+            con.query(sql, (err, statusdata) => {
+              if (err) {
+                res
+                  .status(200)
+                  .json({ status: "0", message: "No orders found" });
+              } else {
+                let data = new Array();
+                let order;
+                let json;
+                for (let i = 0; i < result.length; i++) {
+                  order = {
+                    order_id: result[i].order_id,
+                    item_id: result[i].item_id,
+                    status: statusdata.find(
+                      item => item.id == result[i].status_id
+                    ).status
+                  };
+                  json = JSON.parse(result[i].variant.toString());
+                  order.name = json.name;
+                  order.image = json.thumbnail;
+                  data.push(order);
+                }
+                json = JSON.stringify(data);
+                data = JSON.parse(json, (key, val) =>
+                  typeof val !== "object" && val !== null ? String(val) : val
+                );
+                res.status(200).json({
+                  status: "1",
+                  message: "Getting Order list successfully.",
+                  data: data
+                });
+              }
+            });
+          }
+        });
+    }
+  }
+);
 
 function deleteOrder(order_id) {
   let sql = "delete from customer_order where order_id=" + order_id;

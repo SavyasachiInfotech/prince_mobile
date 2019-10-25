@@ -39,15 +39,19 @@ app.use(
   "/main-image",
   express.static(path.join(__dirname, "dist/admin/assets/main_image"))
 );
-console.log(path.join(__dirname, "dist/admin/assets/main_image"));
 app.use(
   "/profile",
   express.static(path.join(__dirname, "dist/admin/assets/profile"))
 );
+app.use("/info", express.static(path.join(__dirname, "dist/admin/assets")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use("/api", api);
+
+// app.get("/terms", function(req, res) {
+//   res.sendFile(path.join(__dirname, "dist/admin/assets/termscondition.html"));
+// });
 
 app.get("*", function(req, res) {
   res.sendFile(path.join(__dirname, "dist/admin/index.html"));
