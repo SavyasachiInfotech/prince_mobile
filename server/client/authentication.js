@@ -494,8 +494,7 @@ router.post(
                                 password: String(user.password),
                                 email: String(user.email),
                                 mobile: String(user.mobile)
-                              },
-                              otp: String(otp)
+                              }
                             });
                           }
                         });
@@ -604,14 +603,14 @@ router.post("/login-user", (req, res) => {
           });
         } else {
           res.status(200).json({
-            status: "2",
+            status: "0",
             message: "Your Username and password are not matched."
           });
         }
       } else {
         res
           .status(200)
-          .json({ status: "2", message: "Enter registered Email/Mobile." });
+          .json({ status: "0", message: "Enter registered Email/Mobile." });
       }
     }
   });
