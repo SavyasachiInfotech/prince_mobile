@@ -402,7 +402,7 @@ router.post(
       } else {
         if (req.body.status == 6) {
           sql =
-            "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and  d.status_id=" +
+            "select d.*,o.status_id from return_order_detail d,customer_order o  where o.order_id=d.order_id and  d.status_id=" +
             req.body.status +
             " and d.user_id=" +
             req.userId +
@@ -464,6 +464,56 @@ router.post(
             });
           }
         });
+    }
+  }
+);
+
+router.post(
+  "/track-order",
+  [check("item_id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let item_id = req.body.item_id;
+      let sql = "select * from track_order where item_id=" + item_id;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log("err");
+          res.status(200).json({ status: "0", message: "Order not tracked." });
+        } else {
+          sql = "select * from track_detail where item_id=" + item_id;
+          con.query(sql, (err, trackdata) => {
+            if (err) {
+              console.log(er);
+              res
+                .status(200)
+                .json({ status: "0", message: "Order not tracked." });
+            } else {
+              let json = JSON.stringify(result);
+              result = JSON.parse(json, (key, val) =>
+                typeof val !== "object" && val !== null ? String(val) : val
+              );
+              json = JSON.stringify(trackdata);
+              trackdata = JSON.parse(json, (key, val) =>
+                typeof val !== "object" && val !== null ? String(val) : val
+              );
+              res.status(200).json({
+                status: "1",
+                message: "Getting status detail successfully.",
+                track_data: result,
+                track_detail: trackdata
+              });
+            }
+          });
+        }
+      });
     }
   }
 );

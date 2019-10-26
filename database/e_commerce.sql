@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 25, 2019 at 06:06 PM
+-- Generation Time: Oct 26, 2019 at 07:31 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -259,7 +259,7 @@ CREATE TABLE `customer` (
 
 INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `flatno`, `colony`, `landmark`, `address`, `pincode`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
 (12, NULL, NULL, 'Parth Dhankecha', 'a@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156062, NULL, '', '', '', NULL, '', NULL, NULL, NULL, '2019-10-02 08:59:52', '2019-10-02 08:59:52', NULL, 252476, 0),
-(16, NULL, NULL, 'A Xyz', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156062, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-22 17:54:57', '2019-10-22 17:54:57', NULL, 252474, 0);
+(17, NULL, NULL, 'A Xyz', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156061, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-26 10:53:48', '2019-10-26 10:53:48', NULL, 917531, 0);
 
 -- --------------------------------------------------------
 
@@ -887,6 +887,37 @@ INSERT INTO `promocode` (`id`, `code`, `description`, `type`, `discount`, `min_l
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `return_order_detail`
+--
+
+CREATE TABLE `return_order_detail` (
+  `item_id` int(11) NOT NULL,
+  `order_id` int(11) DEFAULT NULL,
+  `variant_id` int(11) DEFAULT NULL,
+  `user_id` int(11) NOT NULL DEFAULT 0,
+  `attributes` text DEFAULT NULL,
+  `variant` text DEFAULT NULL COMMENT 'JSON of whole Product',
+  `quantity` int(11) DEFAULT NULL,
+  `cancel_bit` tinyint(1) DEFAULT NULL,
+  `unit_cost` int(11) DEFAULT NULL,
+  `mobile_required` tinyint(1) NOT NULL,
+  `mobile_id` int(11) NOT NULL,
+  `promocode` int(11) DEFAULT NULL,
+  `added_date` datetime NOT NULL DEFAULT current_timestamp(),
+  `modified_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `status_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `return_order_detail`
+--
+
+INSERT INTO `return_order_detail` (`item_id`, `order_id`, `variant_id`, `user_id`, `attributes`, `variant`, `quantity`, `cancel_bit`, `unit_cost`, `mobile_required`, `mobile_id`, `promocode`, `added_date`, `modified_date`, `status_id`) VALUES
+(17, 26, 2, 12, NULL, '{\"item_id\":41,\"cart_quantity\":20,\"mobile_required\":1,\"mobile_id\":2,\"cart_date\":\"2019-10-23T03:06:40.000Z\",\"variant_id\":2,\"name\":\"Soft leather print back cover good quality Camera protection layer\",\"price\":120,\"discount\":20,\"tax_id\":1,\"accept_promocode\":1,\"min_qty\":10,\"quantity\":0,\"parent\":1,\"avg_rating\":4.2,\"attribute\":null,\"thumbnail\":\"http://52.66.237.4:3000/thumbnail/product1_main.jpg\",\"list_image\":\"\",\"view_image\":\"\",\"main_image\":\"\",\"product_id\":1,\"promo_id\":1,\"extra_detail\":\"Further Description which admin want to display to the user\",\"order_count\":170,\"admin_id\":1,\"added_on\":\"2019-09-18T15:13:50.000Z\",\"modified_date\":\"2019-09-18T15:13:50.000Z\",\"tax\":2.5,\"total_weight\":0,\"dimention_length\":0,\"dimention_breadth\":0,\"dimention_height\":0,\"hsncode\":0,\"mquantity\":10000,\"mprice\":200,\"mdiscount\":0}', 20, NULL, NULL, 1, 2, NULL, '2019-10-23 08:37:38', '2019-10-25 22:03:43', 6);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `return_reason`
 --
 
@@ -993,13 +1024,63 @@ INSERT INTO `tax` (`tax_id`, `tax`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `track_detail`
+--
+
+CREATE TABLE `track_detail` (
+  `id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `status_id` int(11) NOT NULL,
+  `added_date` int(11) NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Dumping data for table `track_detail`
+--
+
+INSERT INTO `track_detail` (`id`, `item_id`, `status_id`, `added_date`) VALUES
+(3, 16, 1, 2147483647),
+(4, 16, 2, 2147483647);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `track_order`
+--
+
+CREATE TABLE `track_order` (
+  `order_id` int(11) NOT NULL,
+  `courier` varchar(300) COLLATE utf8mb4_bin NOT NULL,
+  `tracking_no` varchar(100) COLLATE utf8mb4_bin NOT NULL,
+  `carrier_phone` bigint(11) NOT NULL,
+  `item_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Dumping data for table `track_order`
+--
+
+INSERT INTO `track_order` (`order_id`, `courier`, `tracking_no`, `carrier_phone`, `item_id`) VALUES
+(26, 'Fedex Curior Limited', 'AC665496DSDS', 9825745693, 16);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user_otp`
 --
 
 CREATE TABLE `user_otp` (
   `mobile` bigint(20) NOT NULL,
-  `otp` int(11) NOT NULL
+  `otp` int(11) NOT NULL,
+  `added_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
+
+--
+-- Dumping data for table `user_otp`
+--
+
+INSERT INTO `user_otp` (`mobile`, `otp`, `added_date`) VALUES
+(9737156062, 916553, '2019-10-26 10:25:11');
 
 -- --------------------------------------------------------
 
@@ -1277,6 +1358,15 @@ ALTER TABLE `promocode`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `return_order_detail`
+--
+ALTER TABLE `return_order_detail`
+  ADD PRIMARY KEY (`item_id`),
+  ADD KEY `order_id` (`order_id`),
+  ADD KEY `variant_id` (`variant_id`),
+  ADD KEY `mobile_id` (`mobile_id`);
+
+--
 -- Indexes for table `return_reason`
 --
 ALTER TABLE `return_reason`
@@ -1311,6 +1401,18 @@ ALTER TABLE `status`
 --
 ALTER TABLE `tax`
   ADD PRIMARY KEY (`tax_id`);
+
+--
+-- Indexes for table `track_detail`
+--
+ALTER TABLE `track_detail`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `track_order`
+--
+ALTER TABLE `track_order`
+  ADD PRIMARY KEY (`order_id`,`item_id`);
 
 --
 -- Indexes for table `user_otp`
@@ -1380,7 +1482,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `customer_address`
@@ -1443,6 +1545,12 @@ ALTER TABLE `promocode`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `return_order_detail`
+--
+ALTER TABLE `return_order_detail`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
 -- AUTO_INCREMENT for table `return_reason`
 --
 ALTER TABLE `return_reason`
@@ -1477,6 +1585,12 @@ ALTER TABLE `status`
 --
 ALTER TABLE `tax`
   MODIFY `tax_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT for table `track_detail`
+--
+ALTER TABLE `track_detail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

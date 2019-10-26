@@ -69,6 +69,39 @@ function verifyToken(req, res, next) {
   next();
 }
 
+function registerUser(req, res, next) {
+  let user = req.body;
+  let sql =
+    "select * from customer where email='" +
+    user.email +
+    "' or mobile1=" +
+    user.mobile;
+
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(200).json({ status: "0", message: "Enter valid data." });
+    } else {
+      if (result.length > 0) {
+        if (result[0].email == user.email) {
+          res.status(200).json({
+            status: "0",
+            message: "This email is already registered."
+          });
+        } else {
+          res.status(200).json({
+            status: "0",
+            message: "This mobile number is already registerd."
+          });
+        }
+      } else {
+        next();
+      }
+    }
+  });
+  
+}
+
 router.get("/user-data", verifyToken, (req, res) => {
   let id = req.userId;
   let sql =
@@ -329,7 +362,7 @@ router.post(
 
 router.post(
   "/register-user",
-  [
+  [   
     check("email").isEmail(),
     check("password")
       .isString()
@@ -338,112 +371,163 @@ router.post(
     check("full_name").isString(),
     check("otp").isString()
   ],
+  registerUser,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({ status: "0", message: "Enter Valid Data" });
     } else {
       if (req.body.otp == "") {
-        let query = "select * from user_otp";
-      } else {
-      }
-      let user = req.body;
-      let sql =
-        "select * from customer where email='" +
-        user.email +
-        "' or mobile1=" +
-        user.mobile;
-
-      con.query(sql, (err, result) => {
-        if (err) {
-          console.log(err);
-          res.status(200).json({ status: "0", message: "Enter valid data." });
-        } else {
-          if (result.length > 0) {
-            if (result[0].email == user.email) {
-              res.status(200).json({
-                status: "0",
-                message: "This email is already registered."
-              });
-            } else {
-              res.status(200).json({
-                status: "0",
-                message: "This mobile number is already registerd."
-              });
-            }
+        let user = req.body;
+        let otp = Math.random();
+        otp = Math.ceil(otp * 1000000);
+        let query =
+          "replace into user_otp(mobile,otp) values(" +
+          req.body.mobile +
+          "," +
+          otp +
+          ")";
+        con.query(query, (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(200).json({
+              status: "0",
+              message: "User not registered. Try again later"
+            });
           } else {
-            if (user.email && user.password && user.full_name && user.mobile) {
-              let otp = Math.random();
-              otp = Math.ceil(otp * 1000000);
-              let sql =
-                'insert into customer (username,email,password,mobile1,register_otp) values("' +
-                user.full_name +
-                '","' +
-                user.email +
-                '","' +
-                user.password +
-                '",' +
-                user.mobile +
-                "," +
-                otp +
-                ")";
-              con.query(sql, (err, result) => {
-                if (err) {
-                  console.log(err);
-                  res.status(200).json({
-                    status: "0",
-                    message: "User is not registered. Please try agian later."
-                  });
-                } else {
-                  let http = require("http");
-                  let path =
-                    process.env.SMSPARAMS +
-                    user.mobile +
-                    "&sid=" +
-                    process.env.SMSSENDERID +
-                    "&msg=Your mobile number verification OTP is " +
-                    String(otp) +
-                    process.env.SMSLAST;
-                  // let options = {
-                  //   hostname: process.env.SMSHOST,
-                  //   port: 80,
-                  //   path: encodeURI(path),
-                  //   agent: false
-                  // };
-                  http.get(process.env.SMSHOST + path, res => {});
-                  let payload = { subject: result.insertId };
+            let http = require("http");
+            let path =
+              process.env.SMSPARAMS +
+              user.mobile +
+              "&sid=" +
+              process.env.SMSSENDERID +
+              "&msg=Your mobile number verification OTP is " +
+              String(otp) +
+              process.env.SMSLAST;
 
-                  let jwt_token = jwt.sign(payload, "MysupersecreteKey");
-                  res.status(200).send({
-                    status: "1",
-                    message: "User registered successfully",
-                    token: jwt_token,
-                    user: {
-                      id: String(result.insertId),
-                      username: String(user.full_name),
-                      password: String(user.password),
-                      email: String(user.email),
-                      mobile: String(user.mobile)
-                    },
-                    otp: String(otp)
-                  });
-                }
-              });
+            http.get(process.env.SMSHOST + path, res => {});
+            res
+              .status(200)
+              .json({ status: "1", message: "User registered successfully." });
+          }
+        });
+      } else {
+        let query = "select * from user_otp where mobile=" + req.body.mobile;
+        con.query(query, (err, otpdata) => {
+          if (err) {
+            console.log(err);
+            res.status(200).json({ status: "0", message: "OTP not verified." });
+          } else {
+            if (otpdata.length > 0) {
+              if (otpdata[0].otp == req.body.otp) {
+                query = "delete from user_otp where mobile=" + req.body.mobile;
+                con.query(query, (err, data) => {});
+                let user = req.body;
+                let sql =
+                  "select * from customer where email='" +
+                  user.email +
+                  "' or mobile1=" +
+                  user.mobile;
+
+                con.query(sql, (err, result) => {
+                  if (err) {
+                    console.log(err);
+                    res
+                      .status(200)
+                      .json({ status: "0", message: "Enter valid data." });
+                  } else {
+                    if (result.length > 0) {
+                      if (result[0].email == user.email) {
+                        res.status(200).json({
+                          status: "0",
+                          message: "This email is already registered."
+                        });
+                      } else {
+                        res.status(200).json({
+                          status: "0",
+                          message: "This mobile number is already registerd."
+                        });
+                      }
+                    } else {
+                      if (
+                        user.email &&
+                        user.password &&
+                        user.full_name &&
+                        user.mobile
+                      ) {
+                        let otp = Math.random();
+                        otp = Math.ceil(otp * 1000000);
+                        let sql =
+                          'insert into customer (username,email,password,mobile1,register_otp) values("' +
+                          user.full_name +
+                          '","' +
+                          user.email +
+                          '","' +
+                          user.password +
+                          '",' +
+                          user.mobile +
+                          "," +
+                          otp +
+                          ")";
+                        con.query(sql, (err, result) => {
+                          if (err) {
+                            console.log(err);
+                            res.status(200).json({
+                              status: "0",
+                              message:
+                                "User is not registered. Please try agian later."
+                            });
+                          } else {
+                            let payload = { subject: result.insertId };
+
+                            let jwt_token = jwt.sign(
+                              payload,
+                              "MysupersecreteKey"
+                            );
+                            res.status(200).send({
+                              status: "1",
+                              message: "User registered successfully",
+                              token: jwt_token,
+                              user: {
+                                id: String(result.insertId),
+                                username: String(user.full_name),
+                                password: String(user.password),
+                                email: String(user.email),
+                                mobile: String(user.mobile)
+                              },
+                              otp: String(otp)
+                            });
+                          }
+                        });
+                      } else {
+                        res
+                          .status(200)
+                          .send({ status: "0", message: "Invalid Data Found" });
+                      }
+                    }
+                  }
+                });
+              } else {
+                res.status(200).json({
+                  status: "0",
+                  message: "OTP is not matched. Please provide correct OTP."
+                });
+              }
             } else {
               res
                 .status(200)
-                .send({ status: "0", message: "Invalid Data Found" });
+                .json({ status: "0", message: "OTP is not matched." });
             }
           }
-        }
-      });
+        });
+      }
     }
   }
 );
 
 router.post(
   "/resend-otp",
-  /*[check("user_id").isNumeric()]*/ verifyToken,
+  [check("mobile").isNumeric()] /* verifyToken*/,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -452,7 +536,7 @@ router.post(
       let otp = Math.random();
       otp = Math.ceil(otp * 1000000);
       let sql =
-        "update customer set register_otp=" + otp + " where id=" + req.userId;
+        "update user_otp set otp=" + otp + " where mobile=" + req.body.mobile;
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
@@ -460,37 +544,19 @@ router.post(
             .status(200)
             .json({ status: "0", message: "OTP not sent. Please try again" });
         } else {
-          sql = "select * from customer where id=" + req.userId;
-          con.query(sql, (err, data) => {
-            if (err) {
-              console.log(err);
-              res.status(200).json({
-                status: "0",
-                message: "OTP not sent. Please try again later."
-              });
-            } else {
-              if (data.length > 0) {
-                let http = require("http");
-                let path =
-                  process.env.SMSPARAMS +
-                  data[0].mobile1 +
-                  "&sid=" +
-                  process.env.SMSSENDERID +
-                  "&msg=Your mobile number verification OTP is " +
-                  String(otp) +
-                  process.env.SMSLAST;
-                http.get(process.env.SMSHOST + path, res => {});
-                res
-                  .status(200)
-                  .json({ status: "1", message: "OTP send successfully." });
-              } else {
-                res.status(200).json({
-                  status: "0",
-                  message: "OTP not sent. Please try again later."
-                });
-              }
-            }
-          });
+          let http = require("http");
+          let path =
+            process.env.SMSPARAMS +
+            data[0].mobile1 +
+            "&sid=" +
+            process.env.SMSSENDERID +
+            "&msg=Your mobile number verification OTP is " +
+            String(otp) +
+            process.env.SMSLAST;
+          http.get(process.env.SMSHOST + path, res => {});
+          res
+            .status(200)
+            .json({ status: "1", message: "OTP send successfully." });
         }
       });
     }
