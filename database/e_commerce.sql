@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 26, 2019 at 07:31 AM
+-- Generation Time: Nov 08, 2019 at 04:02 PM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -258,8 +258,9 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `flatno`, `colony`, `landmark`, `address`, `pincode`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
-(12, NULL, NULL, 'Parth Dhankecha', 'a@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156062, NULL, '', '', '', NULL, '', NULL, NULL, NULL, '2019-10-02 08:59:52', '2019-10-02 08:59:52', NULL, 252476, 0),
-(17, NULL, NULL, 'A Xyz', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156061, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-26 10:53:48', '2019-10-26 10:53:48', NULL, 917531, 0);
+(12, NULL, NULL, 'Parth Dhankecha', 'a@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156065, NULL, '', '', '', NULL, '', NULL, NULL, NULL, '2019-10-02 08:59:52', '2019-10-02 08:59:52', NULL, 252476, 0),
+(17, NULL, NULL, 'A Xyz', 'pmd3290@gmail.co', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156061, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-26 10:53:48', '2019-10-26 10:53:48', NULL, 917531, 0),
+(18, NULL, NULL, 'A Xyz', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156062, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-26 17:47:04', '2019-10-26 17:47:04', NULL, 713440, 0);
 
 -- --------------------------------------------------------
 
@@ -1031,7 +1032,7 @@ CREATE TABLE `track_detail` (
   `id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
   `status_id` int(11) NOT NULL,
-  `added_date` int(11) NOT NULL DEFAULT current_timestamp()
+  `added_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 --
@@ -1039,8 +1040,8 @@ CREATE TABLE `track_detail` (
 --
 
 INSERT INTO `track_detail` (`id`, `item_id`, `status_id`, `added_date`) VALUES
-(3, 16, 1, 2147483647),
-(4, 16, 2, 2147483647);
+(3, 16, 1, '0000-00-00 00:00:00'),
+(4, 16, 2, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -1074,13 +1075,6 @@ CREATE TABLE `user_otp` (
   `otp` int(11) NOT NULL,
   `added_date` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
-
---
--- Dumping data for table `user_otp`
---
-
-INSERT INTO `user_otp` (`mobile`, `otp`, `added_date`) VALUES
-(9737156062, 916553, '2019-10-26 10:25:11');
 
 -- --------------------------------------------------------
 
@@ -1482,7 +1476,7 @@ ALTER TABLE `category`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `customer_address`

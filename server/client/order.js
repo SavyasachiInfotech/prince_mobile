@@ -342,18 +342,31 @@ router.post(
             city: result.city,
             state: result.state,
             pincode: result.pincode,
+            shipadd1: result.add1,
+            shipadd2: result.add2,
+            shipadd3: result.add3,
+            shiplandmark: result.landmark,
+            shipcity: result.city,
+            shipstate: result.state,
+            shippincode: result.pincode,
             status: result.status,
+            estimate_date: "",
             added_date: result.added_date
           };
           let product = JSON.parse(result.variant);
           data.quantity = product.cart_quantity;
           data.name = product.name;
+          data.price = product.price;
+          data.sold_by = "MS WORLD";
+          data.image = product.thumbnail;
           data.postage_packing = 0.0;
           let mrp =
             product.price * product.cart_quantity -
             (product.price * product.cart_quantity * product.tax) /
               (100 + product.tax);
+          data.items = mrp.toFixed(2);
           data.taxable_amount = mrp.toFixed(2);
+
           data.tax = ((mrp * product.tax) / 100).toFixed(2);
           data.total = (
             Number.parseInt(data.taxable_amount) + Number.parseInt(data.tax)
