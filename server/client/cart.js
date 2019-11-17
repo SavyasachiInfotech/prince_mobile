@@ -59,7 +59,7 @@ router.post("/add-cart", verifyToken, (req, res) => {
       console.log(err);
       res.status(200).json({
         status: "0",
-        message: "Cart is not added. Please try again later."
+        message: "Cart is already added."
       });
     } else {
       res.status(200).json({
