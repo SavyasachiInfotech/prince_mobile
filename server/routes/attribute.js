@@ -306,4 +306,24 @@ router.put(
   }
 );
 
+router.get("/get-attributes-variant",verifyToken,(req,res)=>{
+  let sql="select * from attribute";
+  con.query(sql,(err,result)=>{
+    if(err){
+      console.log(err);
+      res.status(200).json({status:400, message:"Attributes not found"});
+    } else {
+      sql="select * from attribute_value";
+      con.query(sql,(err,data)=>{
+        if(err){
+          console.log(err);
+          res.status(200).json({status:400, message:"Attributes not found"});
+        } else {
+          res.status(200).json({status:200, message:"Attribute getting successfully.", attributes:result, values:data});
+        }
+      });
+    }
+  });
+});
+
 module.exports = router;

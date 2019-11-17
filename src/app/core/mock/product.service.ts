@@ -14,10 +14,16 @@ export class ProductService {
               private _addProductUrl=this._config.apiBaseUrl+this.service+"add-product";
               private _updateProductUrl=this._config.apiBaseUrl+this.service+"update-product";
               private _getProductUrl=this._config.apiBaseUrl+this.service+"get-products/";
+              private _getProductByIdUrl=this._config.apiBaseUrl+this.service+"get-product-by-id/";
             
               getProducts(up){
                 let options=this._config.getHeader();
                 return this._http.get<any>(this._getProductUrl+up,options);
+              }
+
+              getProductById(id){
+                let options=this._config.getHeader();
+                return this._http.get<any>(this._getProductByIdUrl+id,options);
               }
             
               addProduct(product){

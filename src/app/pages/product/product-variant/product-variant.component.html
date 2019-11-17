@@ -78,13 +78,11 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label class="control-label">Color</label>
-                                                        <select class="form-control" name="colors" [(ngModel)]="variant.color_id" data-placeholder="Choose a Color" tabindex="1">
-                                                           <option *ngFor="let color of colors" [value]="color.id">{{color.value}}</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+                                              <div class="form-group">
+                                                <label class="control-label">Minimum Quantity</label>
+                                                <input type="number" name="quantity" [(ngModel)]="variant.min_quantity" class="form-control" placeholder="Quantity">
+                                            </div>
+                                          </div>
                                 </div>
                                 <!--/row-->
                                 <div class="row">
@@ -102,23 +100,29 @@
                                         </div>
                                     </div>
                                 </div>
-                                
+                                <hr>
+                                Attributes :-
+                                <hr>
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Brand</label>
-                                            <select class="form-control" name="brands" [(ngModel)]="variant.brand_id" data-placeholder="Choose a Brand" tabindex="1">
-                                               <option *ngFor="let brand of brands" [value]="brand.id">{{brand.value}}</option>
-                                            </select>
-                                        </div>
+                                  <div class="col-md-5">
+                                    <div class="form-group">
+                                      <select  class="form-control" >
+                                        <option *ngFor="let attribute of attributes" [value]="attribute.attribute_id">{{attribute.name}}</option>
+                                      </select>
                                     </div>
-                                    
+                                  </div>
+                                  <div class="col-md-5">
+                                    <div class="form-group">
+                                      <select  class="form-control" >
+                                        <option *ngFor="let value of values" [value]="value.attribute_value_id">{{value.value}}</option>
+                                      </select>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-2">
+                                    <button class="btn btn-success">Add</button>
+                                  </div>
                                 </div>
-
-
                             </div>
-
-
 
                             <div class="form-actions m-t-40">
                               <button type="submit" class="btn btn-success" (click)="saveVariant()"> Save</button>

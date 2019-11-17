@@ -6,10 +6,11 @@ import { AddProductComponent } from './add-product/add-product.component';
 import { FormsModule } from '@angular/forms';
 import { ProductVariantComponent } from './product-variant/product-variant.component';
 import { AddImagesComponent } from './add-images/add-images.component';
+import { ProductListComponent } from './product-list/product-list.component';
 
 
 @NgModule({
-  declarations: [AddProductComponent, ProductVariantComponent, AddImagesComponent],
+  declarations: [AddProductComponent, ProductVariantComponent, AddImagesComponent, ProductListComponent],
   imports: [
     CommonModule,
     ProductRoutingModule,

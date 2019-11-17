@@ -1,107 +1,124 @@
-import { Component, OnInit } from '@angular/core';
-import { Config } from 'src/app/core/data/config';
-import { CategoryService } from 'src/app/core/mock/category.service';
-import { InsertProduct } from 'src/app/core/data/insert-product';
-import { ProductService } from 'src/app/core/mock/product.service';
+import { Component, OnInit } from "@angular/core";
+import { Config } from "src/app/core/data/config";
+import { CategoryService } from "src/app/core/mock/category.service";
+import { InsertProduct } from "src/app/core/data/insert-product";
+import { ProductService } from "src/app/core/mock/product.service";
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-  selector: 'app-add-product',
-  templateUrl: './add-product.component.html',
-  styleUrls: ['./add-product.component.scss']
+  selector: "app-add-product",
+  templateUrl: "./add-product.component.html",
+  styleUrls: ["./add-product.component.scss"]
 })
 export class AddProductComponent implements OnInit {
+  categories = new Array();
+  subcategories = new Array();
+  allSubCategories=new Array();
+  product: InsertProduct=new InsertProduct();
+  products = new Array();
+  editBit = false;
+  product_id:number=0;
 
-  categories=new Array();
-  subcategories=new Array();
-  product:InsertProduct;
-  products=new Array();
-  editBit=false;
-
-  constructor(private _config:Config,
-              private _categoryService:CategoryService,
-              private _productService:ProductService) { 
-                this.getCategories();
-                this.cancelProduct(); 
-                this.setProduct();
-              }
+  constructor(
+    private _config: Config,
+    private _categoryService: CategoryService,
+    private _productService: ProductService,
+    private _route:ActivatedRoute,
+    private _router:Router
+  ) {
+    
+    this.cancelProduct();
+  }
 
   ngOnInit() {
-  }
-
-  setProduct(){
-    this._productService.getProducts(0).subscribe(res=>{
-      //@ts-ignore
-      if(res.status==200){
-        //@ts-ignore
-        this.products=res.data;
+    this._route.params.subscribe(data=>{
+      this.product_id=data.id;
+      if(this.product_id>0){
+        this._productService.getProductById(this.product_id).subscribe(res=>{
+          //@ts-ignore
+          if(res.status==200){
+            //@ts-ignore
+            this.product=res.product[0];
+            this.getCategories(1);
+          } else {
+            this.getCategories(0);
+          }
+        });
+      } else {
+        this.getCategories(0);
       }
-    })
+      
+    });
+    
+   
   }
 
-  cancelProduct(){
-    this.product=new InsertProduct();
-    this.product.display_bit=true;
-    this.product.is_mobile_product=false;
-    this.editBit=false;
+  cancelProduct() {
+    this.product = new InsertProduct();
+    this.product.is_display = true;
+    this.editBit = false;
   }
 
-  getCategories(){
-    this._categoryService.getCategory(0).subscribe(res=>{
+  getCategories(productBit) {
+    this._categoryService.getAllCategories().subscribe(res => {
       //@ts-ignore
-      if(res.status==200){
+      if (res.status == 200) {
         //@ts-ignore
-        this.categories=res.categories;
-        this.product.category_id=this.categories[0].id;
-        this.getSubCategories(this.product.category_id);
+        this.categories = res.categories.filter(item=>item.parent_id==0);
+        //@ts-ignore
+        this.allSubCategories= res.categories.filter(item=>item.parent_id!=0);
+        this.subcategories=this.allSubCategories.filter(item=>item.parent_id==this.product.category_id);
+        //@ts-ignore
+        if(this.product.parent_id>0 && productBit==1){
+          this.product.subcategory_id=this.product.category_id;
+          //@ts-ignore
+          this.product.category_id=this.product.parent_id;
+          
+        }
       }
     });
   }
 
-  getSubCategories(category_id){
-    this._categoryService.getSubCategory(category_id,0).subscribe(res=>{
-      //@ts-ignore
-      if(res.status==200){
-        //@ts-ignore
-        this.subcategories=res.categories;
-        this.product.subcategory_id=this.subcategories[0].id;
-      }
-    });
+  getSubCategories() {
+    this.subcategories=this.allSubCategories.filter(item=>item.parent_id==this.product.category_id);
   }
 
-  editProduct(product){
-    this.product.id=product.id;
-    this.product.description=product.description;
-    this.product.category_id=product.category_id;
-    this.product.display_bit=product.display;
-    this.product.is_mobile_product=product.is_mobile;
-    this.getSubCategories(this.product.category_id);
-    this.product.subcategory_id=product.sub_category_id;
-    this.editBit=true;
+  setProduct(product) {
+    this.product.id = product.id;
+    this.product.description = product.description;
+    this.product.category_id = product.category_id;
+    this.product.is_display = product.display;
+    // this.getSubCategories(this.product.category_id);
+    this.product.subcategory_id = product.sub_category_id;
+    this.editBit = true;
   }
 
-  addProduct(){
-    if(this.editBit){
+  addProduct() {
+    if(this.product.subcategory_id>0){
+      this.product.category_id=this.product.subcategory_id;
+    }
+    if (this.product_id>0) {
       this._productService.updateProduct(this.product).subscribe(
-        res=>{
+        res => {
           alert("Product is updated successfully");
           this.cancelProduct();
-          this.setProduct();
+          this._router.navigate(["dashboard/product"]);
         },
-        err=>{
+        err => {
           alert("Product is not updated. Please try again later.");
         }
-      )
+      );
     } else {
       this._productService.addProduct(this.product).subscribe(
-        res=>{
+        res => {
           alert("Product is added successfully.");
+          this._router.navigate(["dashboard/product"]);
           this.cancelProduct();
-          this.setProduct();
-        },err=>{
+        },
+        err => {
           alert("Product is not added successfully. Please try agin later.");
         }
-      )
+      );
     }
   }
-
 }

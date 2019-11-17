@@ -1,0 +1,77 @@
+<div class="page-wrapper">
+  <div class="container-fluid">
+    <div class="row page-titles">
+      <div class="col-md-5 align-self-center">
+        <h4 class="text-themecolor">Manage Product</h4>
+      </div>
+      <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a>Home</a></li>
+            <li class="breadcrumb-item active">Manage Product</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="form-body">
+          <h5 class="card-title">Product</h5>
+          <a class="link" routerLink='../add-product/0'>+ Add Product</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table product-overview" id="myTable">
+            <thead>
+              <tr>
+                <th>Product Id</th>
+                <th>Description</th>
+                <th>Sub Category</th>
+                <th>HSN Code</th>
+                <th>Is Display</th>
+                <th>Action</th>
+                <th>Add-Variant</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of products">
+                <td>{{ product.product_id }}</td>
+                <td>{{ product.description }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.hsncode }}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    name="display_dbit"
+                    [ngModel]="product.is_display"
+                  />
+                </td>
+                
+                <td>
+                  <i class="material-icons" (click)="editProduct(product)"
+                    >edit</i
+                  >
+                </td>
+                <td>
+                  <a routerLink="../add-variant/{{ product.product_id }}"
+                    >+ Add Variant</a
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card-footer"  >
+        <nav aria-label="Page">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" *ngIf="currentPage!=1" (click)="changePage(1)"><a class="page-link">First</a></li>
+            <li class="page-item" *ngIf="currentPage!=1" (click)="changePage(currentPage-1)"><a class="page-link"><i class="ion-md-skip-backward"></i></a></li>
+            <li class="page-item" [class.active]="pageno==currentPage" (click)="changePage(pageno)" *ngFor="let pageno of displayPages"><a class="page-link">{{pageno}}</a></li>
+            <li class="page-item" *ngIf="currentPage!=lastPage" (click)="changePage(currentPage+1)"><a class="page-link"><i class="ion-md-skip-forward"></i></a></li>
+            <li class="page-item" *ngIf="currentPage!=lastPage" (click)="changePage(lastPage)"><a class="page-link">Last</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>

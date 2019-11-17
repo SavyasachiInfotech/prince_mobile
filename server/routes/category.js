@@ -29,6 +29,20 @@ function verifyToken(req, res, next) {
   next();
 }
 
+/** Get All catgeories */
+
+router.get("/",verifyToken,(req,res)=>{
+  let sql="select * from category";
+  con.query(sql,(err,result)=>{
+    if(err){
+      console.log(err);
+      res.json({status:400, message:"Category not found"});
+    } else {
+      res.json({status:200, message:"Category getting successfully", categories:result});
+    }
+  });
+});
+
 /** Count the Categories */
 
 router.get("/count-category", verifyToken, (req, res) => {

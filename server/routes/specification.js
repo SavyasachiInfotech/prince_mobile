@@ -54,7 +54,7 @@ router.post("/add-specifications", [check("name").isString()], verifyToken, (req
     });
   } else {
     let specification = req.body;
-    let sql = 'insert into specif ication(name) values("' + specification.name + '")';
+    let sql = 'insert into specification(name) values("' + specification.name + '")';
     con.query(sql, (err, result) => {
       if (err) {
         console.log(err);

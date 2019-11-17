@@ -4,6 +4,8 @@ import { VariantService } from "src/app/core/mock/variant.service";
 import { ActivatedRoute } from "@angular/router";
 import { AttributeService } from "src/app/core/mock/attribute.service";
 import { AttributeValueService } from "src/app/core/mock/attribute-value.service";
+import { Config } from 'src/app/core/data/config';
+import { SpecificationService } from 'src/app/core/mock/specification.service';
 
 @Component({
   selector: "app-product-variant",
@@ -13,14 +15,16 @@ import { AttributeValueService } from "src/app/core/mock/attribute-value.service
 export class ProductVariantComponent implements OnInit {
   variants: Variant[];
   variant = new Variant();
-  colors = new Array();
-  brands = new Array();
+  attributes=new Array();
+  values=new Array();
   product_id;
   editBit = false;
   constructor(
     private _variantService: VariantService,
     private _route: ActivatedRoute,
-    private _attributeService: AttributeValueService
+    private _attributeService: AttributeValueService,
+    private _specificationService:SpecificationService,
+    private _config:Config
   ) {}
 
   ngOnInit() {
@@ -35,14 +39,18 @@ export class ProductVariantComponent implements OnInit {
           this.variants = res.data;
         }
       });
-    });
-    this._attributeService.getAttributes(0, 2).subscribe(res => {
-      //@ts-ignore
-      this.colors = res.attributeValues;
-    });
-    this._attributeService.getAttributes(0, 3).subscribe(res => {
-      //@ts-ignore
-      this.brands = res.attributeValues;
+      this._variantService.getAttributes().subscribe(res=>{
+        //@ts-ignore
+        if(res.status==200){
+          //@ts-ignore
+          this.attributes=res.attributes;
+          //@ts-ignore
+          this.values=res.values;
+        } else {
+          //@ts-ignore
+          this._config.showMessage(res.message);
+        }
+      });
     });
   }
 

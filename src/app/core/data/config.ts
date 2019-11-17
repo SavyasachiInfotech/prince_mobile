@@ -12,4 +12,8 @@ export class Config {
     let options = { headers: headers };
     return options;
   }
+
+  showMessage(message) {
+    alert(message);
+  }
 }

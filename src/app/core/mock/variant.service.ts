@@ -22,6 +22,12 @@ export class VariantService {
     this._config.apiBaseUrl + "upload-image/upload-image";
   private getvarianturl =
     this._config.apiBaseUrl + this.service + "get-variant/";
+  private getAttributeUrl=this._config.apiBaseUrl+"/attribute/get-attributes-variant";
+
+  getAttributes(){
+    let options=this._config.getHeader();
+    return this._http.get<any>(this.getAttributeUrl,options);
+  }
 
   getvariant(id) {
     let options = this._config.getHeader();
