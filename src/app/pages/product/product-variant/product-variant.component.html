@@ -123,7 +123,19 @@
                                   </div>
                                 </div>
                             </div>
-
+                            <hr>
+                            Specifications :-
+                            <hr>
+                            <div class="row">
+                              <div class="col-md-10">
+                                <select class="form-control">
+                                  <option [value]="specification.specification_id"  *ngFor="let specification of specifications">{{specification.specification_key}} &nbsp;&nbsp; => &nbsp;&nbsp; {{specification.specification_value}}</option>
+                                </select>
+                              </div>
+                              <div class="col-md-2">
+                                <button class="btn btn-success">Add</button>
+                              </div>
+                            </div>
                             <div class="form-actions m-t-40">
                               <button type="submit" class="btn btn-success" (click)="saveVariant()"> Save</button>
                                 <button type="button" class="btn btn-dark">Cancel</button>

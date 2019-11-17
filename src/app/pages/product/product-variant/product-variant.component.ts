@@ -16,6 +16,9 @@ export class ProductVariantComponent implements OnInit {
   variants: Variant[];
   variant = new Variant();
   attributes=new Array();
+  specifications=new Array();
+  selectedAttributes=new Array();
+  selectedSpecifications=new Array();
   values=new Array();
   product_id;
   editBit = false;
@@ -39,6 +42,13 @@ export class ProductVariantComponent implements OnInit {
           this.variants = res.data;
         }
       });
+      this._specificationService.getAllSpecifications().subscribe(res=>{
+        //@ts-ignore
+        if(res.status==200){
+          //@ts-ignore
+          this.specifications=res.data;
+        } 
+      })
       this._variantService.getAttributes().subscribe(res=>{
         //@ts-ignore
         if(res.status==200){
@@ -69,6 +79,14 @@ export class ProductVariantComponent implements OnInit {
         this.variants = res.data;
       }
     });
+  }
+
+  addSpecification(data){
+    this.selectedSpecifications.push(data);
+  }
+
+  addAttributes(data){
+    this.selectedAttributes.push(data);
   }
 
   saveVariant() {
