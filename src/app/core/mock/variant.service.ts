@@ -23,10 +23,16 @@ export class VariantService {
   private getvarianturl =
     this._config.apiBaseUrl + this.service + "get-variant/";
   private getAttributeUrl=this._config.apiBaseUrl+"/attribute/get-attributes-variant";
+  private getSpecificationsUrl=this._config.apiBaseUrl+this.service+"get-attributes";
 
   getAttributes(){
     let options=this._config.getHeader();
     return this._http.get<any>(this.getAttributeUrl,options);
+  }
+
+  getSpecifications(data){
+    let options=this._config.getHeader();
+    return this._http.post<any>(this.getSpecificationsUrl,data,options);
   }
 
   getvariant(id) {

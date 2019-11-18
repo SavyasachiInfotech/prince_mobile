@@ -80,9 +80,19 @@
                                             <div class="col-md-6">
                                               <div class="form-group">
                                                 <label class="control-label">Minimum Quantity</label>
-                                                <input type="number" name="quantity" [(ngModel)]="variant.min_quantity" class="form-control" placeholder="Quantity">
+                                                <input type="number" name="quantity" [(ngModel)]="variant.min_qty" class="form-control" placeholder="Quantity">
                                             </div>
                                           </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Tax</label>
+                                            <select name="tax" class="form-control" [(ngModel)]="variant.tax_id">
+                                                <option *ngFor="let tax of taxes" [value]="tax.tax_id">{{tax.name}} - {{tax.tax}}</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                                 <!--/row-->
                                 <div class="row">
@@ -93,52 +103,107 @@
                                         </div>
                                     </div>
 
-                                   <div class="col-md-6">
-                                        <div class="form-group">
-                                            <input  type="checkbox" class="check" name="image" [(ngModel)]="variant.image_required">  
-                                            <label class="control-label">Image Required</label>
-                                        </div>
-                                    </div>
+                                   
+                                </div>
+                                <div class="row">
+                                        <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <input  type="checkbox" class="check" name="image" [(ngModel)]="variant.image_required">  
+                                                    <label class="control-label">Image Required</label>
+                                                </div>
+                                            </div>
+                                </div>
+                                <div class="row">
+                                        <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <input  type="checkbox" class="check" name="promo" [(ngModel)]="variant.accept_promocode">  
+                                                    <label class="control-label">Accept Promocode</label>
+                                                </div>
+                                            </div>
                                 </div>
                                 <hr>
-                                Attributes :-
+                                Attributes :- <span class="right"><a href="{{url}}dashboard/attribute" target="_blank">+ Add New Attribute</a></span>
                                 <hr>
                                 <div class="row">
                                   <div class="col-md-5">
                                     <div class="form-group">
-                                      <select  class="form-control" >
+                                      <select  class="form-control" name="attributes" (change)="changeAttribute()" [(ngModel)]="attr">
                                         <option *ngFor="let attribute of attributes" [value]="attribute.attribute_id">{{attribute.name}}</option>
                                       </select>
                                     </div>
                                   </div>
                                   <div class="col-md-5">
                                     <div class="form-group">
-                                      <select  class="form-control" >
+                                      <select  class="form-control" name="att_value" [(ngModel)]="att_value" >
                                         <option *ngFor="let value of values" [value]="value.attribute_value_id">{{value.value}}</option>
                                       </select>
                                     </div>
                                   </div>
                                   <div class="col-md-2">
-                                    <button class="btn btn-success">Add</button>
+                                    <button class="btn btn-success" (click)="addAttributes()">Add</button>
                                   </div>
+                                </div>
+                                <div class="table-responsive" *ngIf="selectedAttributes.length>0">
+                                    <table class="table product-overview">
+                                        <thead>
+                                            <tr>
+                                                <th>Attribute</th>
+                                                <th>Value</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let att of selectedAttributes;let i=index">
+                                                <td>{{att.att_name}}</td>
+                                                <td>{{att.value}}</td>
+                                                <td>
+                                                        <i class="material-icons" (click)="editAttribute(i)">edit</i>
+                                                        <i class="material-icons delete" (click)="deleteAttribute(i)">delete</i>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                             <hr>
-                            Specifications :-
+                            Specifications :- <span class="right"><a href="{{url}}dashboard/attribute" target="_blank">+ Add New Specification</a></span>
                             <hr>
                             <div class="row">
                               <div class="col-md-10">
-                                <select class="form-control">
+                                <select class="form-control" name="specis" [(ngModel)]="spec">
                                   <option [value]="specification.specification_id"  *ngFor="let specification of specifications">{{specification.specification_key}} &nbsp;&nbsp; => &nbsp;&nbsp; {{specification.specification_value}}</option>
                                 </select>
                               </div>
                               <div class="col-md-2">
-                                <button class="btn btn-success">Add</button>
+                                <button class="btn btn-success" (click)="addSpecification()">Add</button>
                               </div>
                             </div>
+                            <div class="table-responsive" *ngIf="selectedSpecifications.length>0">
+                                <table class="table product-overview">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Key</th>
+                                            <th>Value</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let specis of selectedSpecifications;let i=index">
+                                            <td>{{specis.specification_id}}</td>
+                                            <td>{{specis.specification_key}}</td>
+                                            <td>{{specis.specification_value}}</td>
+                                            <td>
+                                                <i class="material-icons" (click)="editSpecification(i)">edit</i>
+                                                <i class="material-icons delete" (click)="deleteSpecification(i)">delete</i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                             <div class="form-actions m-t-40">
-                              <button type="submit" class="btn btn-success" (click)="saveVariant()"> Save</button>
-                                <button type="button" class="btn btn-dark">Cancel</button>
+                              <button type="submit" class="btn btn-success save" (click)="saveVariant()"> Save</button>
+                                <button type="button" class="btn btn-dark cancel">Cancel</button>
                             
                             </div>
                         </form>

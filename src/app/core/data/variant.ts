@@ -4,8 +4,9 @@ export class Variant {
   price: number;
   discount: number;
   quantity: number;
+  min_qty:number;
   parent: boolean;
-  color_id: number;
-  brand_id: number;
   image_required: boolean;
+  tax_id:number;
+  accept_promocode:boolean;
 }

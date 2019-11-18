@@ -84,8 +84,9 @@ router.post(
     check("discount").isFloat(),
     check("quantity").isNumeric(),
     check("parent").isBoolean(),
-    check("color_id").isNumeric(),
-    check("brand_id").isNumeric(),
+    check("accept_promocode").isBoolean(),
+    check("min_qty").isNumeric(),
+    check("tax_id").isNumeric(),
     check("image_required").isBoolean()
   ],
   verifyToken,
@@ -100,7 +101,7 @@ router.post(
     } else {
       let variant = req.body;
       let sql =
-        "insert into product_variant(product_id,name,price,discount,quantity,parent,color_id,brand_id,image_required,thumbnail,list_image,view_image,main_image) values(" +
+        "insert into product_variant(product_id,name,price,discount,quantity,parent,accept_promocode,min_qty,tax_id,image_required,thumbnail,list_image,view_image,main_image) values(" +
         variant.product_id +
         ',"' +
         variant.name +
@@ -113,27 +114,95 @@ router.post(
         "," +
         variant.parent +
         "," +
-        variant.color_id +
+        variant.accept_promocode +
         "," +
-        variant.brand_id +
+        variant.min_qty +
+        "," +
+        variant.tax_id +
         "," +
         variant.image_required +
         ",'[]','[]','[]','[]')";
-      con.query(sql, (err, result) => {
-        if (err) {
-          console.log(err);
-          res
-            .status(200)
-            .json({ status: 400, message: "Variant is not added" });
-        } else {
-          res
-            .status(200)
-            .json({ status: 200, message: "Variant is adde successfully." });
-        }
-      });
+        con.query(sql, (err, result) => {
+          console.log(result)
+          if (err) {
+            console.log(err);
+            res
+              .status(200)
+              .json({ status: 400, message: "Variant is not added" });
+          } else {
+            let spec=variant.specifications;
+           
+              sql="insert into product_specification values";
+              for(let i=0;i<spec.length;i++){
+                sql+="("+result.insertId+","+spec[i]+")";
+                if(i==spec.length-1){
+                  sql+";"
+                } else {
+                  sql+=", ";
+                }
+              }
+              console.log(sql)
+              con.query(sql,(err,data)=>{
+                if(err){
+                  res
+                  .status(200)
+                  .json({ status: 200, message: "Variant is adde successfully." });
+                } else {
+                  let att=variant.attributes;
+           
+                  sql="insert into variant_attribute values";
+                  for(let i=0;i<att.length;i++){
+                    sql+="("+result.insertId+","+att[i]+")";
+                    if(i==att.length-1){
+                      sql+=";";
+                    } else {
+                      sql+=", ";
+                    }
+                  }
+                  console.log(sql)
+                  con.query(sql,(err,data)=>{
+                    res
+                    .status(200)
+                    .json({ status: 200, message: "Variant is adde successfully." });
+                  });
+                }
+              });
+          }
+        });
+      }
     }
+  );
+  
+
+router.post('/get-attributes',[check("id").isNumeric()],verifyToken,(req,res)=>{
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.status(200).json({
+      status: process.env.ERROR,
+      message: "Invalid Input Found",
+      errors: errors.array()
+    });
+  } else {
+    let sql="select v.attribute_value_id as value_id,av.value,av.attribute_id as att_id,a.name as att_name from variant_attribute v, attribute_value av, attribute a where v.attribute_value_id=av.attribute_value_id and av.attribute_id=a.attribute_id and v.variant_id="+req.body.id;
+    con.query(sql,(err,result)=>{
+      if(err){
+        console.log(err);
+        res.status(200).json({status:400, message:"Attributes not found"});
+      } else {
+        sql="select s.* from product_specification ps,specification s where s.specification_id=ps.specification_id and ps.variant_id="+req.body.id;
+        con.query(sql,(err,data)=>{
+          if(err){
+            console.log(err);
+            res.status(200).json({status:400, message:"Specification not found"});
+          } else {
+            res.status(200).json({status:200, message:"Getting attribute successfully", attributes:result, specifications:data});
+          }
+        });
+      }
+    });
   }
-);
+});
+
 
 router.put(
   "/update-variant",
@@ -145,8 +214,9 @@ router.put(
     check("discount").isFloat(),
     check("quantity").isNumeric(),
     check("parent").isBoolean(),
-    check("color_id").isNumeric(),
-    check("brand_id").isNumeric(),
+    check("accept_promocode").isBoolean(),
+    check("min_qty").isNumeric(),
+    check("tax_id").isNumeric(),
     check("image_required").isBoolean()
   ],
   verifyToken,
@@ -171,10 +241,12 @@ router.put(
         variant.quantity +
         ",parent=" +
         variant.parent +
-        ",color_id=" +
-        variant.color_id +
-        ",brand_id=" +
-        variant.brand_id +
+        ",accept_promocode=" +
+        variant.accept_promocode +
+        ",min_qty=" +
+        variant.min_qty +
+        ",tax_id=" +
+        variant.tax_id +
         ",image_required=" +
         variant.image_required +
         " where product_id=" +
@@ -189,9 +261,58 @@ router.put(
             message: "Variant is not updated successfully."
           });
         } else {
-          res
+          sql="delete from product_specification where variant_id="+variant.variant_id;
+          con.query(sql,(err,ddata)=>{
+            if(err){
+              res
             .status(200)
             .json({ status: 200, message: "Variant updated successfully." });
+            } else {
+              spec=variant.specifications;
+              sql="insert into product_specification values";
+              for(let i=0;i<spec.length;i++){
+                sql+="("+variant.variant_id+","+spec[i]+")";
+                if(i==spec.length-1){
+                  sql+";"
+                } else {
+                  sql+=", ";
+                }
+              }
+              con.query(sql,(err,sdata)=>{
+                if(err){
+                  res
+                    .status(200)
+                    .json({ status: 200, message: "Variant updated successfully." });
+                } else {
+                  sql="delete from variant_attribute where variant_id="+variant.variant_id;
+                  con.query(sql,(err,ddata)=>{
+                    if(err){
+                      res
+                        .status(200)
+                        .json({ status: 200, message: "Variant updated successfully." });
+                    } else {
+                      let att=variant.attributes;
+                      sql="insert into variant_attribute values";
+                      for(let i=0;i<att.length;i++){
+                        sql+="("+variant.variant_id+","+att[i]+")";
+                        if(i==att.length-1){
+                          sql+=";";
+                        } else {
+                          sql+=", ";
+                        }
+                      }
+                      con.query(sql,(err,adata)=>{
+                        res
+                        .status(200)
+                        .json({ status: 200, message: "Variant updated successfully." });
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          })
+          
         }
       });
     }

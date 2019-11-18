@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { VariantService } from "src/app/core/mock/variant.service";
 import { ActivatedRoute } from "@angular/router";
+import { Config } from 'src/app/core/data/config';
 
 @Component({
   selector: "app-add-images",
@@ -17,7 +18,8 @@ export class AddImagesComponent implements OnInit {
 
   constructor(
     private _variantService: VariantService,
-    private _route: ActivatedRoute
+    private _route: ActivatedRoute,
+    private _config:Config
   ) {}
 
   ngOnInit() {
@@ -32,7 +34,7 @@ export class AddImagesComponent implements OnInit {
           this.list = JSON.parse(this.variant.list_image);
           for (let i = 0; i < 6; i++) {
             if (this.list.length > i) {
-              this.images[i] = "/assets/images/list_image/" + this.list[i];
+              this.images[i] = this._config.imageUrl + this.list[i];
               this.uploadLabel[i] = "Change Image";
             } else {
               this.uploadLabel[i] = "Upload Image";
@@ -100,13 +102,7 @@ export class AddImagesComponent implements OnInit {
               //@ts-ignore
               img.src = reader.result;
               img.onload = () => {
-                if (img.width < 800 || img.height < 800) {
-                  window.alert(
-                    "Please select image with minimum resolution 800*800"
-                  );
-                  check = 1;
-                  return;
-                } else {
+                
                   if (check == 0) {
                     const formsData = new FormData();
                     const file: Array<File> = this.filesToUpload;
@@ -114,7 +110,7 @@ export class AddImagesComponent implements OnInit {
                       formsData.append("uploads[]", file[i], files[i]["name"]);
                     }
                     if (index < this.list.length) {
-                      let image = JSON.parse(this.variant.large_image);
+                      let image = JSON.parse(this.variant.main_image);
                       this._variantService
                         .editUploadedImage(
                           formsData,
@@ -146,7 +142,7 @@ export class AddImagesComponent implements OnInit {
                         );
                     }
                   }
-                }
+                
               };
             };
           }

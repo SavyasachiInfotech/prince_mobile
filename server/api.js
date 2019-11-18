@@ -17,6 +17,7 @@ const variant = require("./routes/variant");
 // const order=require('./admin/orders');
 const authentication = require("./routes/authentication");
 const imageUpload = require("./routes/image_upload");
+const tax=require("./routes/tax");
 
 app.use("/client", client);
 app.use("/authentication", authentication);
@@ -26,6 +27,7 @@ app.use("/mobile", mobile);
 app.use("/specification", specification);
 app.use("/variant", variant);
 app.use("/upload-image", imageUpload);
+app.use("/tax",tax);
 // app.use('/attributeValue',attributeValue);
 app.use("/category", category);
 // app.use('/order',order);
