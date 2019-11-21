@@ -54,6 +54,7 @@ router.get("/get-address", verifyToken, (req, res) => {
 router.post(
   "/add-address",
   [
+    check("id").isString(),
     check("first_name")
       .isString()
       .isLength({ min: 1, max: 100 }),
@@ -93,7 +94,9 @@ router.post(
       });
     } else {
       let add = req.body;
-      let sql =
+      let sql;
+      if(add.id==""){
+         sql =
         'insert into customer_address(first_name,last_name,email,add1,add2,add3,landmark,city,state,pincode,mobile,customer_id) values("' +
         add.first_name +
         '","' +
@@ -119,6 +122,36 @@ router.post(
         "," +
         req.userId +
         ")";
+      } else {
+        sql =
+        'update customer_address set first_name="' +
+        add.first_name +
+        '", last_name="' +
+        add.last_name +
+        '",email="' +
+        add.email +
+        '", add1="' +
+        add.add1 +
+        '", add2="' +
+        add.add2 +
+        '", add3="' +
+        add.add3 +
+        '",landmark="' +
+        add.landmark +
+        '", city="' +
+        add.city +
+        '", state="' +
+        add.city +
+        '", pincode=' +
+        add.pincode +
+        ", mobile=" +
+        add.mobile +
+        " where customer_id=" +
+        req.userId +
+        " and address_id=" +
+        add.address_id;
+      }
+      
 
       con.query(sql, (err, result) => {
         if (err) {

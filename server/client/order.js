@@ -509,6 +509,19 @@ router.post(
                 .status(200)
                 .json({ status: "0", message: "Order not tracked." });
             } else {
+              for(let i=0;i<5;i++){
+                if(i<trackdata.length){
+                  trackdata[i].status=1;
+                } else {
+                  trackdata[i]={
+                    id:i,
+                    item_id:trackdata[0].item_id,
+                    status_id:i+1,
+                    added_date:new Date(),
+                    status:0
+                  }
+                }
+              }
               let json = JSON.stringify(result);
               result = JSON.parse(json, (key, val) =>
                 typeof val !== "object" && val !== null ? String(val) : val
