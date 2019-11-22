@@ -1,0 +1,50 @@
+<div class="page-wrapper">
+    <div class="container-fluid">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h4 class="text-themecolor">Add Mobile Brand</h4>
+            </div>
+            <div class="col-md-7 align-self-center text-right">
+                <div class="d-flex justify-content-end align-items-center">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">Home</li>
+                        <li class="breadcrumb-item active">Add Mobile Brand</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Column -->
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-body">
+                            <h5 class="card-title">Mobile Brands :-</h5>
+                            <span class="mr-left"></span>
+                            <button class="btn btn-success" (click)="addBrand()">+ Add Brand</button>
+                        </div>
+                        <hr>
+                        <div class="table-responsive">
+                                <table class="table product-overview" id="myTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Brand Id</th>
+                                            <th>Name</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let brand of allBrand">
+                                            <td>{{brand.brand_id}}</td>
+                                            <td>{{brand.name}}</td>
+                                            <td><i class="material-icons" (click)="updateBrand(brand)">edit</i></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

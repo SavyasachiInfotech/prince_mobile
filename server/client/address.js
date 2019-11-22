@@ -51,6 +51,56 @@ router.get("/get-address", verifyToken, (req, res) => {
   });
 });
 
+router.get("/get-shipping-address", verifyToken, (req, res) => {
+  let sql = "select * from customer_address where customer_id=" + req.userId;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(200).json({
+        status: "0",
+        message: "No Address found. Please add one address. "
+      });
+    } else {
+      if(result.length>0){
+        result=result[0];
+      }
+      let json = JSON.stringify(result);
+      result = JSON.parse(json, (key, val) =>
+        typeof val !== "object" && val !== null ? String(val) : val
+      );
+      res.status(200).json({
+        status: "1",
+        message: "Getting shipping address successfully.",
+        address: result
+      });
+    }
+  });
+});
+
+
+router.post("/delete-address",[check("address_id").isNumeric()],verifyToken,(req,res)=>{
+  const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let data=req.body;
+      let sql="delete from customer_address where address_id="+data.address_id;
+      con.query(sql,(err,result)=>{
+        if(err){
+          console.log(err);
+          res.status(200).json({status:"0",message:"Address not deleted. Please try again"});
+        } else {
+          res.status(200).json({status:"1", message:"Address deleted successfully."});
+        }
+      });
+    }
+});
+
+
 router.post(
   "/add-address",
   [

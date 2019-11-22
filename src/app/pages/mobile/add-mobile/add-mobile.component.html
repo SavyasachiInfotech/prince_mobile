@@ -34,6 +34,16 @@
                                 <div class="form-body">
                                     <h5 class="card-title">About Mobiles</h5>
                                     <hr>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Mobile Brand</label>
+                                                <select class="form-control" name="brands" [(ngModel)]="selectedBrand" (change)="this.setMobiles()">
+                                                    <option *ngFor="let brand of brands" [value]="brand.brand_id">{{brand.name}}</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <!--/row-->
                                     <div class="row">
                                         <div class="col-md-6">
