@@ -48,11 +48,20 @@ router.get(
             message: "Product variants not found."
           });
         } else {
-          res.status(200).json({
-            status: 200,
-            message: "Variants getting successfully.",
-            data: result
+          sql="select * from mobile_models";
+          con.query(sql,(err,mobile)=>{
+            if(err){
+              res.status(200).json({status:400, message:"Mobiles not found"});
+            } else{
+              res.status(200).json({
+                status: 200,
+                message: "Variants getting successfully.",
+                data: result,
+                mobiles:mobile
+              });    
+            }
           });
+          
         }
       });
     }
@@ -141,12 +150,11 @@ router.post(
                   sql+=", ";
                 }
               }
-              console.log(sql)
               con.query(sql,(err,data)=>{
                 if(err){
                   res
                   .status(200)
-                  .json({ status: 200, message: "Variant is adde successfully." });
+                  .json({ status: 200, message: "Variant is added successfully." });
                 } else {
                   let att=variant.attributes;
            
@@ -159,11 +167,32 @@ router.post(
                       sql+=", ";
                     }
                   }
-                  console.log(sql)
                   con.query(sql,(err,data)=>{
-                    res
-                    .status(200)
-                    .json({ status: 200, message: "Variant is adde successfully." });
+                    if(variant.mobiles){
+                      if(variant.mobiles.length>0){
+                        sql="insert into variant_mobile values ";
+                        for(let i=0;i<variant.mobiles.length;i++){
+                          sql+="("+result.insertId+","+variant.mobiles[i].model_id+","+variant.mobiles[i].quantity+","+variant.price+","+variant.discount+")";
+                          if(i<variant.mobiles.length-2){
+                            sql+=",";
+                          }
+                        }
+                        con.query(sql,(err,data)=>{
+                          if(err){
+                            res.status(200).json({status:400, message:"Mobiles not added."});
+                          } else {
+                            res
+                            .status(200)
+                            .json({ status: 200, message: "Variant is added successfully." });
+                          }
+                        });
+                      }
+                    } else {
+                      res
+                      .status(200)
+                      .json({ status: 200, message: "Variant is added successfully." });
+                    }
+                    
                   });
                 }
               });
@@ -195,7 +224,15 @@ router.post('/get-attributes',[check("id").isNumeric()],verifyToken,(req,res)=>{
             console.log(err);
             res.status(200).json({status:400, message:"Specification not found"});
           } else {
-            res.status(200).json({status:200, message:"Getting attribute successfully", attributes:result, specifications:data});
+            sql="select * from variant_mobile where variant_id="+req.body.id;
+            con.query(sql,(err,mobile)=>{
+              if(err){
+                res.status(200).json({status:400, message:"Mobiles not found"});
+              } else{
+                res.status(200).json({status:200, message:"Getting attribute successfully", attributes:result, specifications:data,mobiles:mobile});
+              }
+            });
+            
           }
         });
       }
@@ -302,9 +339,34 @@ router.put(
                         }
                       }
                       con.query(sql,(err,adata)=>{
-                        res
-                        .status(200)
-                        .json({ status: 200, message: "Variant updated successfully." });
+                        sql="delete from variant_mobile where variant_id="+variant.variant_id;
+                        con.query(sql,(err,data)=>{
+if(variant.mobiles){
+                      if(variant.mobiles.length>0){
+                        sql="insert into variant_mobile values ";
+                        for(let i=0;i<variant.mobiles.length;i++){
+                          sql+="("+variant.variant_id+","+variant.mobiles[i].model_id+","+variant.mobiles[i].quantity+","+variant.price+","+variant.discount+")";
+                          if(i<variant.mobiles.length-2){
+                            sql+=",";
+                          }
+                        }
+                        con.query(sql,(err,data)=>{
+                          if(err){
+                            res.status(200).json({status:400, message:"Mobiles not added."});
+                          } else {
+                            res
+                            .status(200)
+                            .json({ status: 200, message: "Variant is updated successfully." });
+                          }
+                        });
+                      }
+                    } else {
+                      res
+                      .status(200)
+                      .json({ status: 200, message: "Variant updated successfully." });
+                    }
+                        });
+                        
                       });
                     }
                   });

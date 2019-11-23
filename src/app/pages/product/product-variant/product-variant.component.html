@@ -178,6 +178,7 @@
                                 <button class="btn btn-success" (click)="addSpecification()">Add</button>
                               </div>
                             </div>
+                            
                             <div class="table-responsive" *ngIf="selectedSpecifications.length>0">
                                 <table class="table product-overview">
                                     <thead>
@@ -201,6 +202,50 @@
                                     </tbody>
                                 </table>
                             </div>
+
+                            <hr>
+                                Mobiles :-
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label>Mobiles</label>
+                                    <select class="form-control" name="mobiles" [(ngModel)]="selectedMobile">
+                                        <option [value]="mobile.model_id" *ngFor="let mobile of mobiles">{{mobile.model_name}}</option>
+                                    </select>    
+                                </div>
+                                <div class="col-md-5">
+                                    <label>Quantity</label>
+                                    <input class="form-control" [(ngModel)]="selectQuantity" name="selectquantity">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success" (click)="addMobile()">Add</button>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive" *ngIf="allMobiles.length>0">
+                                <table class="table product-overview">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Mobile</th>
+                                            <th>Quantity</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let mob of allMobiles;let i=index">
+                                            <td>{{mob.model_id}}</td>
+                                            <td>{{mob.model_name}}</td>
+                                            <td>{{mob.quantity}}</td>
+                                            <td>
+                                                <i class="material-icons" (click)="editMobile(i)">edit</i>
+                                                <i class="material-icons delete" (click)="deleteMobile(i)">delete</i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
                             <div class="form-actions m-t-40">
                               <button type="submit" class="btn btn-success save" (click)="saveVariant()"> Save</button>
                                 <button type="button" class="btn btn-dark cancel">Cancel</button>

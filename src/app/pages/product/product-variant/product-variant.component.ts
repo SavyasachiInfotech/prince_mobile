@@ -17,14 +17,18 @@ export class ProductVariantComponent implements OnInit {
   variants: Variant[];
   variant = new Variant();
   attributes=new Array();
+  mobiles=new Array();
   url="";
+  selectedMobile=0;
   specifications=new Array();
   allValues=new Array();
+  allMobiles=new Array();
   selectedAttributes=new Array();
   attr;
   att_value;
   spec;
   selectedSpecifications=new Array();
+  selectQuantity=0;
   values=new Array();
   product_id;
   editBit = false;
@@ -49,6 +53,9 @@ export class ProductVariantComponent implements OnInit {
         if (res.status == 200) {
           //@ts-ignore
           this.variants = res.data;
+          //@ts-ignore
+        this.mobiles=res.mobiles;
+        this.selectedMobile=this.mobiles[0].model_id;
         }
       });
       this._taxService.getAllTaxes().subscribe(res=>{
@@ -61,6 +68,22 @@ export class ProductVariantComponent implements OnInit {
       this.getAttributes();
       this.getSpecifications();
     });
+  }
+
+  addMobile(){
+    let data=this.mobiles.find(item=>item.model_id==this.selectedMobile);
+    data.quantity=this.selectQuantity;
+    this.allMobiles.push(data);
+  }
+
+  editMobile(i){
+    this.selectedMobile=this.allMobiles[i].model_id;
+    this.selectQuantity=this.allMobiles[i].quantity;
+    this.allMobiles.splice(i,1);
+  } 
+
+  deleteMobile(i){
+    this.allMobiles.splice(i,1);
   }
 
   getAttributes(){
@@ -88,6 +111,7 @@ export class ProductVariantComponent implements OnInit {
         //@ts-ignore
         this.specifications=res.data;
         this.spec=this.specifications[0].specification_id;
+        
       } 
     })
   }
@@ -161,6 +185,8 @@ export class ProductVariantComponent implements OnInit {
       atts.push(this.selectedAttributes[i].value_id);
     }
     //@ts-ignore
+    this.variant.mobiles=this.allMobiles;
+    //@ts-ignore
     this.variant.specifications=specs;
     //@ts-ignore
     this.variant.attributes=atts;
@@ -204,9 +230,17 @@ export class ProductVariantComponent implements OnInit {
       if(res.status==200){
         //@ts-ignore
         this.selectedAttributes=res.attributes;
-        console.log(this.selectedAttributes)
+
         //@ts-ignore
         this.selectedSpecifications=res.specifications;
+
+        //@ts-ignore
+        this.allMobiles=res.mobiles;
+        console.log(this.allMobiles)
+        for(let i=0;i<this.allMobiles.length;i++){
+          this.allMobiles[i].model_id=this.allMobiles[i].mobile_id;
+          this.allMobiles[i].model_name=this.mobiles.find(item=>item.model_id==this.allMobiles[i].mobile_id).model_name;
+        }
       }
     });
     this.editBit = true;
