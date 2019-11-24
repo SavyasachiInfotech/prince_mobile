@@ -379,7 +379,7 @@ router.post(
           res.status(200).json({
             status: "1",
             message: "Getting order detail successfully.",
-            data: data
+            order_detail: data
           });
         }
       });
