@@ -61,8 +61,8 @@ router.get("/get-shipping-address", verifyToken, (req, res) => {
         message: "No Address found. Please add one address. "
       });
     } else {
-      if(result.length>0){
-        result=result[0];
+      if (result.length > 0) {
+        result = result[0];
       }
       let json = JSON.stringify(result);
       result = JSON.parse(json, (key, val) =>
@@ -77,9 +77,12 @@ router.get("/get-shipping-address", verifyToken, (req, res) => {
   });
 });
 
-
-router.post("/delete-address",[check("address_id").isNumeric()],verifyToken,(req,res)=>{
-  const errors = validationResult(req);
+router.post(
+  "/delete-address",
+  [check("address_id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({
         status: "0",
@@ -87,19 +90,25 @@ router.post("/delete-address",[check("address_id").isNumeric()],verifyToken,(req
         errors: errors.array()
       });
     } else {
-      let data=req.body;
-      let sql="delete from customer_address where address_id="+data.address_id;
-      con.query(sql,(err,result)=>{
-        if(err){
+      let data = req.body;
+      let sql =
+        "delete from customer_address where address_id=" + data.address_id;
+      con.query(sql, (err, result) => {
+        if (err) {
           console.log(err);
-          res.status(200).json({status:"0",message:"Address not deleted. Please try again"});
+          res.status(200).json({
+            status: "0",
+            message: "Address not deleted. Please try again"
+          });
         } else {
-          res.status(200).json({status:"1", message:"Address deleted successfully."});
+          res
+            .status(200)
+            .json({ status: "1", message: "Address deleted successfully." });
         }
       });
     }
-});
-
+  }
+);
 
 router.post(
   "/add-address",
@@ -112,13 +121,10 @@ router.post(
       .isString()
       .isLength({ min: 1, max: 100 }),
     check("email").isEmail(),
-    check("add1")
+    check("flatno")
       .isString()
       .isLength({ min: 1, max: 500 }),
-    check("add2")
-      .isString()
-      .isLength({ min: 0, max: 500 }),
-    check("add3")
+    check("colony")
       .isString()
       .isLength({ min: 0, max: 500 }),
     check("landmark")
@@ -145,63 +151,58 @@ router.post(
     } else {
       let add = req.body;
       let sql;
-      if(add.id==""){
-         sql =
-        'insert into customer_address(first_name,last_name,email,add1,add2,add3,landmark,city,state,pincode,mobile,customer_id) values("' +
-        add.first_name +
-        '","' +
-        add.last_name +
-        '","' +
-        add.email +
-        '","' +
-        add.add1 +
-        '","' +
-        add.add2 +
-        '","' +
-        add.add3 +
-        '","' +
-        add.landmark +
-        '","' +
-        add.city +
-        '","' +
-        add.state +
-        '",' +
-        add.pincode +
-        "," +
-        add.mobile +
-        "," +
-        req.userId +
-        ")";
+      if (add.id == "") {
+        sql =
+          'insert into customer_address(first_name,last_name,email,flatno,colony,landmark,city,state,pincode,mobile,customer_id) values("' +
+          add.first_name +
+          '","' +
+          add.last_name +
+          '","' +
+          add.email +
+          '","' +
+          add.flatno +
+          '","' +
+          add.colony +
+          '","' +
+          add.landmark +
+          '","' +
+          add.city +
+          '","' +
+          add.state +
+          '",' +
+          add.pincode +
+          "," +
+          add.mobile +
+          "," +
+          req.userId +
+          ")";
       } else {
         sql =
-        'update customer_address set first_name="' +
-        add.first_name +
-        '", last_name="' +
-        add.last_name +
-        '",email="' +
-        add.email +
-        '", add1="' +
-        add.add1 +
-        '", add2="' +
-        add.add2 +
-        '", add3="' +
-        add.add3 +
-        '",landmark="' +
-        add.landmark +
-        '", city="' +
-        add.city +
-        '", state="' +
-        add.city +
-        '", pincode=' +
-        add.pincode +
-        ", mobile=" +
-        add.mobile +
-        " where customer_id=" +
-        req.userId +
-        " and address_id=" +
-        add.address_id;
+          'update customer_address set first_name="' +
+          add.first_name +
+          '", last_name="' +
+          add.last_name +
+          '",email="' +
+          add.email +
+          '", flatno="' +
+          add.flatno +
+          '", colony="' +
+          add.colony +
+          '",landmark="' +
+          add.landmark +
+          '", city="' +
+          add.city +
+          '", state="' +
+          add.city +
+          '", pincode=' +
+          add.pincode +
+          ", mobile=" +
+          add.mobile +
+          " where customer_id=" +
+          req.userId +
+          " and address_id=" +
+          add.id;
       }
-      
 
       con.query(sql, (err, result) => {
         if (err) {
