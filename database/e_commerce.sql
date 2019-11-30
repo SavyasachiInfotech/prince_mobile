@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.1
+-- version 4.9.0.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Nov 18, 2019 at 05:31 AM
--- Server version: 10.4.8-MariaDB
--- PHP Version: 7.3.11
+-- Host: 127.0.0.1
+-- Generation Time: Nov 30, 2019 at 01:35 PM
+-- Server version: 10.3.16-MariaDB
+-- PHP Version: 7.3.7
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -164,6 +164,13 @@ CREATE TABLE `cart` (
   `modified_date` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `cart`
+--
+
+INSERT INTO `cart` (`item_id`, `cart_id`, `variant_id`, `quantity`, `mobile_required`, `mobile_id`, `added_date`, `modified_date`) VALUES
+(42, 12, 12, 20, 1, 2, '2019-11-26 05:53:30', '2019-11-26 05:53:30');
+
 -- --------------------------------------------------------
 
 --
@@ -274,9 +281,8 @@ CREATE TABLE `customer_address` (
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) NOT NULL,
   `email` varchar(400) NOT NULL,
-  `add1` text DEFAULT NULL,
-  `add2` text DEFAULT NULL,
-  `add3` text DEFAULT NULL,
+  `flatno` text DEFAULT NULL,
+  `colony` text DEFAULT NULL,
   `landmark` varchar(100) DEFAULT '',
   `city` varchar(100) DEFAULT '',
   `state` varchar(100) DEFAULT '',
@@ -289,8 +295,9 @@ CREATE TABLE `customer_address` (
 -- Dumping data for table `customer_address`
 --
 
-INSERT INTO `customer_address` (`address_id`, `first_name`, `last_name`, `email`, `add1`, `add2`, `add3`, `landmark`, `city`, `state`, `pincode`, `mobile`, `customer_id`) VALUES
-(1, 'Parth', 'Dhankecha', 'pmdhankecha.18@gmail.com', 'c-18, shivdarshan socity', 'yogichowk', '', 'Yogichowk', 'Surat', 'Surat', 395010, 9737156062, 12);
+INSERT INTO `customer_address` (`address_id`, `first_name`, `last_name`, `email`, `flatno`, `colony`, `landmark`, `city`, `state`, `pincode`, `mobile`, `customer_id`) VALUES
+(1, 'Parth', 'Dhankecha', 'pmdhankecha.18@gmail.com', 'c-18, shivdarshan socity', 'yogichowk', 'Yogichowk', 'Surat', 'Surat', 395010, 9737156062, 12),
+(2, 'Parth', 'Dhankecha', 'pmdhankecha.18@gmail.com', 'c-18, shivdarshan socity', 'yogichowk', 'Yogichowk', 'Surat', 'Surat', 395010, 9737156062, 12);
 
 -- --------------------------------------------------------
 
@@ -1484,7 +1491,7 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
 
 --
 -- AUTO_INCREMENT for table `category`
@@ -1502,7 +1509,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `customer_address`
 --
 ALTER TABLE `customer_address`
-  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `address_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `customer_order`
