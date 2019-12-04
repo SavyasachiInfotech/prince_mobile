@@ -11,7 +11,7 @@ export class AddMobileComponent implements OnInit {
   mobile;
   mobiles;
   editBit = false;
-  brands=new Array();
+  brands = new Array();
   selectedBrand;
 
   constructor(private _config: Config, private _mobileService: MobileService) {
@@ -19,15 +19,15 @@ export class AddMobileComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._mobileService.getBrand().subscribe(res=>{
+    this._mobileService.getBrand().subscribe(res => {
       //@ts-ignore
-      if(res.status==200){
+      if (res.status == 200) {
         //@ts-ignore
-        this.brands=res.data;
-        this.selectedBrand=this.brands[0].brand_id;
+        this.brands = res.data;
+        this.selectedBrand = this.brands[0].brand_id;
         this.setMobiles();
       }
-    }); 
+    });
   }
 
   setMobiles() {
@@ -38,7 +38,7 @@ export class AddMobileComponent implements OnInit {
           //@ts-ignore
           this.mobiles = res.data;
         } else {
-          alert("No recored found for mobile");
+          // alert("No record found for mobile");
         }
       },
       err => {
@@ -55,12 +55,13 @@ export class AddMobileComponent implements OnInit {
   editMobile(mobile) {
     this.mobile.id = mobile.mobile_id;
     this.mobile.name = mobile.model_name;
-    this.mobile.brand_id=this.selectedBrand;
+    this.mobile.brand_id = this.selectedBrand;
     this.editBit = true;
   }
 
   addMobile() {
-    this.mobile.brand_id=this.selectedBrand;
+    this.mobile.brand_id = this.selectedBrand;
+
     if (this.mobile.name != "") {
       if (this.editBit) {
         this._mobileService.updateMobile(this.mobile).subscribe(
@@ -74,6 +75,10 @@ export class AddMobileComponent implements OnInit {
           }
         );
       } else {
+        let brand = this.brands.find(
+          item => item.brand_id == this.selectedBrand
+        );
+        this.mobile.name = brand.name + " " + this.mobile.name;
         this._mobileService.addMobile(this.mobile).subscribe(
           res => {
             alert("Mobile is added successfully.");

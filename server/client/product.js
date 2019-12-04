@@ -308,6 +308,16 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                     if (err) {
                       console.log(err);
                     } else {
+                      if (mobiles.length < 1) {
+                        mobiles.push({
+                          variant_id: id,
+                          mobile_id: 0,
+                          quantity: products[0].quantity,
+                          model_name: products[0].name,
+                          price: products[0].price,
+                          discount: products[0].discount
+                        });
+                      }
                       sql =
                         "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +
                         id +
@@ -352,7 +362,7 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                                 ) {
                                   products[i].mobiles[j].mrp =
                                     products[i].mobiles[j].price +
-                                    (products[i].mobiles[j].price * products[i],
+                                    (products[i].mobiles[j].price * products[i].
                                     mobiles[j].discount) /
                                       100;
                                   products[i].mobiles[j].category =
