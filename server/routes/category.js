@@ -31,14 +31,38 @@ function verifyToken(req, res, next) {
 
 /** Get All catgeories */
 
-router.get("/",verifyToken,(req,res)=>{
-  let sql="select * from category";
-  con.query(sql,(err,result)=>{
-    if(err){
+router.get("/", verifyToken, (req, res) => {
+  let sql = "select * from category";
+  con.query(sql, (err, result) => {
+    if (err) {
       console.log(err);
-      res.json({status:400, message:"Category not found"});
+      res.json({ status: 400, message: "Category not found" });
     } else {
-      res.json({status:200, message:"Category getting successfully", categories:result});
+      res.json({
+        status: 200,
+        message: "Category getting successfully",
+        categories: result
+      });
+    }
+  });
+});
+
+/** Get Category By ID */
+
+router.get("/get-category/:id", verifyToken, (req, res) => {
+  let sql = "select * from category where category_id=" + req.params.id;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res
+        .status(200)
+        .json({ status: 400, message: "Please select valid category" });
+    } else {
+      res.status(200).json({
+        status: 200,
+        message: "Getting category successfully",
+        category: result
+      });
     }
   });
 });
@@ -163,7 +187,8 @@ router.post(
     check("name").isString(),
     check("description").isString(),
     check("image_required").isBoolean(),
-    check("mobile_required").isBoolean()
+    check("mobile_required").isBoolean(),
+    check("is_display").isBoolean()
   ],
   verifyToken,
   (req, res) => {
@@ -173,7 +198,7 @@ router.post(
     } else {
       let category = req.body;
       let sql =
-        "insert into category(name,description,parent_id,image_required,mobile_required) values('" +
+        "insert into category(name,description,parent_id,image_required,mobile_required,is_display) values('" +
         category.name.replace("'", "''") +
         "','" +
         category.description.replace("'", "''") +
@@ -181,6 +206,8 @@ router.post(
         category.image_required +
         "," +
         category.mobile_required +
+        "," +
+        category.is_display +
         ")";
       con.query(sql, (err, result) => {
         if (err) {
@@ -209,7 +236,8 @@ router.post(
   [
     check("name").isString(),
     check("description").isString(),
-    check("parent_id").isNumeric()
+    check("parent_id").isNumeric(),
+    check("is_display").isBoolean()
     // check("image_required").isBoolean(),
     // check("mobile_required").isBoolean()
   ],
@@ -221,12 +249,14 @@ router.post(
     } else {
       let category = req.body;
       let sql =
-        "insert into category(name,description,parent_id) values('" +
+        "insert into category(name,description,parent_id,is_display) values('" +
         category.name.replace("'", "''") +
         "','" +
         category.description.replace("'", "''") +
         "'," +
         category.parent_id +
+        "," +
+        category.is_display +
         // "," +
         // category.image_required +
         // "," +
@@ -261,7 +291,8 @@ router.put(
     check("name").isString(),
     check("description").isString(),
     check("image_required").isBoolean(),
-    check("mobile_required").isBoolean()
+    check("mobile_required").isBoolean(),
+    check("is_display").isBoolean()
   ],
   verifyToken,
   (req, res) => {
@@ -279,6 +310,8 @@ router.put(
         category.image_required +
         ", mobile_required=" +
         category.mobile_required +
+        ", is_display=" +
+        category.is_display +
         " where category_id=" +
         category.category_id;
       con.query(sql, (err, result) => {
@@ -311,7 +344,8 @@ router.put(
     check("description").isString(),
     check("parent_id").isNumeric(),
     check("image_required").isBoolean(),
-    check("mobile_required").isBoolean()
+    check("mobile_required").isBoolean(),
+    check("is_display").isBoolean()
   ],
   verifyToken,
   (req, res) => {
@@ -331,6 +365,8 @@ router.put(
         category.image_required +
         ", mobile_required=" +
         category.mobile_required +
+        ", is_display=" +
+        category.is_display +
         " where category_id=" +
         category.category_id;
       con.query(sql, (err, result) => {

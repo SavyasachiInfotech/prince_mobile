@@ -22,17 +22,26 @@ export class VariantService {
     this._config.apiBaseUrl + "upload-image/upload-image";
   private getvarianturl =
     this._config.apiBaseUrl + this.service + "get-variant/";
-  private getAttributeUrl=this._config.apiBaseUrl+"/attribute/get-attributes-variant";
-  private getSpecificationsUrl=this._config.apiBaseUrl+this.service+"get-attributes";
+  private getAttributeUrl =
+    this._config.apiBaseUrl + "/attribute/get-attributes-variant";
+  private getSpecificationsUrl =
+    this._config.apiBaseUrl + this.service + "get-attributes";
+  private _getFinishedProductsUrl =
+    this._config.apiBaseUrl + this.service + "get-finished-quantity";
 
-  getAttributes(){
-    let options=this._config.getHeader();
-    return this._http.get<any>(this.getAttributeUrl,options);
+  getAttributes() {
+    let options = this._config.getHeader();
+    return this._http.get<any>(this.getAttributeUrl, options);
   }
 
-  getSpecifications(data){
-    let options=this._config.getHeader();
-    return this._http.post<any>(this.getSpecificationsUrl,data,options);
+  getFinishedProducts() {
+    let options = this._config.getHeader();
+    return this._http.get<any>(this._getFinishedProductsUrl, options);
+  }
+
+  getSpecifications(data) {
+    let options = this._config.getHeader();
+    return this._http.post<any>(this.getSpecificationsUrl, data, options);
   }
 
   getvariant(id) {

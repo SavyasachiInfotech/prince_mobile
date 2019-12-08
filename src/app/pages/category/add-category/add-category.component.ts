@@ -42,7 +42,8 @@ export class AddCategoryComponent implements OnInit {
       name: "",
       description: "",
       image_required: false,
-      mobile_required: false
+      mobile_required: false,
+      is_display: true
     };
   }
 

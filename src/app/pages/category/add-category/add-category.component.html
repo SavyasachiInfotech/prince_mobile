@@ -88,6 +88,15 @@
                   />
                   <span class="checkmark"></span>
                 </label>
+                <label class="check-container"
+                  ><span class="check-head">Is Display</span>
+                  <input
+                    type="checkbox"
+                    name="is_display"
+                    [(ngModel)]="category.is_display"
+                  />
+                  <span class="checkmark"></span>
+                </label>
               </div>
               <div class="form-actions m-t-40">
                 <button
@@ -118,6 +127,7 @@
                     <th>Category Id</th>
                     <th>Category Name</th>
                     <th>Parent Id</th>
+                    <th>Image Upload</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -126,6 +136,11 @@
                     <td>{{ category.category_id }}</td>
                     <td>{{ category.name }}</td>
                     <td>{{ category.description }}</td>
+                    <td>
+                      <a routerLink="../image-upload/{{ category.category_id }}"
+                        >+ Add Image</a
+                      >
+                    </td>
                     <td>
                       <i class="material-icons" (click)="editCategory(category)"
                         >edit</i

@@ -24,14 +24,18 @@ export class AddSubCategoryComponent implements OnInit {
   ngOnInit() {}
 
   cancelCategory() {
-    this.category = { name: "", description: "", parent_id: 1 };
+    this.category = {
+      name: "",
+      description: "",
+      parent_id: 1,
+      is_display: true
+    };
     this.editBit = false;
   }
 
   setSubCategory() {
     this._categoryService.getCategory(0).subscribe(
       res => {
-        console.log(res);
         //@ts-ignore
         if (res.status == 200) {
           //@ts-ignore
@@ -44,7 +48,6 @@ export class AddSubCategoryComponent implements OnInit {
     );
     this._categoryService.getSubCategory(1, 0).subscribe(
       res => {
-        console.log(res);
         //@ts-ignore
         if (res.status == 200) {
           //@ts-ignore
@@ -91,10 +94,8 @@ export class AddSubCategoryComponent implements OnInit {
           }
         );
       } else {
-        console.log(this.category);
         this._categoryService.addSubCategory(this.category).subscribe(
           res => {
-            console.log(res);
             //@ts-ignore
             if (res.status == 200) {
               alert("Sub category added successfully");

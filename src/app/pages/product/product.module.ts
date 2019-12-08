@@ -7,10 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { ProductVariantComponent } from './product-variant/product-variant.component';
 import { AddImagesComponent } from './add-images/add-images.component';
 import { ProductListComponent } from './product-list/product-list.component';
+import { QuantityFinishComponent } from './quantity-finish/quantity-finish.component';
 
 
 @NgModule({
-  declarations: [AddProductComponent, ProductVariantComponent, AddImagesComponent, ProductListComponent],
+  declarations: [AddProductComponent, ProductVariantComponent, AddImagesComponent, ProductListComponent, QuantityFinishComponent],
   imports: [
     CommonModule,
     ProductRoutingModule,

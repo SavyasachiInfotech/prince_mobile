@@ -163,7 +163,7 @@ router.get("/get-cart-detail", verifyToken, (req, res) => {
   let sql =
     "select c.item_id,c.variant_id,v.name,c.quantity,v.list_image,v.price,v.discount,t.tax,c.mobile_required,m.model_name from cart c, product_variant v,tax t,mobile_models m where c.cart_id=" +
     req.userId +
-    " and  c.variant_id=v.variant_id and v.tax_id=t.tax_id and c.mobile_id=m.model_id";
+    " and  c.variant_id=v.variant_id and v.tax_id=t.tax_id and c.mobile_id=m.model_id group by c.variant_id";
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -203,6 +203,58 @@ router.get("/get-cart-detail", verifyToken, (req, res) => {
     }
   });
 });
+
+router.post(
+  "/get-cart-item-detail",
+  [check("variant_id").isNumeric(), check("mobile_required").isBoolean()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let data = req.body;
+      let sql;
+      if (data.mobile_required) {
+        sql =
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,vm.quantity as total_quantity,v.thumbnail,vm.price,vm.discount,m.model_name from cart c, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
+          data.variant_id +
+          " and c.cart_id=" +
+          req.userId;
+      } else {
+        sql =
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.quantity as total_quantity,v.thumbnail,v.price,v.discount,m.model_name from cart c,mobile_models m,variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and c.cart_id=" +
+          req.userId +
+          " and c.variant_id=" +
+          data.variant_id;
+      }
+      con.query(sql,(err,result)=>{
+        if(err){
+          console.log(err);
+          res.status(200).json({status:0, message:"Please select valid cart product"});
+        } else {
+          for(let i=0;i<result.length;i++){
+            let data=JSON.parse(result[i].thumbnail);
+            if(data.length>0){
+              result[i].thumbnail="http://52.66.237.4:3000/thumbnail/"+data[0];
+            } else {
+              result[i].thumbnail="";
+            }
+          }
+          let json = JSON.stringify(result);
+          result = JSON.parse(json, (key, val) =>
+            typeof val !== "object" && val !== null ? String(val) : val
+          );
+          res.status(200).json({status:1, message:"Getting cart product detail successfuly.",cart_data:result});
+        } 
+      });
+    }
+  }
+);
 
 router.post(
   "/apply-promocode",

@@ -4,6 +4,7 @@ import { AddProductComponent } from "./add-product/add-product.component";
 import { ProductVariantComponent } from "./product-variant/product-variant.component";
 import { AddImagesComponent } from "./add-images/add-images.component";
 import { ProductListComponent } from "./product-list/product-list.component";
+import { QuantityFinishComponent } from "./quantity-finish/quantity-finish.component";
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
   {
     path: "",
     component: ProductListComponent
+  },
+  {
+    path: "quantity-finish",
+    component: QuantityFinishComponent
   }
 ];
 

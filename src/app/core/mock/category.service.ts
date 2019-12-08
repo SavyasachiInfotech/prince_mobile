@@ -24,12 +24,18 @@ export class CategoryService {
     this._config.apiBaseUrl + this.service + "edit-subcategory";
   private countCategoryUrl =
     this._config.apiBaseUrl + this.service + "count-category";
-    private _getAllCategoryUrl=this._config.apiBaseUrl+this.service;
+  private _getAllCategoryUrl = this._config.apiBaseUrl + this.service;
+  private _getCategoryByIdUrl =
+    this._config.apiBaseUrl + this.service + "get-category/";
 
+  getAllCategories() {
+    let options = this._config.getHeader();
+    return this._http.get<any>(this._getAllCategoryUrl, options);
+  }
 
-  getAllCategories(){
-    let options=this._config.getHeader();
-    return this._http.get<any>(this._getAllCategoryUrl,options);
+  getCategoryById(id) {
+    let options = this._config.getHeader();
+    return this._http.get<any>(this._getCategoryByIdUrl + id, options);
   }
 
   addCategory(category) {
