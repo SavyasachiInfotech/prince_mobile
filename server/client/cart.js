@@ -161,44 +161,32 @@ router.post(
 
 router.get("/get-cart-detail", verifyToken, (req, res) => {
   let sql =
-    "select c.item_id,c.variant_id,v.name,c.quantity,v.list_image,v.price,v.discount,t.tax,c.mobile_required,m.model_name from cart c, product_variant v,tax t,mobile_models m where c.cart_id=" +
+    "select c.item_id,c.variant_id,v.name,SUM(c.quantity) as total_quantity,v.list_image,v.price,v.discount from cart c, product_variant v where c.cart_id=" +
     req.userId +
-    " and  c.variant_id=v.variant_id and v.tax_id=t.tax_id and c.mobile_id=m.model_id group by c.variant_id";
+    " and  c.variant_id=v.variant_id group by c.variant_id";
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
       res.status(200).json({ status: "0", message: "Enter valid user token" });
     } else {
-      sql = "select * from promocode where type=1";
-      con.query(sql, (err, promo) => {
-        if (err) {
-          console.log(err);
+      let image;
+      for (let i = 0; i < result.length; i++) {
+        result[i].price = result[i].total_quantity * result[i].price;
+        image = JSON.parse(result[i].list_image);
+        if (image.length > 0) {
+          result[i].list_image = process.env.LISTIMAGE + image[0];
+        } else {
+          result[i].list_image = "";
         }
-        let image;
-        for (let i = 0; i < result.length; i++) {
-          result[i].mrp =
-            result[i].price + (result[i].price * result[i].discount) / 100;
-          image = JSON.parse(result[i].list_image);
-          if (image.length > 0) {
-            result[i].list_image = process.env.LISTIMAGE + image[0];
-          } else {
-            result[i].list_image = "";
-          }
-        }
-        json = JSON.stringify(result);
-        result = JSON.parse(json, (key, val) =>
-          typeof val !== "object" && val !== null ? String(val) : val
-        );
-        json = JSON.stringify(promo);
-        promo = JSON.parse(json, (key, val) =>
-          typeof val !== "object" && val !== null ? String(val) : val
-        );
-        res.status(200).json({
-          status: "1",
-          message: "Getting Cart Details Successfully.",
-          data: result,
-          offers_detail: promo
-        });
+      }
+      json = JSON.stringify(result);
+      result = JSON.parse(json, (key, val) =>
+        typeof val !== "object" && val !== null ? String(val) : val
+      );
+      res.status(200).json({
+        status: "1",
+        message: "Getting Cart Details Successfully.",
+        data: result
       });
     }
   });
@@ -221,36 +209,51 @@ router.post(
       let sql;
       if (data.mobile_required) {
         sql =
-          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,vm.quantity as total_quantity,v.thumbnail,vm.price,vm.discount,m.model_name from cart c, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,vm.quantity as available_quantity,v.thumbnail,vm.price,vm.discount,m.model_name from cart c, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
           data.variant_id +
           " and c.cart_id=" +
           req.userId;
       } else {
         sql =
-          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.quantity as total_quantity,v.thumbnail,v.price,v.discount,m.model_name from cart c,mobile_models m,variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and c.cart_id=" +
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.quantity as available_quantity,v.thumbnail,v.price,v.discount from cart c,variant v where c.variant_id=v.variant_id and c.cart_id=" +
           req.userId +
           " and c.variant_id=" +
           data.variant_id;
       }
-      con.query(sql,(err,result)=>{
-        if(err){
+      con.query(sql, (err, result) => {
+        if (err) {
           console.log(err);
-          res.status(200).json({status:0, message:"Please select valid cart product"});
+          res
+            .status(200)
+            .json({ status: 0, message: "Please select valid cart product" });
         } else {
-          for(let i=0;i<result.length;i++){
-            let data=JSON.parse(result[i].thumbnail);
-            if(data.length>0){
-              result[i].thumbnail="http://52.66.237.4:3000/thumbnail/"+data[0];
-            } else {
-              result[i].thumbnail="";
+          for (let i = 0; i < result.length; i++) {
+            if (!data.mobile_required) {
+              result[i].model_name = "";
             }
+            result[i].mobile_required = data.mobile_required;
+            let images = JSON.parse(result[i].thumbnail);
+            if (images.length > 0) {
+              result[i].thumbnail =
+                "http://52.66.237.4:3000/thumbnail/" + images[0];
+            } else {
+              result[i].thumbnail = "";
+            }
+            result[i].mrp =
+              result[i].price + (result[i].price * result[i].discount) / 100;
+
+            // result[i].total_price=result[i].price*
           }
           let json = JSON.stringify(result);
           result = JSON.parse(json, (key, val) =>
             typeof val !== "object" && val !== null ? String(val) : val
           );
-          res.status(200).json({status:1, message:"Getting cart product detail successfuly.",cart_data:result});
-        } 
+          res.status(200).json({
+            status: 1,
+            message: "Getting cart product detail successfuly.",
+            cart_data: result
+          });
+        }
       });
     }
   }
@@ -258,7 +261,7 @@ router.post(
 
 router.post(
   "/apply-promocode",
-  [check("promo_id").isNumeric()],
+  [check("promo_id").isNumeric(), check("variant_id").isNumeric()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -286,6 +289,17 @@ router.post(
         } else {
           if (result.length > 0) {
             if (result[0].count < result[0].max_attempt) {
+              sql = "select * from promocode where id=" + promo;
+              con.query(sql, (err, promoData) => {
+                if (promoData.length > 0) {
+                } else {
+                  res.status(200).json({
+                    status: "0",
+                    message: "Please enter valid promocode."
+                  });
+                }
+              });
+
               res.status(200).json({
                 status: "1",
                 message: "Promocode applied successfully."

@@ -99,14 +99,16 @@ function registerUser(req, res, next) {
       }
     }
   });
-  
 }
 
 router.get("/user-data", verifyToken, (req, res) => {
   let id = req.userId;
   let sql =
-    "select username,email,mobile1,profile_image,flatno,colony,landmark,pincode from customer where id=" +
-    id;
+    "select c.username,c.email,c.mobile1,c.profile_image,a.flatno,a.colony,a.landmark,a.pincode from customer c, customer_address a where c.id=" +
+    id +
+    " and a.customer_id=" +
+    id +
+    " and a.default_address=1";
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -167,7 +169,8 @@ router.post(
       .isLength({ max: 100 }),
     check("pincode")
       .isString()
-      .isLength({ max: 6 })
+      .isLength({ max: 6 }),
+    check("address_id").isNumeric()
   ],
   verifyToken,
   (req, res) => {
@@ -177,15 +180,7 @@ router.post(
     } else {
       let data = req.body;
       let sql =
-        'update customer set flatno="' +
-        data.flatno +
-        '", colony="' +
-        data.colony +
-        '", landmark="' +
-        data.landmark +
-        '",pincode="' +
-        data.pincode +
-        '",username="' +
+        'update customer set username="' +
         data.username +
         '" where id=' +
         req.userId;
@@ -194,9 +189,30 @@ router.post(
           console.log(err);
           res.status(200).json({ status: "0", message: "Enter valid data." });
         } else {
-          res
-            .status(200)
-            .json({ status: "1", message: "Profile updated successfully." });
+          sql =
+            'update customer_address set flatno="' +
+            data.flatno +
+            '", colony="' +
+            data.colony +
+            '", landmark="' +
+            data.landmark +
+            '",pincode="' +
+            data.pincode +
+            '" where address_id=' +
+            data.address_id;
+          con.query(sql, (err, result) => {
+            if (err) {
+              res.status(200).json({
+                status: "0",
+                message: "Profile address is not updated."
+              });
+            } else {
+              res.status(200).json({
+                status: "1",
+                message: "Profile updated successfully."
+              });
+            }
+          });
         }
       });
     }
@@ -362,7 +378,7 @@ router.post(
 
 router.post(
   "/register-user",
-  [   
+  [
     check("email").isEmail(),
     check("password")
       .isString()
@@ -478,6 +494,13 @@ router.post(
                                 "User is not registered. Please try agian later."
                             });
                           } else {
+                            sql =
+                              "insert into customer_address(first_name,email,default_address) values('" +
+                              user.full_name +
+                              "','" +
+                              user.email +
+                              "',1)";
+                            con.query(sql);
                             let payload = { subject: result.insertId };
 
                             let jwt_token = jwt.sign(
