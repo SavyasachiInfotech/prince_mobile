@@ -395,8 +395,7 @@ router.post(
     } else {
       if (req.body.otp == "") {
         let user = req.body;
-        let otp = Math.random();
-        otp = Math.ceil(otp * 1000000);
+        let otp = Math.floor(100000 + Math.random() * 900000);
         let query =
           "replace into user_otp(mobile,otp) values(" +
           req.body.mobile +
@@ -471,8 +470,7 @@ router.post(
                         user.full_name &&
                         user.mobile
                       ) {
-                        let otp = Math.random();
-                        otp = Math.ceil(otp * 1000000);
+                        let otp = Math.floor(100000 + Math.random() * 900000);
                         let sql =
                           'insert into customer (username,email,password,mobile1,register_otp) values("' +
                           user.full_name +
@@ -555,8 +553,7 @@ router.post(
     if (!errors.isEmpty()) {
       res.status(200).json({ status: "0", message: "Enter Valid Data" });
     } else {
-      let otp = Math.random();
-      otp = Math.ceil(otp * 1000000);
+      let otp = Math.floor(100000 + Math.random() * 900000);
       let sql =
         "update user_otp set otp=" + otp + " where mobile=" + req.body.mobile;
       con.query(sql, (err, result) => {

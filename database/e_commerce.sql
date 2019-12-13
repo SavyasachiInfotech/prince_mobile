@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 30, 2019 at 01:35 PM
+-- Generation Time: Dec 13, 2019 at 03:46 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -169,6 +169,7 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`item_id`, `cart_id`, `variant_id`, `quantity`, `mobile_required`, `mobile_id`, `added_date`, `modified_date`) VALUES
+(44, 12, 12, 20, 1, 1, '2019-12-12 07:25:11', '2019-12-12 07:25:11'),
 (42, 12, 12, 20, 1, 2, '2019-11-26 05:53:30', '2019-11-26 05:53:30');
 
 -- --------------------------------------------------------
@@ -205,31 +206,35 @@ CREATE TABLE `category` (
   `image` varchar(700) DEFAULT NULL,
   `image_required` tinyint(1) DEFAULT 0,
   `parent_id` int(11) DEFAULT NULL,
-  `mobile_required` tinyint(1) DEFAULT 0
+  `mobile_required` tinyint(1) DEFAULT 0,
+  `promo_images` text NOT NULL DEFAULT '[]',
+  `is_display` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `category`
 --
 
-INSERT INTO `category` (`category_id`, `name`, `description`, `image`, `image_required`, `parent_id`, `mobile_required`) VALUES
-(2, 'Design Print Soft Cover', 'Design Print Soft Cover', 'design-hard-cover.png', 0, 0, 1),
-(3, 'Design Print Hard Cover', 'Design Print Hard Cover', 'design-hard-cover.png', 0, 0, 1),
-(4, 'Photo Soft Cover', 'Photo Soft Cover', 'photo-covor.png', 1, 0, 1),
-(5, 'Photo Hard Cover', 'Photo Hard Cover', 'photo-hard-cover.png', 1, 0, 1),
-(6, 'Earphone', 'Earphone', 'ear-phone.png', 0, 0, 0),
-(7, 'Cabel', 'Cabel', 'cabel.png', 0, 0, 0),
-(8, 'Charger', 'Charger', 'charger.png', 0, 0, 0),
-(9, 'Speaker', 'Speaker', 'speaker.png', 0, 0, 0),
-(10, 'Design Print Soft Cover', '', 'soft-cover.png', 0, 2, 0),
-(11, 'Soft Design Print Cover', '', 'soft-cover.png', 0, 2, 0),
-(12, 'Design Print Hard Cover', '', 'design-hard-cover.png', 0, 3, 0),
-(13, 'Hard Design Print Cover', '', 'design-hard-cover.png', 0, 3, 0),
-(14, 'Rubber Photo Hard Cover', '', 'photo-covor.png', 1, 5, 0),
-(15, 'Hard Photo Cover', '', 'photo-covor.png', 1, 5, 0),
-(16, 'Rubber Photo Soft Cover', '', 'photo-covor.png', 1, 4, 0),
-(17, 'Soft Photo Cover', '', 'photo-covor.png', 1, 4, 0),
-(18, 'Lot Shot', '', 'lotshot.png', 0, 0, 1);
+INSERT INTO `category` (`category_id`, `name`, `description`, `image`, `image_required`, `parent_id`, `mobile_required`, `promo_images`, `is_display`) VALUES
+(2, 'Design Print Soft Cover', 'Design Print Soft Cover', 'design-hard-cover.png', 0, 0, 1, '[\"Radhika_Infotech.jpg-1575645524332.jpg\"]', 0),
+(3, 'Design Print Hard Cover', 'Design Print Hard Cover', 'design-hard-cover.png', 0, 0, 1, '[\"Radhika_Infotech.jpg-1575628062047.jpg\",\"logo9.png-1575627417727.png\"]', 1),
+(4, 'Photo Soft Cover', 'Photo Soft Cover', 'photo-covor.png', 1, 0, 1, '[]', 1),
+(5, 'Photo Hard Cover', 'Photo Hard Cover', 'photo-hard-cover.png', 1, 0, 1, '[]', 1),
+(6, 'Earphone', 'Earphone', 'ear-phone.png', 0, 0, 0, '[]', 1),
+(7, 'Cabel', 'Cabel', 'cabel.png', 0, 0, 0, '[]', 1),
+(8, 'Charger', 'Charger', 'charger.png', 0, 0, 0, '[]', 1),
+(9, 'Speaker', 'Speaker', 'speaker.png', 0, 0, 0, '[]', 1),
+(10, 'Design Print Soft Cover', '', 'soft-cover.png', 0, 2, 0, '[]', 1),
+(11, 'Soft Design Print Cover', '', 'soft-cover.png', 0, 2, 0, '[]', 1),
+(12, 'Design Print Hard Cover', '', 'design-hard-cover.png', 0, 3, 0, '[]', 1),
+(13, 'Hard Design Print Cover', '', 'design-hard-cover.png', 0, 3, 0, '[]', 1),
+(14, 'Rubber Photo Hard Cover', '', 'photo-covor.png', 1, 5, 0, '[]', 1),
+(15, 'Hard Photo Cover', '', 'photo-covor.png', 1, 5, 0, '[]', 1),
+(16, 'Rubber Photo Soft Cover', '', 'photo-covor.png', 1, 4, 0, '[]', 1),
+(17, 'Soft Photo Cover', '', 'photo-covor.png', 1, 4, 0, '[]', 1),
+(18, 'Lot Shot', '', 'lotshot.png', 0, 0, 1, '[]', 1),
+(19, 'Parth Test', 'Testing', NULL, 1, 0, 1, '[]', 1),
+(20, 'Parth Sub Category', 'Test desc', NULL, 0, 19, 0, '[]', 1);
 
 -- --------------------------------------------------------
 
@@ -258,17 +263,18 @@ CREATE TABLE `customer` (
   `modified_date` datetime NOT NULL DEFAULT current_timestamp(),
   `reset_token` text DEFAULT NULL,
   `register_otp` int(11) DEFAULT NULL,
-  `mobile_verified` tinyint(1) DEFAULT 0
+  `mobile_verified` tinyint(1) DEFAULT 0,
+  `block_bit` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `customer`
 --
 
-INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `flatno`, `colony`, `landmark`, `address`, `pincode`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`) VALUES
-(12, NULL, NULL, 'Parth Dhankecha', 'a@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156065, NULL, '', '', '', NULL, '', NULL, NULL, NULL, '2019-10-02 08:59:52', '2019-10-02 08:59:52', NULL, 252476, 0),
-(17, NULL, NULL, 'A Xyz', 'pmd3290@gmail.co', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156061, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-26 10:53:48', '2019-10-26 10:53:48', NULL, 917531, 0),
-(18, NULL, NULL, 'A Xyz', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156062, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-26 17:47:04', '2019-10-26 17:47:04', NULL, 713440, 0);
+INSERT INTO `customer` (`id`, `fname`, `lname`, `username`, `email`, `password`, `mobile1`, `mobile2`, `flatno`, `colony`, `landmark`, `address`, `pincode`, `profile_image`, `city`, `state`, `added_date`, `modified_date`, `reset_token`, `register_otp`, `mobile_verified`, `block_bit`) VALUES
+(12, NULL, NULL, 'Parth Dhankecha', 'a@a.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156065, NULL, '', '', '', NULL, '', NULL, NULL, NULL, '2019-10-02 08:59:52', '2019-10-02 08:59:52', NULL, 252476, 0, 0),
+(17, NULL, NULL, 'A Xyz', 'pmd3290@gmail.co', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156061, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-26 10:53:48', '2019-10-26 10:53:48', NULL, 917531, 0, 0),
+(18, NULL, NULL, 'A Xyz', 'pmd3290@gmail.com', 'E10ADC3949BA59ABBE56E057F20F883E', 9737156062, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2019-10-26 17:47:04', '2019-10-26 17:47:04', NULL, 713440, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -288,16 +294,17 @@ CREATE TABLE `customer_address` (
   `state` varchar(100) DEFAULT '',
   `pincode` int(11) DEFAULT NULL,
   `mobile` bigint(11) DEFAULT NULL,
-  `customer_id` int(11) DEFAULT NULL
+  `customer_id` int(11) DEFAULT NULL,
+  `default_address` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `customer_address`
 --
 
-INSERT INTO `customer_address` (`address_id`, `first_name`, `last_name`, `email`, `flatno`, `colony`, `landmark`, `city`, `state`, `pincode`, `mobile`, `customer_id`) VALUES
-(1, 'Parth', 'Dhankecha', 'pmdhankecha.18@gmail.com', 'c-18, shivdarshan socity', 'yogichowk', 'Yogichowk', 'Surat', 'Surat', 395010, 9737156062, 12),
-(2, 'Parth', 'Dhankecha', 'pmdhankecha.18@gmail.com', 'c-18, shivdarshan socity', 'yogichowk', 'Yogichowk', 'Surat', 'Surat', 395010, 9737156062, 12);
+INSERT INTO `customer_address` (`address_id`, `first_name`, `last_name`, `email`, `flatno`, `colony`, `landmark`, `city`, `state`, `pincode`, `mobile`, `customer_id`, `default_address`) VALUES
+(1, 'Parth', 'Dhankecha', 'pmdhankecha.18@gmail.com', 'c-18, shivdarshan socity', 'yogichowk', 'Yogichowk', 'Surat', 'Surat', 395010, 9737156062, 12, 1),
+(2, 'Parth', 'Dhankecha', 'pmdhankecha.18@gmail.com', 'c-18, shivdarshan socity', 'yogichowk', 'Yogichowk', 'Surat', 'Surat', 395010, 9737156062, 12, 0);
 
 -- --------------------------------------------------------
 
@@ -349,6 +356,14 @@ CREATE TABLE `mobile_brand` (
   `name` varchar(200) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `mobile_brand`
+--
+
+INSERT INTO `mobile_brand` (`brand_id`, `name`) VALUES
+(1, 'Samsung'),
+(2, 'Oppo');
+
 -- --------------------------------------------------------
 
 --
@@ -367,7 +382,9 @@ CREATE TABLE `mobile_models` (
 
 INSERT INTO `mobile_models` (`model_id`, `model_name`, `brand_id`) VALUES
 (1, 'Redmi 7 pro', NULL),
-(2, 'Redmi 6 pro', NULL);
+(2, 'Redmi 6 pro', NULL),
+(3, 'Samsung Galaxy M30s', 1),
+(4, 'Oppo Redmi 5 pro', 2);
 
 -- --------------------------------------------------------
 
@@ -883,7 +900,8 @@ INSERT INTO `product_variant` (`variant_id`, `name`, `price`, `discount`, `tax_i
 (45, 'Cover with Image 1', 20, 11, 1, 1, 5200, 5200, 0, NULL, NULL, '[]', '[]', '[]', '[]', 0, 1, 0, '', 0, NULL, '2019-11-18 07:47:28', '2019-11-18 07:47:28'),
 (46, 'Cover with Image 1', 20, 11, 1, 1, 5200, 5200, 0, NULL, NULL, '[]', '[]', '[]', '[]', 0, 1, 0, '', 0, NULL, '2019-11-18 07:48:46', '2019-11-18 07:48:46'),
 (47, 'Cover with Image 1', 20, 11, 1, 1, 5200, 5200, 0, NULL, NULL, '[]', '[]', '[]', '[]', 0, 1, 0, '', 0, NULL, '2019-11-18 07:49:19', '2019-11-18 07:49:19'),
-(48, 'Cover with Image 1', 20, 11, 1, 1, 5200, 5200, 0, NULL, NULL, '[]', '[]', '[]', '[]', 0, 1, 0, '', 0, NULL, '2019-11-18 07:49:51', '2019-11-18 07:49:51');
+(48, 'Cover with Image 1', 20, 11, 1, 1, 5200, 5200, 0, NULL, NULL, '[]', '[]', '[]', '[]', 0, 1, 0, '', 0, NULL, '2019-11-18 07:49:51', '2019-11-18 07:49:51'),
+(49, 'Cover with Image 1', 20, 11, 2, 1, 222, 5200, 0, NULL, NULL, '[]', '[]', '[]', '[]', 0, 1, 0, '', 0, NULL, '2019-12-06 16:42:23', '2019-12-06 16:42:23');
 
 -- --------------------------------------------------------
 
@@ -1044,9 +1062,11 @@ CREATE TABLE `tax` (
 --
 
 INSERT INTO `tax` (`tax_id`, `tax`, `name`) VALUES
-(1, 2.5, 'CGST'),
-(2, 2.5, 'SGST'),
-(3, 5, 'IGST');
+(1, 5, '5% Tax'),
+(2, 18, '18% Tax'),
+(3, 12, '18% Tax'),
+(4, 0, 'No Tax'),
+(5, 28, '28% Tax');
 
 -- --------------------------------------------------------
 
@@ -1177,10 +1197,8 @@ CREATE TABLE `variant_mobile` (
 --
 
 INSERT INTO `variant_mobile` (`variant_id`, `mobile_id`, `quantity`, `price`, `discount`) VALUES
-(1, 1, 80, 200, 0),
+(1, 1, 80, 200, 10),
 (1, 2, 50, 200, 0),
-(2, 1, 760, 200, 0),
-(2, 2, 9960, 200, 0),
 (3, 1, 80, 200, 0),
 (3, 2, 50, 200, 0),
 (4, 1, 80, 200, 0),
@@ -1491,13 +1509,13 @@ ALTER TABLE `banners`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `category`
 --
 ALTER TABLE `category`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `customer`
@@ -1521,13 +1539,13 @@ ALTER TABLE `customer_order`
 -- AUTO_INCREMENT for table `mobile_brand`
 --
 ALTER TABLE `mobile_brand`
-  MODIFY `brand_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `brand_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `mobile_models`
 --
 ALTER TABLE `mobile_models`
-  MODIFY `model_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `model_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -1557,7 +1575,7 @@ ALTER TABLE `product`
 -- AUTO_INCREMENT for table `product_variant`
 --
 ALTER TABLE `product_variant`
-  MODIFY `variant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `variant_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `promocode`
@@ -1605,7 +1623,7 @@ ALTER TABLE `status`
 -- AUTO_INCREMENT for table `tax`
 --
 ALTER TABLE `tax`
-  MODIFY `tax_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `tax_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `track_detail`

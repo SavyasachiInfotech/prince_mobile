@@ -107,4 +107,71 @@ router.post(
   }
 );
 
+router.get("/get-users-by-page/:up", verifyToken, (req, res) => {
+  if (isNaN(req.params.up)) {
+    res
+      .status(200)
+      .json({ status: 400, message: "Provide valid Page number." });
+  } else {
+    let sql =
+      "select id,username,email,mobile1 from customer limit " +
+      parseInt(process.env.RECORD_LIMIT) * (parseInt(req.params.up) - 1) +
+      "," +
+      process.env.RECORD_LIMIT;
+    con.query(sql, (err, result) => {
+      if (err) {
+        res
+          .status(200)
+          .json({ status: 400, message: "Provide valid page Number" });
+      } else {
+        sql = "select count(id) as total from customer";
+        con.query(sql, (err, data) => {
+          if (err) {
+            res.status(200).json({ status: 400, message: "Users not found" });
+          } else {
+            res.status(200).json({
+              status: 200,
+              message: "Getting users successfully.",
+              users: result,
+              count: data[0].total
+            });
+          }
+        });
+      }
+    });
+  }
+});
+
+router.post(
+  "/block-user",
+  [check("user_id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: 400,
+        message: "Provide valid data",
+        errors: errors.array()
+      });
+    } else {
+      let sql = "update customer set block_bit=1 where id=" + req.body.user_id;
+      con.query(sql, (err, result) => {
+        if (err) {
+          res
+            .status(200)
+            .json({ status: 400, message: "Customer is not blocked." });
+        } else {
+          res
+            .status(200)
+            .json({
+              status: 200,
+              message: "Customer is blocked successfully."
+            });
+        }
+      });
+    }
+  }
+);
+
 module.exports = router;
