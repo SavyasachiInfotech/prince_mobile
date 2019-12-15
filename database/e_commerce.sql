@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 15, 2019 at 08:59 AM
+-- Generation Time: Dec 15, 2019 at 09:48 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -207,7 +207,7 @@ CREATE TABLE `category` (
   `image_required` tinyint(1) DEFAULT 0,
   `parent_id` int(11) DEFAULT 0,
   `mobile_required` tinyint(1) DEFAULT 0,
-  `promo_images` text NOT NULL DEFAULT '[]',
+  `promo_images` varchar(5000) NOT NULL DEFAULT '[]',
   `is_display` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
