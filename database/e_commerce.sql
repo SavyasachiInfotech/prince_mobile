@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 15, 2019 at 09:48 AM
+-- Generation Time: Dec 15, 2019 at 10:03 AM
 -- Server version: 10.3.16-MariaDB
 -- PHP Version: 7.3.7
 
@@ -319,7 +319,7 @@ CREATE TABLE `customer_order` (
   `address_id` int(11) DEFAULT 0,
   `shipment_id` varchar(100) DEFAULT '',
   `awbno` varchar(100) DEFAULT '',
-  `comment` text DEFAULT '\'\'',
+  `comment` varchar(5000) DEFAULT '',
   `apx_shipped_date` date DEFAULT current_timestamp(),
   `status_id` int(11) DEFAULT 0,
   `promo_id` int(11) NOT NULL DEFAULT 0,
