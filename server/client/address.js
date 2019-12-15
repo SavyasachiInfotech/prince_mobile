@@ -52,7 +52,9 @@ router.get("/get-address", verifyToken, (req, res) => {
 });
 
 router.get("/get-shipping-address", verifyToken, (req, res) => {
-  let sql = "select * from customer_address where customer_id=" + req.userId;
+  let sql =
+    "select * from customer_address where default_address=1 and customer_id=" +
+    req.userId;
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -76,6 +78,49 @@ router.get("/get-shipping-address", verifyToken, (req, res) => {
     }
   });
 });
+
+router.post(
+  "/make-default-address",
+  [check("address_id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let sql =
+        "update customer_address set default_address=0 where customer_id=" +
+        req.userId;
+      con.query(sql, (err, result) => {
+        if (err) {
+          res
+            .status(200)
+            .json({ status: "0", message: "Address not updated." });
+        } else {
+          sql =
+            "update customer_address set default_address=1 where address_id=" +
+            req.body.address_id;
+          con.query(sql, (err, result) => {
+            if (err) {
+              res
+                .status(200)
+                .json({ status: "0", message: "Address not updated." });
+            } else {
+              res.status(200).json({
+                status: "0",
+                message: "Address updated successfully."
+              });
+            }
+          });
+        }
+      });
+    }
+  }
+);
 
 router.post(
   "/delete-address",
@@ -137,7 +182,8 @@ router.post(
       .isString()
       .isLength({ min: 1, max: 100 }),
     check("pincode").isNumeric({ min: 6, max: 6 }),
-    check("mobile").isNumeric({ min: 10, max: 10 })
+    check("mobile").isNumeric({ min: 10, max: 10 }),
+    check("default_address").isNumeric()
   ],
   verifyToken,
   (req, res) => {
@@ -153,7 +199,7 @@ router.post(
       let sql;
       if (add.id == "") {
         sql =
-          'insert into customer_address(first_name,last_name,email,flatno,colony,landmark,city,state,pincode,mobile,customer_id) values("' +
+          'insert into customer_address(first_name,last_name,email,flatno,colony,landmark,city,state,pincode,mobile,customer_id,default_address) values("' +
           add.first_name +
           '","' +
           add.last_name +
@@ -175,6 +221,8 @@ router.post(
           add.mobile +
           "," +
           req.userId +
+          "," +
+          add.default_address +
           ")";
       } else {
         sql =
@@ -212,9 +260,48 @@ router.post(
             message: "Address is not added. Try again later."
           });
         } else {
-          res
-            .status(200)
-            .json({ status: "1", message: "Address added successfully." });
+          if (add.default_address == 1) {
+            sql =
+              "update customer_address set default_address=0 where customer_id=" +
+              req.userId;
+            con.query(sql, (err, data) => {
+              if (err) {
+                res.json({
+                  status: "0",
+                  message: "Default address is not set."
+                });
+              } else {
+                if (add.id == "") {
+                  sql =
+                    "update customer_address set default_address=1 where address_id=" +
+                    result.insertId;
+                } else {
+                  sql =
+                    "update customer_address set default_address=1 where address_id=" +
+                    add.id;
+                }
+                con.query(sql, (err, result) => {
+                  if (err) {
+                    res.json({
+                      status: "0",
+                      message: "Default address is not set."
+                    });
+                  } else {
+                    res
+                      .status(200)
+                      .json({
+                        status: "1",
+                        message: "Address added successfully."
+                      });
+                  }
+                });
+              }
+            });
+          } else {
+            res
+              .status(200)
+              .json({ status: "1", message: "Address added successfully." });
+          }
         }
       });
     }
