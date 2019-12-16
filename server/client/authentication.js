@@ -492,13 +492,6 @@ router.post(
                                 "User is not registered. Please try agian later."
                             });
                           } else {
-                            sql =
-                              "insert into customer_address(first_name,email,default_address) values('" +
-                              user.full_name +
-                              "','" +
-                              user.email +
-                              "',1)";
-                            con.query(sql);
                             let payload = { subject: result.insertId };
 
                             let jwt_token = jwt.sign(

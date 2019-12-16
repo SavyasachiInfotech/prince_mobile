@@ -64,17 +64,24 @@ router.get("/get-shipping-address", verifyToken, (req, res) => {
       });
     } else {
       if (result.length > 0) {
-        result = result[0];
+        let json = JSON.stringify(result);
+        result = JSON.parse(json, (key, val) =>
+          typeof val !== "object" && val !== null ? String(val) : val
+        );
+        res.status(200).json({
+          status: "1",
+          message: "Getting shipping address successfully.",
+          getShippingData: result,
+          address_added: "1"
+        });
+      } else {
+        res.status(200).json({
+          status: "1",
+          message: "Getting shipping address successfully.",
+          getShippingData: "[]",
+          address_added: "0"
+        });
       }
-      let json = JSON.stringify(result);
-      result = JSON.parse(json, (key, val) =>
-        typeof val !== "object" && val !== null ? String(val) : val
-      );
-      res.status(200).json({
-        status: "1",
-        message: "Getting shipping address successfully.",
-        address: result
-      });
     }
   });
 });
@@ -287,12 +294,10 @@ router.post(
                       message: "Default address is not set."
                     });
                   } else {
-                    res
-                      .status(200)
-                      .json({
-                        status: "1",
-                        message: "Address added successfully."
-                      });
+                    res.status(200).json({
+                      status: "1",
+                      message: "Address added successfully."
+                    });
                   }
                 });
               }

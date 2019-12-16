@@ -260,181 +260,207 @@ router.post(
   }
 );
 
-router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(200).json({
-      status: process.env.ERROR,
-      message: "Invalid Input Found",
-      errors: errors.array()
-    });
-  } else {
-    let id = req.body.id;
-    let sql =
-      "select v.variant_id,v.name,p.description,c.name as category,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
-      id;
-    con.query(sql, (err, products) => {
-      if (err) {
-        console.log(err);
-        res
-          .status(200)
-          .json({ status: "0", message: "Provide valid product id" });
-      } else {
-        if (products.length > 0) {
-          sql =
-            "select a.attribute_id,a.name,av.value,v.variant_id from attribute a,attribute_value av,variant_attribute v where a.attribute_id=av.attribute_id and av.attribute_value_id=v.attribute_value_id and v.variant_id =" +
-            id;
-          con.query(sql, (err, attributes) => {
-            if (err) {
-              console.log(err);
-              res
-                .status(200)
-                .json({ status: "0", message: "Enter valid Product." });
-            } else {
-              sql =
-                "select s.specification_key,s.specification_value,p.variant_id from product_specification p,specification s where s.specification_id=p.specification_id and p.variant_id=" +
-                id;
-              con.query(sql, (err, specifications) => {
-                if (err) {
-                  console.log(err);
-                  res
-                    .status(200)
-                    .json({ status: "0", message: "Enter valid Product." });
-                } else {
-                  sql =
-                    "select vm.variant_id,vm.mobile_id,vm.quantity as max_quantity,v.min_qty,m.model_name,vm.price,vm.discount from variant_mobile vm,product_variant v,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
-                    id +
-                    " and v.variant_id=" +
-                    id;
-                  con.query(sql, (err, mobiles) => {
-                    if (err) {
-                      console.log(err);
-                    } else {
-                      if (mobiles.length < 1) {
-                        mobiles.push({
-                          variant_id: id,
-                          mobile_id: 0,
-                          max_quantity: products[0].quantity,
-                          model_name: products[0].name,
-                          price: products[0].price,
-                          discount: products[0].discount,
-                          min_qty: products[0].min_qty
-                        });
-                      }
-                      sql =
-                        "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +
-                        id +
-                        " and v.product_id=(select product_id from product_variant where variant_id=" +
-                        id +
-                        ")";
-                      con.query(sql, (err, variant) => {
-                        if (err) {
-                          console.log(err);
-                        } else {
-                          sql =
-                            "select p.code,p.description from promocode p,product_variant v where v.variant_id=" +
-                            products[0].variant_id +
-                            " and (p.id=v.promo_id or p.type=1 )";
-                          con.query(sql, (err, promo) => {
-                            if (err) {
-                              res.status(200).json({
-                                status: "0",
-                                message: "Offers not detected"
-                              });
-                            } else {
-                              if (promo.length > 0) {
-                                products[0].offers = new Array();
-                                for (let i = 0; i < promo.length; i++) {
-                                  products[0].offers.push({
-                                    offer_code: promo[i].code,
-                                    offer_detail: promo[i].description
-                                  });
-                                }
-                              } else {
-                                products[0].offers = [];
-                              }
-                              for (let i = 0; i < products.length; i++) {
-                                products[i].mobiles = mobiles.filter(
-                                  item =>
-                                    item.variant_id == products[i].variant_id
-                                );
-                                for (
-                                  let j = 0;
-                                  j < products[i].mobiles.length;
-                                  j++
-                                ) {
-                                  products[i].mobiles[j].mrp =
-                                    products[i].mobiles[j].price +
-                                    (products[i].mobiles[j].price *
-                                      products[i].mobiles[j].discount) /
-                                      100;
-                                  products[i].mobiles[j].category =
-                                    products[i].category;
-                                }
-                                products[i].mrp =
-                                  products[i].price +
-                                  (products[i].price * products[i].discount) /
-                                    100;
-                                products[i].main_image = JSON.parse(
-                                  products[i].main_image
-                                );
-                                for (
-                                  let j = 0;
-                                  j < products[i].main_image.length;
-                                  j++
-                                ) {
-                                  products[i].main_image[j] = {
-                                    image:
-                                      process.env.MAINIMAGE +
-                                      products[i].main_image[j]
-                                  };
-                                }
-                                products[i].attributes = attributes.filter(
-                                  item =>
-                                    item.variant_id == products[i].variant_id
-                                );
-                                products[
-                                  i
-                                ].specifications = specifications.filter(
-                                  item =>
-                                    item.variant_id == products[i].variant_id
-                                );
-                              }
-                              products[0].colors = variant;
-                              for (let i = 0; i < variant.length; i++) {
-                                let data = JSON.parse(variant[i].thumbnail);
-                                variant[i].thumbnail =
-                                  process.env.THUMBNAIL + data[0];
-                              }
-                              json = JSON.stringify(products);
-                              products = JSON.parse(json, (key, val) =>
-                                typeof val !== "object" && val !== null
-                                  ? String(val)
-                                  : val
-                              );
-                              res.status(200).json({
-                                status: "1",
-                                message: "Getting product detail successfully.",
-                                products: products
-                              });
-                            }
-                          });
-                        }
-                      });
-                    }
-                  });
-                }
-              });
-            }
-          });
-        } else {
+router.post(
+  "/get-product-detail",
+  [check("id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: process.env.ERROR,
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let id = req.body.id;
+      let sql =
+        "select v.variant_id,v.name,p.description,c.name as category,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
+        id;
+      con.query(sql, (err, products) => {
+        if (err) {
+          console.log(err);
           res
             .status(200)
-            .json({ status: "1", message: "Select valid product." });
+            .json({ status: "0", message: "Provide valid product id" });
+        } else {
+          if (products.length > 0) {
+            sql =
+              "select a.attribute_id,a.name,av.value,v.variant_id from attribute a,attribute_value av,variant_attribute v where a.attribute_id=av.attribute_id and av.attribute_value_id=v.attribute_value_id and v.variant_id =" +
+              id;
+            con.query(sql, (err, attributes) => {
+              if (err) {
+                console.log(err);
+                res
+                  .status(200)
+                  .json({ status: "0", message: "Enter valid Product." });
+              } else {
+                sql =
+                  "select s.specification_key,s.specification_value,p.variant_id from product_specification p,specification s where s.specification_id=p.specification_id and p.variant_id=" +
+                  id;
+                con.query(sql, (err, specifications) => {
+                  if (err) {
+                    console.log(err);
+                    res
+                      .status(200)
+                      .json({ status: "0", message: "Enter valid Product." });
+                  } else {
+                    sql =
+                      "select vm.variant_id,vm.mobile_id,vm.quantity as max_quantity,v.min_qty,m.model_name,vm.price,vm.discount from variant_mobile vm,product_variant v,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
+                      id +
+                      " and v.variant_id=" +
+                      id;
+                    con.query(sql, (err, mobiles) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        if (mobiles.length < 1) {
+                          mobiles.push({
+                            variant_id: id,
+                            mobile_id: 0,
+                            max_quantity: products[0].quantity,
+                            model_name: products[0].name,
+                            price: products[0].price,
+                            discount: products[0].discount,
+                            min_qty: products[0].min_qty
+                          });
+                        }
+                        sql =
+                          "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +
+                          id +
+                          " and v.product_id=(select product_id from product_variant where variant_id=" +
+                          id +
+                          ")";
+                        con.query(sql, (err, variant) => {
+                          if (err) {
+                            console.log(err);
+                          } else {
+                            sql =
+                              "select p.code,p.description from promocode p,product_variant v where v.variant_id=" +
+                              products[0].variant_id +
+                              " and (p.id=v.promo_id or p.type=1 )";
+                            con.query(sql, (err, promo) => {
+                              if (err) {
+                                res.status(200).json({
+                                  status: "0",
+                                  message: "Offers not detected"
+                                });
+                              } else {
+                                if (promo.length > 0) {
+                                  products[0].offers = new Array();
+                                  for (let i = 0; i < promo.length; i++) {
+                                    products[0].offers.push({
+                                      offer_code: promo[i].code,
+                                      offer_detail: promo[i].description
+                                    });
+                                  }
+                                } else {
+                                  products[0].offers = [];
+                                }
+                                for (let i = 0; i < products.length; i++) {
+                                  products[i].mobiles = mobiles.filter(
+                                    item =>
+                                      item.variant_id == products[i].variant_id
+                                  );
+                                  for (
+                                    let j = 0;
+                                    j < products[i].mobiles.length;
+                                    j++
+                                  ) {
+                                    products[i].mobiles[j].mrp =
+                                      products[i].mobiles[j].price +
+                                      (products[i].mobiles[j].price *
+                                        products[i].mobiles[j].discount) /
+                                        100;
+                                    products[i].mobiles[j].category =
+                                      products[i].category;
+                                  }
+                                  products[i].mrp =
+                                    products[i].price +
+                                    (products[i].price * products[i].discount) /
+                                      100;
+                                  products[i].main_image = JSON.parse(
+                                    products[i].main_image
+                                  );
+                                  for (
+                                    let j = 0;
+                                    j < products[i].main_image.length;
+                                    j++
+                                  ) {
+                                    products[i].main_image[j] = {
+                                      image:
+                                        process.env.MAINIMAGE +
+                                        products[i].main_image[j]
+                                    };
+                                  }
+                                  products[i].attributes = attributes.filter(
+                                    item =>
+                                      item.variant_id == products[i].variant_id
+                                  );
+                                  products[
+                                    i
+                                  ].specifications = specifications.filter(
+                                    item =>
+                                      item.variant_id == products[i].variant_id
+                                  );
+                                }
+                                products[0].colors = variant;
+                                for (let i = 0; i < variant.length; i++) {
+                                  let data = JSON.parse(variant[i].thumbnail);
+                                  variant[i].thumbnail =
+                                    process.env.THUMBNAIL + data[0];
+                                }
+                                sql =
+                                  "select * from cart where cart_id=" +
+                                  req.userId +
+                                  " and variant_id=" +
+                                  id;
+                                con.query(sql, (err, data) => {
+                                  if (err) {
+                                    console.log(err);
+                                    res.json({
+                                      status: "0",
+                                      message: "Product detail not found"
+                                    });
+                                  } else {
+                                    if (data.length > 0) {
+                                      products[0].is_added_cart = "1";
+                                    } else {
+                                      products[0].is_added_cart = "0";
+                                    }
+                                    json = JSON.stringify(products);
+                                    products = JSON.parse(json, (key, val) =>
+                                      typeof val !== "object" && val !== null
+                                        ? String(val)
+                                        : val
+                                    );
+                                    res.status(200).json({
+                                      status: "1",
+                                      message:
+                                        "Getting product detail successfully.",
+                                      products: products
+                                    });
+                                  }
+                                });
+                              }
+                            });
+                          }
+                        });
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          } else {
+            res
+              .status(200)
+              .json({ status: "1", message: "Select valid product." });
+          }
         }
-      }
-    });
+      });
+    }
   }
-});
+);
 
 module.exports = router;
