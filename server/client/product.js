@@ -302,7 +302,9 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                     .json({ status: "0", message: "Enter valid Product." });
                 } else {
                   sql =
-                    "select vm.variant_id,vm.mobile_id,vm.quantity,m.model_name,vm.price,vm.discount from variant_mobile vm,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
+                    "select vm.variant_id,vm.mobile_id,vm.quantity as max_quantity,v.min_qty,m.model_name,vm.price,vm.discount from variant_mobile vm,product_variant v,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
+                    id +
+                    " and v.variant_id=" +
                     id;
                   con.query(sql, (err, mobiles) => {
                     if (err) {
@@ -312,10 +314,11 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                         mobiles.push({
                           variant_id: id,
                           mobile_id: 0,
-                          quantity: products[0].quantity,
+                          max_quantity: products[0].quantity,
                           model_name: products[0].name,
                           price: products[0].price,
-                          discount: products[0].discount
+                          discount: products[0].discount,
+                          min_qty: products[0].min_qty
                         });
                       }
                       sql =
@@ -362,8 +365,8 @@ router.post("/get-product-detail", [check("id").isNumeric()], (req, res) => {
                                 ) {
                                   products[i].mobiles[j].mrp =
                                     products[i].mobiles[j].price +
-                                    (products[i].mobiles[j].price * products[i].
-                                    mobiles[j].discount) /
+                                    (products[i].mobiles[j].price *
+                                      products[i].mobiles[j].discount) /
                                       100;
                                   products[i].mobiles[j].category =
                                     products[i].category;
