@@ -76,9 +76,8 @@ router.get("/get-shipping-address", verifyToken, (req, res) => {
         });
       } else {
         res.status(200).json({
-          status: "1",
+          status: "2",
           message: "Getting shipping address successfully.",
-          getShippingData: "[]",
           address_added: "0"
         });
       }
