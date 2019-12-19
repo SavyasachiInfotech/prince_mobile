@@ -159,6 +159,39 @@ router.post(
   }
 );
 
+router.post(
+  "/remove-whole-cart",
+  [check("variant_id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let item_id = req.body.variant_id;
+      let sql =
+        "delete from cart where variant_id=" +
+        item_id +
+        " and cart_id=" +
+        req.userId;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({ status: "0", message: "Provide valid cart" });
+        } else {
+          res
+            .status(200)
+            .json({ status: "1", message: "Cart removed successfully." });
+        }
+      });
+    }
+  }
+);
+
 router.get("/get-cart-detail", verifyToken, (req, res) => {
   let sql =
     "select c.item_id,c.variant_id,v.name,SUM(c.quantity) as total_quantity,v.list_image,v.price,v.discount from cart c, product_variant v where c.cart_id=" +
@@ -209,13 +242,13 @@ router.post(
       let sql;
       if (data.mobile_required) {
         sql =
-          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,vm.quantity as available_quantity,v.thumbnail,vm.price,vm.discount,m.model_name from cart c, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,vm.quantity as max_qty,v.min_qty,v.thumbnail,vm.price,vm.discount,m.model_name from cart c, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
           data.variant_id +
           " and c.cart_id=" +
           req.userId;
       } else {
         sql =
-          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.quantity as available_quantity,v.thumbnail,v.price,v.discount from cart c,variant v where c.variant_id=v.variant_id and c.cart_id=" +
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,v.quantity as max_qty,v.min_qty,v.thumbnail,v.price,v.discount from cart c,variant v where c.variant_id=v.variant_id and c.cart_id=" +
           req.userId +
           " and c.variant_id=" +
           data.variant_id;
@@ -234,8 +267,7 @@ router.post(
             result[i].mobile_required = data.mobile_required;
             let images = JSON.parse(result[i].thumbnail);
             if (images.length > 0) {
-              result[i].thumbnail =
-                "http://52.66.237.4:3000/thumbnail/" + images[0];
+              result[i].thumbnail = process.env.THUMBNAIL + images[0];
             } else {
               result[i].thumbnail = "";
             }
@@ -244,14 +276,41 @@ router.post(
 
             // result[i].total_price=result[i].price*
           }
+          let other_details = { is_code: "0" };
+          if (result.length > 0) {
+            other_details = {
+              is_cod: result[0].is_cod.toString()
+            };
+          }
           let json = JSON.stringify(result);
           result = JSON.parse(json, (key, val) =>
             typeof val !== "object" && val !== null ? String(val) : val
           );
-          res.status(200).json({
-            status: 1,
-            message: "Getting cart product detail successfuly.",
-            cart_data: result
+          sql = "select id,code,description from promocode";
+          con.query(sql, (err, offers) => {
+            if (err) {
+              console.log(err);
+              res.status(200).json({
+                status: "0",
+                message: "Cart details not found. Try again later."
+              });
+            } else {
+              json = JSON.stringify(offers);
+              offers = JSON.parse(json, (key, val) =>
+                typeof val !== "object" && val !== null ? String(val) : val
+              );
+              sql = "select meta_value from meta where id=1";
+              con.query(sql, (err, cod) => {
+                other_details.cod_charge = cod[0].meta_value;
+                res.status(200).json({
+                  status: 1,
+                  message: "Getting cart product detail successfuly.",
+                  cart_data: result,
+                  offers: offers,
+                  other_details: other_details
+                });
+              });
+            }
           });
         }
       });
@@ -261,7 +320,7 @@ router.post(
 
 router.post(
   "/apply-promocode",
-  [check("promo_id").isNumeric(), check("variant_id").isNumeric()],
+  [check("promo_id").isNumeric(), check("price").isNumeric()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -292,17 +351,35 @@ router.post(
               sql = "select * from promocode where id=" + promo;
               con.query(sql, (err, promoData) => {
                 if (promoData.length > 0) {
+                  if (promoData[0].min_limit <= req.body.price) {
+                    let discount;
+                    if (promoData[0].discount_type == 1) {
+                      discount = promoData[0].max_discount;
+                    } else {
+                      discount = (req.body.price * promoData[0].discount) / 100;
+                      if (discount > promoData[0].max_discount) {
+                        discount = promoData[0].max_discount;
+                      }
+                    }
+                    req.body.price = req.body.price - discount;
+                    res.status(200).json({
+                      status: "1",
+                      message: "Promocode applied successfully.",
+                      price: req.body.price.toString()
+                    });
+                  } else {
+                    res.status(200).json({
+                      status: "0",
+                      message:
+                        "Your order amount is not sufficient for applying the promocode"
+                    });
+                  }
                 } else {
                   res.status(200).json({
                     status: "0",
                     message: "Please enter valid promocode."
                   });
                 }
-              });
-
-              res.status(200).json({
-                status: "1",
-                message: "Promocode applied successfully."
               });
             } else {
               res.status(200).json({
