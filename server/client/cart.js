@@ -306,7 +306,7 @@ router.post(
                   status: 1,
                   message: "Getting cart product detail successfuly.",
                   cart_data: result,
-                  offers: offers,
+                  offers_details: offers,
                   other_details: other_details
                 });
               });
@@ -371,7 +371,7 @@ router.post(
                     res.status(200).json({
                       status: "0",
                       message:
-                        "Your order amount is not sufficient for applying the promocode"
+                        "Your cart amount is not sufficient for applying the promocode"
                     });
                   }
                 } else {
