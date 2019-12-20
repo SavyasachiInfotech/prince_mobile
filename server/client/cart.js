@@ -159,6 +159,19 @@ router.post(
   }
 );
 
+router.post("/update-cart", verifyToken, (req, res) => {
+  let data = req.body;
+  for (let i = 0; i < data.length; i++) {
+    let sql =
+      "update cart set quantity=" +
+      data[i].quantity +
+      " where item_id=" +
+      data[i].item_id;
+    con.query(sql);
+  }
+  res.status(200).json({ status: "1", message: "Cart updated sucessfully." });
+});
+
 router.post(
   "/remove-whole-cart",
   [check("variant_id").isNumeric()],
