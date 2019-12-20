@@ -206,6 +206,7 @@ router.post(
                               }
                               orderdata.order_amount =
                                 orderdata.order_amount - discount;
+                              orderdata.collectable_amount=orderdata.collectable_amount+50;
                               sql =
                                 "update customer_order set collectable_amount=" +
                                 orderdata.collectable_amount +
