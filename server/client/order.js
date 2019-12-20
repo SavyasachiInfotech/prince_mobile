@@ -31,6 +31,7 @@ function verifyToken(req, res, next) {
 router.post(
   "/place-order",
   [
+    check("variant_id").isNumeric(),
     check("address_id").isNumeric(),
     check("promo_id").isNumeric(),
     check("iscod").isBoolean()
@@ -64,8 +65,10 @@ router.post(
         } else {
           order_id = result.insertId;
           sql =
-            "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.*,t.tax,p.total_weight,p.dimention_length,p.dimention_breadth,p.dimention_height,p.hsncode,m.quantity as mquantity,m.price as mprice, m.discount as mdiscount from cart c, product_variant v, tax t,product p,variant_mobile m where v.variant_id=m.variant_id and m.mobile_id=c.mobile_id and  p.product_id=v.product_id and v.tax_id=t.tax_id and c.variant_id=v.variant_id and cart_id=" +
-            req.userId;
+            "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.*,t.tax,p.total_weight,p.dimention_length,p.dimention_breadth,p.dimention_height,p.hsncode,m.quantity as mquantity,m.price as mprice, m.discount as mdiscount from cart c, product_variant v, tax t,product p,variant_mobile m where v.variant_id=m.variant_id and m.mobile_id=c.mobile_id and  p.product_id=v.product_id and v.tax_id=t.tax_id and c.variant_id=v.variant_id and c.cart_id=" +
+            req.userId +
+            " and c.variant_id=" +
+            req.body.variant_id;
           con.query(sql, (err, cart) => {
             if (err) {
               deleteOrder(order_id);
@@ -263,7 +266,9 @@ router.post(
                                   }
                                   sql =
                                     "delete from cart where cart_id=" +
-                                    req.userId;
+                                    req.userId +
+                                    " and variant_id=" +
+                                    req.body.variant_id;
                                   con.query(sql, (err, result) => {
                                     res.status(200).json({
                                       status: 1,
@@ -509,17 +514,17 @@ router.post(
                 .status(200)
                 .json({ status: "0", message: "Order not tracked." });
             } else {
-              for(let i=0;i<5;i++){
-                if(i<trackdata.length){
-                  trackdata[i].status=1;
+              for (let i = 0; i < 5; i++) {
+                if (i < trackdata.length) {
+                  trackdata[i].status = 1;
                 } else {
-                  trackdata[i]={
-                    id:i,
-                    item_id:trackdata[0].item_id,
-                    status_id:i+1,
-                    added_date:new Date(),
-                    status:0
-                  }
+                  trackdata[i] = {
+                    id: i,
+                    item_id: trackdata[0].item_id,
+                    status_id: i + 1,
+                    added_date: new Date(),
+                    status: 0
+                  };
                 }
               }
               let json = JSON.stringify(result);
