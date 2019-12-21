@@ -157,20 +157,7 @@ router.post(
   [
     check("username")
       .isString()
-      .isLength({ max: 100 }),
-    check("flatno")
-      .isString()
-      .isLength({ max: 50 }),
-    check("colony")
-      .isString()
-      .isLength({ max: 300 }),
-    check("landmark")
-      .isString()
-      .isLength({ max: 100 }),
-    check("pincode")
-      .isString()
-      .isLength({ max: 6 }),
-    check("address_id").isNumeric()
+      .isLength({ max: 100 })
   ],
   verifyToken,
   (req, res) => {
@@ -189,29 +176,9 @@ router.post(
           console.log(err);
           res.status(200).json({ status: "0", message: "Enter valid data." });
         } else {
-          sql =
-            'update customer_address set flatno="' +
-            data.flatno +
-            '", colony="' +
-            data.colony +
-            '", landmark="' +
-            data.landmark +
-            '",pincode="' +
-            data.pincode +
-            '" where address_id=' +
-            data.address_id;
-          con.query(sql, (err, result) => {
-            if (err) {
-              res.status(200).json({
-                status: "0",
-                message: "Profile address is not updated."
-              });
-            } else {
-              res.status(200).json({
-                status: "1",
-                message: "Profile updated successfully."
-              });
-            }
+          res.status(200).json({
+            status: "1",
+            message: "Profile updated successfully."
           });
         }
       });
@@ -477,7 +444,7 @@ router.post(
                           '","' +
                           user.email +
                           '","' +
-                          user.password +
+                          md5(user.password) +
                           '",' +
                           user.mobile +
                           "," +
@@ -597,7 +564,7 @@ router.post("/login-user", (req, res) => {
       if (result.length > 0) {
         if (
           result[0].password.toString().toLowerCase() ==
-          data.password.toString().toLowerCase()
+          md5(data.password.toString()).toLowerCase()
         ) {
           let payload = { subject: result[0].id };
           let jwt_token = jwt.sign(payload, "MysupersecreteKey");
@@ -748,7 +715,7 @@ router.post(
             ) {
               sql =
                 "update customer set password='" +
-                data.newPassword +
+                md5(data.newPassword) +
                 "' where id=" +
                 result[0].id;
               con.query(sql, (err, newPass) => {
