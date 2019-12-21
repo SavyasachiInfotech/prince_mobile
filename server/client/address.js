@@ -117,7 +117,7 @@ router.post(
                 .json({ status: "0", message: "Address not updated." });
             } else {
               res.status(200).json({
-                status: "0",
+                status: "1",
                 message: "Address updated successfully."
               });
             }

@@ -180,120 +180,198 @@ router.post(
                       orderdata.igst = 0;
                       orderdata.taxable_amount =
                         orderdata.collectable_amount - orderdata.taxable_amount;
-                      sql = "select * from promocode where id=" + data.promo_id;
-                      con.query(sql, (err, promo) => {
+                      if(req.body.iscod==1){
+                        orderdata.collectable_amount=orderdata.collectable_amount+50;
+                      }
+                      if(data.promo_id==0){
+                        sql =
+                        "update customer_order set collectable_amount=" +
+                        orderdata.collectable_amount +
+                        ", total_weight=" +
+                        orderdata.total_weight +
+                        ", dm_length=" +
+                        orderdata.dm_length +
+                        ", dm_breadth=" +
+                        orderdata.dm_breadth +
+                        ", dm_height=" +
+                        orderdata.dm_height +
+                        ", taxable_value=" +
+                        orderdata.taxable_amount +
+                        ",sgst=" +
+                        orderdata.sgst +
+                        ", cgst=" +
+                        orderdata.cgst +
+                        ", igst=" +
+                        orderdata.igst +
+                        ",order_amount=" +
+                        orderdata.order_amount +
+                        " where order_id=" +
+                        order_id;
+                      con.query(sql, (err, orderinfo) => {
                         if (err) {
                           console.log(err);
                           deleteOrder(order_id);
                           res.status(200).json({
                             status: "0",
                             message:
-                              "Order not placed. Please apply valid promocode."
+                              "Order is not placed. Try again later."
                           });
                         } else {
-                          if (promo.length > 0) {
-                            if (promo[0].min_limit <= orderdata.order_amount) {
-                              let discount;
-                              if (promo[0].discount_type == 1) {
-                                discount = promo[0].max_discount;
-                              } else {
-                                discount =
-                                  (orderdata.order_amount * promo[0].discount) /
-                                  100;
-                                if (discount > promo[0].max_discount) {
-                                  discount = promo[0].max_discount;
-                                }
-                              }
-                              orderdata.order_amount =
-                                orderdata.order_amount - discount;
-                              orderdata.collectable_amount=orderdata.collectable_amount+50;
+                          for (let i = 0; i < cart.length; i++) {
+                            if (cart[i].mobile_required == 1) {
                               sql =
-                                "update customer_order set collectable_amount=" +
-                                orderdata.collectable_amount +
-                                ", total_weight=" +
-                                orderdata.total_weight +
-                                ", dm_length=" +
-                                orderdata.dm_length +
-                                ", dm_breadth=" +
-                                orderdata.dm_breadth +
-                                ", dm_height=" +
-                                orderdata.dm_height +
-                                ", taxable_value=" +
-                                orderdata.taxable_amount +
-                                ",sgst=" +
-                                orderdata.sgst +
-                                ", cgst=" +
-                                orderdata.cgst +
-                                ", igst=" +
-                                orderdata.igst +
-                                ",order_amount=" +
-                                orderdata.order_amount +
-                                " where order_id=" +
-                                order_id;
-                              con.query(sql, (err, orderinfo) => {
-                                if (err) {
-                                  console.log(err);
-                                  deleteOrder(order_id);
-                                  res.status(200).json({
-                                    status: "0",
-                                    message:
-                                      "Order is not placed. Try again later."
-                                  });
-                                } else {
-                                  for (let i = 0; i < cart.length; i++) {
-                                    if (cart[i].mobile_required == 1) {
-                                      sql =
-                                        "update variant_mobile set quantity=quantity-" +
-                                        cart[i].cart_quantity +
-                                        " where  variant_id=" +
-                                        cart[i].variant_id;
-                                      con.query(sql, (err, result) => {});
-                                      sql =
-                                        "update product_variant set order_count=order_count+" +
-                                        cart[i].cart_quantity +
-                                        " where variant_id=" +
-                                        cart[i].variant_id;
-                                    } else {
-                                      sql =
-                                        "update product_variant set quantity=quantity-" +
-                                        cart[i].cart_quantity +
-                                        ", order_count=order_count+" +
-                                        cart[i].cart_quantity +
-                                        " where variant_id=" +
-                                        cart[i].variant_id +
-                                        ";";
-                                    }
-                                    con.query(sql, (err, result) => {});
-                                  }
-                                  sql =
-                                    "delete from cart where cart_id=" +
-                                    req.userId +
-                                    " and variant_id=" +
-                                    req.body.variant_id;
-                                  con.query(sql, (err, result) => {
-                                    res.status(200).json({
-                                      status: 1,
-                                      message: "Order placed successfully."
-                                    });
-                                  });
-                                }
-                              });
+                                "update variant_mobile set quantity=quantity-" +
+                                cart[i].cart_quantity +
+                                " where  variant_id=" +
+                                cart[i].variant_id;
+                              con.query(sql, (err, result) => {});
+                              sql =
+                                "update product_variant set order_count=order_count+" +
+                                cart[i].cart_quantity +
+                                " where variant_id=" +
+                                cart[i].variant_id;
                             } else {
-                              deleteOrder(order_id);
-                              res.status(200).json({
-                                status: "0",
-                                message:
-                                  "Order not placed. Your order amount is not eligible for promocode"
-                              });
+                              sql =
+                                "update product_variant set quantity=quantity-" +
+                                cart[i].cart_quantity +
+                                ", order_count=order_count+" +
+                                cart[i].cart_quantity +
+                                " where variant_id=" +
+                                cart[i].variant_id +
+                                ";";
                             }
-                          } else {
-                            res.status(200).json({
-                              status: "0",
-                              message: "Please apply valid promocode."
-                            });
+                            con.query(sql, (err, result) => {});
                           }
+                          sql =
+                            "delete from cart where cart_id=" +
+                            req.userId +
+                            " and variant_id=" +
+                            req.body.variant_id;
+                          con.query(sql, (err, result) => {
+                            res.status(200).json({
+                              status: 1,
+                              message: "Order placed successfully."
+                            });
+                          });
                         }
                       });
+                      } else {
+                        sql = "select * from promocode where id=" + data.promo_id;
+                        con.query(sql, (err, promo) => {
+                          if (err) {
+                            console.log(err);
+                            deleteOrder(order_id);
+                            res.status(200).json({
+                              status: "0",
+                              message:
+                                "Order not placed. Please apply valid promocode."
+                            });
+                          } else {
+                            if (promo.length > 0) {
+                              if (promo[0].min_limit <= orderdata.order_amount) {
+                                let discount;
+                                if (promo[0].discount_type == 1) {
+                                  discount = promo[0].max_discount;
+                                } else {
+                                  discount =
+                                    (orderdata.order_amount * promo[0].discount) /
+                                    100;
+                                  if (discount > promo[0].max_discount) {
+                                    discount = promo[0].max_discount;
+                                  }
+                                }
+                                orderdata.order_amount =
+                                  orderdata.order_amount - discount;
+                                
+                                sql =
+                                  "update customer_order set collectable_amount=" +
+                                  orderdata.collectable_amount +
+                                  ", total_weight=" +
+                                  orderdata.total_weight +
+                                  ", dm_length=" +
+                                  orderdata.dm_length +
+                                  ", dm_breadth=" +
+                                  orderdata.dm_breadth +
+                                  ", dm_height=" +
+                                  orderdata.dm_height +
+                                  ", taxable_value=" +
+                                  orderdata.taxable_amount +
+                                  ",sgst=" +
+                                  orderdata.sgst +
+                                  ", cgst=" +
+                                  orderdata.cgst +
+                                  ", igst=" +
+                                  orderdata.igst +
+                                  ",order_amount=" +
+                                  orderdata.order_amount +
+                                  " where order_id=" +
+                                  order_id;
+                                con.query(sql, (err, orderinfo) => {
+                                  if (err) {
+                                    console.log(err);
+                                    deleteOrder(order_id);
+                                    res.status(200).json({
+                                      status: "0",
+                                      message:
+                                        "Order is not placed. Try again later."
+                                    });
+                                  } else {
+                                    for (let i = 0; i < cart.length; i++) {
+                                      if (cart[i].mobile_required == 1) {
+                                        sql =
+                                          "update variant_mobile set quantity=quantity-" +
+                                          cart[i].cart_quantity +
+                                          " where  variant_id=" +
+                                          cart[i].variant_id;
+                                        con.query(sql, (err, result) => {});
+                                        sql =
+                                          "update product_variant set order_count=order_count+" +
+                                          cart[i].cart_quantity +
+                                          " where variant_id=" +
+                                          cart[i].variant_id;
+                                      } else {
+                                        sql =
+                                          "update product_variant set quantity=quantity-" +
+                                          cart[i].cart_quantity +
+                                          ", order_count=order_count+" +
+                                          cart[i].cart_quantity +
+                                          " where variant_id=" +
+                                          cart[i].variant_id +
+                                          ";";
+                                      }
+                                      con.query(sql, (err, result) => {});
+                                    }
+                                    sql =
+                                      "delete from cart where cart_id=" +
+                                      req.userId +
+                                      " and variant_id=" +
+                                      req.body.variant_id;
+                                    con.query(sql, (err, result) => {
+                                      res.status(200).json({
+                                        status: 1,
+                                        message: "Order placed successfully."
+                                      });
+                                    });
+                                  }
+                                });
+                              } else {
+                                deleteOrder(order_id);
+                                res.status(200).json({
+                                  status: "0",
+                                  message:
+                                    "Order not placed. Your order amount is not eligible for promocode"
+                                });
+                              }
+                            } else {
+                              res.status(200).json({
+                                status: "0",
+                                message: "Please apply valid promocode."
+                              });
+                            }
+                          }
+                        });
+                      }
+                     
                     }
                   });
                 }

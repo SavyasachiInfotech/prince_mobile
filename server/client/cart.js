@@ -160,7 +160,7 @@ router.post(
 );
 
 router.post("/update-cart", verifyToken, (req, res) => {
-  let data = req.body;
+  let data = req.body.cart;
   for (let i = 0; i < data.length; i++) {
     let sql =
       "update cart set quantity=" +
