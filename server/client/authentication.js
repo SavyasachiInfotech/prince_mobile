@@ -678,10 +678,10 @@ router.post(
   [
     check("currentPassword")
       .isString()
-      .isLength({ min: 32, max: 32 }),
+      .isLength({ min: 1, max: 40 }),
     check("newPassword")
       .isString()
-      .isLength({ min: 32, max: 32 }),
+      .isLength({ min: 1, max: 40 }),
     check("email")
       .isString()
       .isLength({ min: 1, max: 400 })

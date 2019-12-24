@@ -4,9 +4,13 @@ export class Variant {
   price: number;
   discount: number;
   quantity: number;
-  min_qty:number;
+  min_qty: number;
   parent: boolean;
   image_required: boolean;
-  tax_id:number;
-  accept_promocode:boolean;
+  tax_id: number;
+  accept_promocode: boolean;
+
+  constructor() {
+    this.parent = true;
+  }
 }
