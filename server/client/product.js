@@ -329,6 +329,11 @@ router.post(
                           });
                           delete products[0].cart_quantity;
                         }
+                        for(let i=0;i<mobiles.length;i++){
+                          if(mobiles[i].max_quantity<1){
+                            mobiles.splice(i,1);
+                          }
+                        }
                         sql =
                           "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +
                           id +
@@ -350,6 +355,13 @@ router.post(
                                   message: "Offers not detected"
                                 });
                               } else {
+                                if(products[0].image_required==1){
+                                  products[0].terms_condition="<div><ul><li>Make online payment</li></ul></div>"
+                                  products[0].how_to_buy="<div>How to Buy ?</div>";
+                                } else {
+                                  products[0].terms_condition=""
+                                  products[0].how_to_buy="";
+                                }
                                 if (promo.length > 0) {
                                   products[0].offers = new Array();
                                   for (let i = 0; i < promo.length; i++) {
@@ -361,6 +373,7 @@ router.post(
                                 } else {
                                   products[0].offers = [];
                                 }
+
                                 for (let i = 0; i < products.length; i++) {
                                   products[i].mobiles = mobiles.filter(
                                     item =>

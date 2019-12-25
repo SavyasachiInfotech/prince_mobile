@@ -180,83 +180,84 @@ router.post(
                       orderdata.igst = 0;
                       orderdata.taxable_amount =
                         orderdata.collectable_amount - orderdata.taxable_amount;
-                      if(req.body.iscod==1){
-                        orderdata.collectable_amount=orderdata.collectable_amount+50;
+                      if (req.body.iscod == 1) {
+                        orderdata.collectable_amount =
+                          orderdata.collectable_amount + 50;
                       }
-                      if(data.promo_id==0){
+                      if (data.promo_id == 0) {
                         sql =
-                        "update customer_order set collectable_amount=" +
-                        orderdata.collectable_amount +
-                        ", total_weight=" +
-                        orderdata.total_weight +
-                        ", dm_length=" +
-                        orderdata.dm_length +
-                        ", dm_breadth=" +
-                        orderdata.dm_breadth +
-                        ", dm_height=" +
-                        orderdata.dm_height +
-                        ", taxable_value=" +
-                        orderdata.taxable_amount +
-                        ",sgst=" +
-                        orderdata.sgst +
-                        ", cgst=" +
-                        orderdata.cgst +
-                        ", igst=" +
-                        orderdata.igst +
-                        ",order_amount=" +
-                        orderdata.order_amount +
-                        " where order_id=" +
-                        order_id;
-                      con.query(sql, (err, orderinfo) => {
-                        if (err) {
-                          console.log(err);
-                          deleteOrder(order_id);
-                          res.status(200).json({
-                            status: "0",
-                            message:
-                              "Order is not placed. Try again later."
-                          });
-                        } else {
-                          for (let i = 0; i < cart.length; i++) {
-                            if (cart[i].mobile_required == 1) {
-                              sql =
-                                "update variant_mobile set quantity=quantity-" +
-                                cart[i].cart_quantity +
-                                " where  variant_id=" +
-                                cart[i].variant_id;
-                              con.query(sql, (err, result) => {});
-                              sql =
-                                "update product_variant set order_count=order_count+" +
-                                cart[i].cart_quantity +
-                                " where variant_id=" +
-                                cart[i].variant_id;
-                            } else {
-                              sql =
-                                "update product_variant set quantity=quantity-" +
-                                cart[i].cart_quantity +
-                                ", order_count=order_count+" +
-                                cart[i].cart_quantity +
-                                " where variant_id=" +
-                                cart[i].variant_id +
-                                ";";
-                            }
-                            con.query(sql, (err, result) => {});
-                          }
-                          sql =
-                            "delete from cart where cart_id=" +
-                            req.userId +
-                            " and variant_id=" +
-                            req.body.variant_id;
-                          con.query(sql, (err, result) => {
+                          "update customer_order set collectable_amount=" +
+                          orderdata.collectable_amount +
+                          ", total_weight=" +
+                          orderdata.total_weight +
+                          ", dm_length=" +
+                          orderdata.dm_length +
+                          ", dm_breadth=" +
+                          orderdata.dm_breadth +
+                          ", dm_height=" +
+                          orderdata.dm_height +
+                          ", taxable_value=" +
+                          orderdata.taxable_amount +
+                          ",sgst=" +
+                          orderdata.sgst +
+                          ", cgst=" +
+                          orderdata.cgst +
+                          ", igst=" +
+                          orderdata.igst +
+                          ",order_amount=" +
+                          orderdata.order_amount +
+                          " where order_id=" +
+                          order_id;
+                        con.query(sql, (err, orderinfo) => {
+                          if (err) {
+                            console.log(err);
+                            deleteOrder(order_id);
                             res.status(200).json({
-                              status: 1,
-                              message: "Order placed successfully."
+                              status: "0",
+                              message: "Order is not placed. Try again later."
                             });
-                          });
-                        }
-                      });
+                          } else {
+                            for (let i = 0; i < cart.length; i++) {
+                              if (cart[i].mobile_required == 1) {
+                                sql =
+                                  "update variant_mobile set quantity=quantity-" +
+                                  cart[i].cart_quantity +
+                                  " where  variant_id=" +
+                                  cart[i].variant_id;
+                                con.query(sql, (err, result) => {});
+                                sql =
+                                  "update product_variant set order_count=order_count+" +
+                                  cart[i].cart_quantity +
+                                  " where variant_id=" +
+                                  cart[i].variant_id;
+                              } else {
+                                sql =
+                                  "update product_variant set quantity=quantity-" +
+                                  cart[i].cart_quantity +
+                                  ", order_count=order_count+" +
+                                  cart[i].cart_quantity +
+                                  " where variant_id=" +
+                                  cart[i].variant_id +
+                                  ";";
+                              }
+                              con.query(sql, (err, result) => {});
+                            }
+                            sql =
+                              "delete from cart where cart_id=" +
+                              req.userId +
+                              " and variant_id=" +
+                              req.body.variant_id;
+                            con.query(sql, (err, result) => {
+                              res.status(200).json({
+                                status: 1,
+                                message: "Order placed successfully."
+                              });
+                            });
+                          }
+                        });
                       } else {
-                        sql = "select * from promocode where id=" + data.promo_id;
+                        sql =
+                          "select * from promocode where id=" + data.promo_id;
                         con.query(sql, (err, promo) => {
                           if (err) {
                             console.log(err);
@@ -268,13 +269,16 @@ router.post(
                             });
                           } else {
                             if (promo.length > 0) {
-                              if (promo[0].min_limit <= orderdata.order_amount) {
+                              if (
+                                promo[0].min_limit <= orderdata.order_amount
+                              ) {
                                 let discount;
                                 if (promo[0].discount_type == 1) {
                                   discount = promo[0].max_discount;
                                 } else {
                                   discount =
-                                    (orderdata.order_amount * promo[0].discount) /
+                                    (orderdata.order_amount *
+                                      promo[0].discount) /
                                     100;
                                   if (discount > promo[0].max_discount) {
                                     discount = promo[0].max_discount;
@@ -282,7 +286,7 @@ router.post(
                                 }
                                 orderdata.order_amount =
                                   orderdata.order_amount - discount;
-                                
+
                                 sql =
                                   "update customer_order set collectable_amount=" +
                                   orderdata.collectable_amount +
@@ -371,7 +375,6 @@ router.post(
                           }
                         });
                       }
-                     
                     }
                   });
                 }
@@ -415,56 +418,63 @@ router.post(
             .status(200)
             .json({ status: "0", message: "Order detail not found." });
         } else {
-          result = result[0];
-          let data = {
-            order_id: result.order_id,
-            iscod: result.iscod,
-            add1: result.add1,
-            add2: result.add2,
-            add3: result.add3,
-            landmark: result.landmark,
-            city: result.city,
-            state: result.state,
-            pincode: result.pincode,
-            shipadd1: result.add1,
-            shipadd2: result.add2,
-            shipadd3: result.add3,
-            shiplandmark: result.landmark,
-            shipcity: result.city,
-            shipstate: result.state,
-            shippincode: result.pincode,
-            status: result.status,
-            estimate_date: "",
-            added_date: result.added_date
-          };
-          let product = JSON.parse(result.variant);
-          data.quantity = product.cart_quantity;
-          data.name = product.name;
-          data.price = product.price;
-          data.sold_by = "MS WORLD";
-          data.image = product.thumbnail;
-          data.postage_packing = 0.0;
-          let mrp =
-            product.price * product.cart_quantity -
-            (product.price * product.cart_quantity * product.tax) /
-              (100 + product.tax);
-          data.items = mrp.toFixed(2);
-          data.taxable_amount = mrp.toFixed(2);
+          if (result.length > 0) {
+            result = result[0];
+            let data = {
+              order_id: result.order_id,
+              iscod: result.iscod,
+              flatno: result.flatno,
+              colony: result.colony,
+              landmark: result.landmark,
+              city: result.city,
+              state: result.state,
+              pincode: result.pincode,
+              shipflatno: result.flatno,
+              shipcolony: result.colony,
+              shiplandmark: result.landmark,
+              shipcity: result.city,
+              shipstate: result.state,
+              shippincode: result.pincode,
+              status: result.status,
+              estimate_date: "",
+              added_date: result.added_date,
+              is_cancelable:1,
+              is_replacable:1,
+              is_returnable:1
+            };
+            let product = JSON.parse(result.variant);
+            data.quantity = product.cart_quantity;
+            data.name = product.name;
+            data.price = product.price;
+            data.sold_by = "MS WORLD";
+            data.image = product.thumbnail;
+            data.postage_packing = 0.0;
+            let mrp =
+              product.price * product.cart_quantity -
+              (product.price * product.cart_quantity * product.tax) /
+                (100 + product.tax);
+            data.items = mrp.toFixed(2);
+            data.taxable_amount = mrp.toFixed(2);
 
-          data.tax = ((mrp * product.tax) / 100).toFixed(2);
-          data.total = (
-            Number.parseInt(data.taxable_amount) + Number.parseInt(data.tax)
-          ).toFixed(2);
+            data.tax = ((mrp * product.tax) / 100).toFixed(2);
+            data.total = (
+              Number.parseInt(data.taxable_amount) + Number.parseInt(data.tax)
+            ).toFixed(2);
 
-          let json = JSON.stringify(data);
-          data = JSON.parse(json, (key, val) =>
-            typeof val !== "object" && val !== null ? String(val) : val
-          );
-          res.status(200).json({
-            status: "1",
-            message: "Getting order detail successfully.",
-            order_detail: data
-          });
+            let json = JSON.stringify(data);
+            data = JSON.parse(json, (key, val) =>
+              typeof val !== "object" && val !== null ? String(val) : val
+            );
+            res.status(200).json({
+              status: "1",
+              message: "Getting order detail successfully.",
+              order_detail: data
+            });
+          } else {
+            res
+              .status(200)
+              .json({ status: "0", message: "Order detail not found" });
+          }
         }
       });
     }
@@ -622,6 +632,56 @@ router.post(
               });
             }
           });
+        }
+      });
+    }
+  }
+);
+
+router.post(
+  "/cancel-order",
+  verifyToken,
+  [check("order_id").isNumeric()],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: "0",
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let order_id = req.body.order_id;
+      let sql = "select * from  customer_order where order_id=" + order_id;
+      con.query(sql, (err, result) => {
+        if (err) {
+          res.json({ status: "0", message: "Please select valid order" });
+        } else {
+          if (result.length > 0) {
+            if (result[0].status_id <= 2) {
+              sql =
+                "insert into track_detail(item_id,status_id) values(" +
+                order_id +
+                ",7)";
+              con.query(sql);
+              sql =
+                "update cutomer_order set status_id=7 where order_id=" +
+                order_id;
+              con.query(sql);
+              res.json({
+                status: "1",
+                message: "Order cancelled successfully."
+              });
+            } else {
+              res.json({
+                status: "0",
+                message:
+                  "Order is already shipped, so you can return order at delivery time"
+              });
+            }
+          } else {
+            res.json({ status: "0", message: "Order not found" });
+          }
         }
       });
     }
