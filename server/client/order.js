@@ -438,9 +438,9 @@ router.post(
               status: result.status,
               estimate_date: "",
               added_date: result.added_date,
-              is_cancelable:1,
-              is_replacable:1,
-              is_returnable:1
+              is_cancelable: 1,
+              is_replacable: 1,
+              is_returnable: 1
             };
             let product = JSON.parse(result.variant);
             data.quantity = product.cart_quantity;
@@ -638,10 +638,16 @@ router.post(
   }
 );
 
+/**
+ * return_type = > 1. Cancel
+ *                 2. Return
+ *                 3. Replace
+ */
+
 router.post(
   "/cancel-order",
   verifyToken,
-  [check("order_id").isNumeric()],
+  [check("order_id").isNumeric(), check("return_type").isNumeric()],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -652,38 +658,45 @@ router.post(
       });
     } else {
       let order_id = req.body.order_id;
-      let sql = "select * from  customer_order where order_id=" + order_id;
-      con.query(sql, (err, result) => {
-        if (err) {
-          res.json({ status: "0", message: "Please select valid order" });
-        } else {
-          if (result.length > 0) {
-            if (result[0].status_id <= 2) {
-              sql =
-                "insert into track_detail(item_id,status_id) values(" +
-                order_id +
-                ",7)";
-              con.query(sql);
-              sql =
-                "update cutomer_order set status_id=7 where order_id=" +
-                order_id;
-              con.query(sql);
-              res.json({
-                status: "1",
-                message: "Order cancelled successfully."
-              });
+      switch (req.body.return_type) {
+        case 1:
+          let sql = "select * from  customer_order where order_id=" + order_id;
+          con.query(sql, (err, result) => {
+            if (err) {
+              res.json({ status: "0", message: "Please select valid order" });
             } else {
-              res.json({
-                status: "0",
-                message:
-                  "Order is already shipped, so you can return order at delivery time"
-              });
+              if (result.length > 0) {
+                if (result[0].status_id <= 2) {
+                  sql =
+                    "insert into track_detail(item_id,status_id) values(" +
+                    order_id +
+                    ",7)";
+                  con.query(sql);
+                  sql =
+                    "update cutomer_order set status_id=7 where order_id=" +
+                    order_id;
+                  con.query(sql);
+                  res.json({
+                    status: "1",
+                    message: "Order cancelled successfully."
+                  });
+                } else {
+                  res.json({
+                    status: "0",
+                    message:
+                      "Order is already shipped, so you can return order at delivery time"
+                  });
+                }
+              } else {
+                res.json({ status: "0", message: "Order not found" });
+              }
             }
-          } else {
-            res.json({ status: "0", message: "Order not found" });
-          }
-        }
-      });
+          });
+          break;
+
+        default:
+          break;
+      }
     }
   }
 );
