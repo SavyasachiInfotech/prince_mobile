@@ -33,6 +33,14 @@ export class ManageOrderComponent implements OnInit {
           this.lastPage = Math.ceil(res.count / this.limit);
           //@ts-ignore
           this.orders = res.data;
+          for (let i = 0; i < this.orders.length; i++) {
+            let image = JSON.parse(this.orders[i].thumbnail);
+            if (image.length > 0) {
+              this.orders[i].thumbnail = this._config.thumbnailUrl + image[0];
+            } else {
+              this.orders[i].thumbnail = "";
+            }
+          }
           this.setPagination();
         }
       });

@@ -61,20 +61,30 @@
               <table class="table product-overview">
                 <tr>
                   <th>Order ID</th>
+                  <th>Name</th>
                   <th>User ID</th>
                   <th>Amount</th>
                   <th>Date Time</th>
+                  <th>Image</th>
                   <th>Action</th>
                 </tr>
                 <tr *ngFor="let order of orders; let i = index">
                   <td>{{ order.order_id }}</td>
+                  <td>{{order.name}}</td>
                   <td>{{ order.user_id }}</td>
                   <td>{{ order.collectable_amount }}</td>
                   <td>{{ order.added_date }}</td>
                   <td>
-                    <button class="btn btn-outline-primary">
-                      <i class="material-icons">visibility</i>
-                    </button>
+                    <a [href]="order.thumbnail" target="_blank">
+                      <img [src]="order.thumbnail" width="50" height="50">
+                    </a>
+                  </td>
+                  <td>
+                    <a routerLink="../order-detail/{{order.order_id}}">
+                      <button class="btn btn-outline-primary">
+                        <i class="material-icons">visibility</i>
+                      </button>
+                    </a>
                     <button
                       class="btn btn-outline-success"
                       (click)="changeStatus(1, order, i)"

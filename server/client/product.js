@@ -264,7 +264,7 @@ router.post(
   "/get-product-detail",
   [check("id").isNumeric()],
   verifyToken,
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({
@@ -275,7 +275,7 @@ router.post(
     } else {
       let id = req.body.id;
       let sql =
-        "select v.variant_id,v.name,p.description,c.name as category,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
+        "select v.variant_id,v.name,p.description,c.name as category,IFNULL((select quantity from cart where variant_id=v.variant_id and mobile_required=0),0) as cart_quantity,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
         id;
       con.query(sql, (err, products) => {
         if (err) {
@@ -306,7 +306,9 @@ router.post(
                       .json({ status: "0", message: "Enter valid Product." });
                   } else {
                     sql =
-                      "select vm.variant_id,vm.mobile_id,vm.quantity as max_quantity,v.min_qty,m.model_name,vm.price,vm.discount from variant_mobile vm,product_variant v,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
+                      "select vm.variant_id,vm.mobile_id,vm.quantity as max_quantity,IFNULL((select quantity from  cart where cart_id=" +
+                      req.userId +
+                      " and variant_id=v.variant_id and mobile_id=m.model_id),0) as cart_quantity,v.min_qty,m.model_name,vm.price,vm.discount from variant_mobile vm,product_variant v,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
                       id +
                       " and v.variant_id=" +
                       id;
@@ -322,8 +324,10 @@ router.post(
                             model_name: products[0].name,
                             price: products[0].price,
                             discount: products[0].discount,
-                            min_qty: products[0].min_qty
+                            min_qty: products[0].min_qty,
+                            cart_quantity: products[0].cart_quantity
                           });
+                          delete products[0].cart_quantity;
                         }
                         sql =
                           "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +

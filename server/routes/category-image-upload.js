@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, path.join(__dirname, "../../", "dist/admin/assets/categories"));
+    cb(null, path.join(__dirname, "../", "assets/categories"));
   },
   filename: function(req, file, cb) {
     var ext = path.extname(file.originalname);
@@ -62,11 +62,7 @@ var storage = multer.diskStorage({
               if (images[i] === req.params.image_name) {
                 images[i] = filename.toString();
                 let filepath =
-                  path.join(
-                    __dirname,
-                    "../../",
-                    "dist/admin/assets/categories"
-                  ) + images[i];
+                  path.join(__dirname, "../", "assets/categories") + images[i];
                 check = 1;
                 break;
               }

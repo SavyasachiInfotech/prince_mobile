@@ -13,6 +13,8 @@ export class OrderService {
     this._config.apiBaseUrl + this.service + "get-orders-by-status";
   private changeStatusUrl =
     this._config.apiBaseUrl + this.service + "change-status";
+  private _getOrderDetailUrl =
+    this._config.apiBaseUrl + this.service + "get-order-detail";
 
   getOrdersByStatus(data) {
     let options = this._config.getHeader();
@@ -22,5 +24,10 @@ export class OrderService {
   changeStatus(data) {
     let options = this._config.getHeader();
     return this._http.post<any>(this.changeStatusUrl, data, options);
+  }
+
+  getOrderDetail(data) {
+    let options = this._config.getHeader();
+    return this._http.post<any>(this._getOrderDetailUrl, data, options);
   }
 }

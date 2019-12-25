@@ -271,10 +271,7 @@ router.post(
           data[0].profile_image.length > 0
         ) {
           fs.unlink(
-            path.join(
-              __dirname,
-              "../../dist/admin/assets/profile/" + data[0].profile_image
-            ),
+            path.join(__dirname, "../assets/profile/" + data[0].profile_image),
             error => {}
           );
         }

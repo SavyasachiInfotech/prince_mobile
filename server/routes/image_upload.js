@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 
 var storage = multer.diskStorage({
   destination: function(req, file, cb) {
-    cb(null, path.join(__dirname, "../../", "dist/admin/assets/main_image"));
+    cb(null, path.join(__dirname, "../", "assets/main_image"));
   },
   filename: function(req, file, cb) {
     var ext = path.extname(file.originalname);
@@ -62,7 +62,7 @@ var storage = multer.diskStorage({
               if (images[i] === req.params.image_name) {
                 images[i] = filename.toString();
                 let filepath =
-                path.join(__dirname, "../../", "dist/admin/assets/main_image") + images[i];
+                path.join(__dirname, "../", "assets/main_image") + images[i];
                 check = 1;
                 break;
               }
@@ -110,7 +110,7 @@ router.post(
         sharp(req.files[0].path)
         .resize(100)
         .toFile(
-          path.join(__dirname, "../../", "dist/admin/assets/thumbnail/100-100") +
+          path.join(__dirname, "../", "assets/thumbnail/100-100") +
             req.files[0].filename,
           (err, info) => {
             if (err) {
@@ -122,7 +122,7 @@ router.post(
               sharp(req.files[0].path)
                 .resize(300)
                 .toFile(
-                  path.join(__dirname, "../../", "dist/admin/assets/list_image/300-300") + req.files[0].filename,
+                  path.join(__dirname, "../", "assets/list_image/300-300") + req.files[0].filename,
                   (err, info) => {
                     if (err) {
                       console.log(err);
@@ -134,7 +134,7 @@ router.post(
                       sharp(req.files[0].path)
                         .resize(500)
                         .toFile(
-                          path.join(__dirname, "../../", "dist/admin/assets/view_image/500-500") + req.files[0].filename,
+                          path.join(__dirname, "../", "assets/view_image/500-500") + req.files[0].filename,
                           (err, info) => {
                             if (err) {
                               console.log(err);
@@ -192,7 +192,7 @@ router.post(
         sharp(req.files[0].path)
       .resize(100)
       .toFile(
-        path.join(__dirname, "../../", "dist/admin/assets/thumbnail/100-100") +
+        path.join(__dirname, "../", "assets/thumbnail/100-100") +
           req.files[0].filename,
         (err, info) => {
           if (err) {
@@ -208,7 +208,7 @@ router.post(
             sharp(req.files[0].path)
               .resize(300)
               .toFile(
-                path.join(__dirname, "../../", "dist/admin/assets/list_image/300-300") + req.files[0].filename,
+                path.join(__dirname, "../", "assets/list_image/300-300") + req.files[0].filename,
                 (err, info) => {
                   if (err) {
                     console.log(err);
@@ -224,7 +224,7 @@ router.post(
                     sharp(req.files[0].path)
                       .resize(500)
                       .toFile(
-                        path.join(__dirname, "../../", "dist/admin/assets/view_image/500-500") + req.files[0].filename,
+                        path.join(__dirname, "../", "assets/view_image/500-500") + req.files[0].filename,
                         (err, info) => {
                           if (err) {
                             console.log(err);

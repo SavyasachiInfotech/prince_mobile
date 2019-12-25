@@ -31,7 +31,7 @@ function verifyToken(req, res, next) {
 router.post("/add-cart", verifyToken, (req, res) => {
   let cart = req.body.cart;
   let sql =
-    "insert into cart(cart_id,variant_id,quantity,mobile_required,mobile_id) values";
+    "replace into cart(cart_id,variant_id,quantity,mobile_required,mobile_id) values";
   for (let i = 0; i < cart.length; i++) {
     if (
       isNaN(cart[i].variant_id) ||
