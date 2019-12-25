@@ -673,7 +673,7 @@ router.post(
                     ",7)";
                   con.query(sql);
                   sql =
-                    "update cutomer_order set status_id=7 where order_id=" +
+                    "update customer_order set status_id=7 where order_id=" +
                     order_id;
                   con.query(sql);
                   res.json({
