@@ -357,7 +357,7 @@ router.post(
                               } else {
                                 if(products[0].image_required==1){
                                   products[0].tnc_to_buy="<div><ul><li>Make online payment</li></ul></div>"
-                                  products[0].how_to_buy="<div>How to Buy ?</div>";
+                                  products[0].how_to_buy="<div><ul><li>First you need to Pay for buying product</li><li>After successful payment you will get order id</li><li>You need to send your image with order id to us in chat</li></ul></div>";
                                 } else {
                                   products[0].tnc_to_buy=""
                                   products[0].how_to_buy="";
