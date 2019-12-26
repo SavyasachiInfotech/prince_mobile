@@ -1,9 +1,25 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
 const router = express.Router();
 const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
+
+var storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, "../../dist/admin/assets/profile"));
+  },
+  filename: (req, file, cb) => {
+    file.originalname = new Date().getTime() + file.originalname;
+    cb(null, file.originalname);
+  }
+});
+
+var upload = multer({
+  storage: storage
+});
+
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
     return res
@@ -647,7 +663,10 @@ router.post(
 router.post(
   "/cancel-order",
   verifyToken,
-  [check("order_id").isNumeric(), check("return_type").isNumeric()],
+  upload.single("reason_image"),
+  [
+    (check("order_id").isNumeric(), check("return_type").isNumeric(), check(""))
+  ],
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -692,6 +711,9 @@ router.post(
               }
             }
           });
+          break;
+
+        case 2:
           break;
 
         default:

@@ -255,13 +255,13 @@ router.post(
       let sql;
       if (data.mobile_required) {
         sql =
-          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,vm.quantity as max_qty,v.min_qty,v.thumbnail,vm.price,vm.discount,m.model_name from cart c, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,vm.quantity as max_qty,v.min_qty,v.thumbnail,vm.price,vm.discount,m.model_name,v.image_required from cart c, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
           data.variant_id +
           " and c.cart_id=" +
           req.userId;
       } else {
         sql =
-          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,v.quantity as max_qty,v.min_qty,v.thumbnail,v.price,v.discount from cart c,variant v where c.variant_id=v.variant_id and c.cart_id=" +
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,v.quantity as max_qty,v.min_qty,v.thumbnail,v.price,v.discount,v.image_required from cart c,variant v where c.variant_id=v.variant_id and c.cart_id=" +
           req.userId +
           " and c.variant_id=" +
           data.variant_id;
@@ -315,12 +315,17 @@ router.post(
               sql = "select meta_value from meta where id=1";
               con.query(sql, (err, cod) => {
                 other_details.cod_charge = cod[0].meta_value;
+                let image = 0;
+                if (result.length > 0) {
+                  image = result[0].image_required;
+                }
                 res.status(200).json({
                   status: 1,
                   message: "Getting cart product detail successfuly.",
                   cart_data: result,
                   offers_details: offers,
-                  other_details: other_details
+                  other_details: other_details,
+                  image_required: image
                 });
               });
             }
