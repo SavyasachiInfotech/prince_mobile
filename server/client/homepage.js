@@ -44,27 +44,27 @@ router.get("/get-homepage-data", (req, res) => {
         } else {
           categories = category;
           sql =
-            "select v.variant_id,v.name,v.price,v.quantity,v.discount,t.tax,v.thumbnail,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.category_id=18 and p.is_display=1 order by v.added_on limit 0,5 ";
+            "select v.variant_id,v.name,v.price,v.quantity,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity ,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,t.tax,v.thumbnail,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.category_id=18 and p.is_display=1 order by v.added_on limit 0,5 ";
           con.query(sql, (err, products) => {
             if (err) {
               console.log(err);
             } else {
               products = products;
               sql =
-                "select v.variant_id,v.name,v.price,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.added_on DESC limit 0,5";
+                "select v.variant_id,v.name,v.price,v.quantity,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.added_on DESC limit 0,5";
               con.query(sql, (err, latest) => {
                 if (err) {
                   console.log(err);
                 }
                 let trend;
                 sql =
-                  "select v.variant_id,v.name,v.price,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.order_count DESC limit 0,5";
+                  "select v.variant_id,v.name,v.price,v.quantity,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where  t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.order_count DESC limit 0,5";
                 con.query(sql, (err, trending) => {
                   if (err) {
                     console.log(err);
                   } else {
                     sql =
-                      "select v.variant_id,v.name,v.price,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.modified_date DESC limit 0,5";
+                      "select v.variant_id,v.name,v.price,v.quantity,v.discount,t.tax,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.modified_date DESC limit 0,5";
                     con.query(sql, (err, allProduct) => {
                       if (err) {
                         console.log(err);
@@ -95,6 +95,19 @@ router.get("/get-homepage-data", (req, res) => {
                           } else {
                             products[i].thumbnail = "";
                           }
+                          if(products[i].count>0){
+                            if(products[i].sum_quantity>0){
+                              products[i].Is_Out_Of_Stock=0;
+                            } else {
+                              products[i].Is_Out_Of_Stock=1;
+                            }
+                          } else {
+                            if(products[i].quantity>0){
+                              products[i].Is_Out_Of_Stock=0;
+                            } else {
+                              products[i].Is_Out_Of_Stock=1;
+                            }
+                          }
 
                           products[i].mrp =
                             products[i].price +
@@ -108,7 +121,19 @@ router.get("/get-homepage-data", (req, res) => {
                           } else {
                             allProduct[i].list_image = "";
                           }
-
+                          if(allProduct[i].count>0){
+                            if(allProduct[i].sum_quantity>0){
+                              allProduct[i].Is_Out_Of_Stock=0;
+                            } else {
+                              allProduct[i].Is_Out_Of_Stock=1;
+                            }
+                          } else {
+                            if(products[i].quantity>0){
+                              allProduct[i].Is_Out_Of_Stock=0;
+                            } else {
+                              allProduct[i].Is_Out_Of_Stock=1;
+                            }
+                          } 
                           allProduct[i].mrp =
                             allProduct[i].price +
                             (allProduct[i].price * allProduct[i].discount) /
@@ -121,6 +146,19 @@ router.get("/get-homepage-data", (req, res) => {
                               process.env.LISTIMAGE + data[0];
                           } else {
                             trend[i].list_image = "";
+                          }
+                          if(trend[i].count>0){
+                            if(trend[i].sum_quantity>0){
+                              trend[i].Is_Out_Of_Stock=0;
+                            } else {
+                              trend[i].Is_Out_Of_Stock=1;
+                            }
+                          } else {
+                            if(products[i].quantity>0){
+                              trend[i].Is_Out_Of_Stock=0;
+                            } else {
+                              trend[i].Is_Out_Of_Stock=1;
+                            }
                           }
                           trend[i].mrp =
                             trend[i].price +
@@ -139,6 +177,19 @@ router.get("/get-homepage-data", (req, res) => {
                               process.env.LISTIMAGE + data[0];
                           } else {
                             latest[i].list_image = "";
+                          }
+                          if(latest[i].count>0){
+                            if(latest[i].sum_quantity>0){
+                              latest[i].Is_Out_Of_Stock=0;
+                            } else {
+                              latest[i].Is_Out_Of_Stock=1;
+                            }
+                          } else {
+                            if(latest[i].quantity>0){
+                              latest[i].Is_Out_Of_Stock=0;
+                            } else {
+                              latest[i].Is_Out_Of_Stock=1;
+                            }
                           }
                           latest[i].mrp =
                             latest[i].price +
@@ -243,27 +294,27 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
         } else {
           categories = category;
           sql =
-            "select v.variant_id,v.name,v.price,v.discount,v.quantity,t.tax,v.thumbnail,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.category_id=18 and p.is_display=1 order by v.added_on limit 0,5 ";
+            "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,t.tax,v.thumbnail,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.product_id=v.product_id and p.category_id=18 and p.is_display=1 order by v.added_on limit 0,5 ";
           con.query(sql, (err, products) => {
             if (err) {
               console.log(err);
             } else {
               products = products;
               sql =
-                "select v.variant_id,v.name,v.price,v.discount,v.quantity,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.added_on DESC limit 0,5";
+                "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.added_on DESC limit 0,5";
               con.query(sql, (err, latest) => {
                 if (err) {
                   console.log(err);
                 }
                 let trend;
                 sql =
-                  "select v.variant_id,v.name,v.price,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.order_count DESC limit 0,5";
+                  "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.order_count DESC limit 0,5";
                 con.query(sql, (err, trending) => {
                   if (err) {
                     console.log(err);
                   } else {
                     sql =
-                      "select v.variant_id,v.name,v.price,v.discount,v.quantity,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.modified_date DESC limit 0,5";
+                      "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.modified_date DESC limit 0,5";
                     con.query(sql, (err, allProduct) => {
                       if (err) {
                         console.log(err);
@@ -294,7 +345,19 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
                           } else {
                             products[i].thumbnail = "";
                           }
-
+                          if(products[i].count>0){
+                            if(products[i].sum_quantity>0){
+                              products[i].Is_Out_Of_Stock=0;
+                            } else {
+                              products[i].Is_Out_Of_Stock=1;
+                            }
+                          } else {
+                            if(products[i].quantity>0){
+                              products[i].Is_Out_Of_Stock=0;
+                            } else {
+                              products[i].Is_Out_Of_Stock=1;
+                            }
+                          }
                           products[i].mrp =
                             products[i].price +
                             (products[i].price * products[i].discount) / 100;
@@ -307,7 +370,19 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
                           } else {
                             allProduct[i].list_image = "";
                           }
-
+                          if(allProduct[i].count>0){
+                            if(allProduct[i].sum_quantity>0){
+                              allProduct[i].Is_Out_Of_Stock=0;
+                            } else {
+                              allProduct[i].Is_Out_Of_Stock=1;
+                            }
+                          } else {
+                            if(allProduct[i].quantity>0){
+                              allProduct[i].Is_Out_Of_Stock=0;
+                            } else {
+                              allProduct[i].Is_Out_Of_Stock=1;
+                            }
+                          }
                           allProduct[i].mrp =
                             allProduct[i].price +
                             (allProduct[i].price * allProduct[i].discount) /
@@ -320,6 +395,19 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
                               process.env.LISTIMAGE + data[0];
                           } else {
                             trend[i].list_image = "";
+                          }
+                          if(trend[i].count>0){
+                            if(trend[i].sum_quantity>0){
+                              trend[i].Is_Out_Of_Stock=0;
+                            } else {
+                              trend[i].Is_Out_Of_Stock=1;
+                            }
+                          } else {
+                            if(trend[i].quantity>0){
+                              trend[i].Is_Out_Of_Stock=0;
+                            } else {
+                              trend[i].Is_Out_Of_Stock=1;
+                            }
                           }
                           trend[i].mrp =
                             trend[i].price +
@@ -338,6 +426,19 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
                               process.env.LISTIMAGE + data[0];
                           } else {
                             latest[i].list_image = "";
+                          }
+                          if(latest[i].count>0){
+                            if(latest[i].sum_quantity>0){
+                              latest[i].Is_Out_Of_Stock=0;
+                            } else {
+                              latest[i].Is_Out_Of_Stock=1;
+                            }
+                          } else {
+                            if(latest[i].quantity>0){
+                              latest[i].Is_Out_Of_Stock=0;
+                            } else {
+                              latest[i].Is_Out_Of_Stock=1;
+                            }
                           }
                           latest[i].mrp =
                             latest[i].price +

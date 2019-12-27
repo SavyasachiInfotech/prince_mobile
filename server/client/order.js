@@ -5,10 +5,11 @@ const router = express.Router();
 const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
+const path = require("path");
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../dist/admin/assets/profile"));
+    cb(null, path.join(__dirname, "../assets/return"));
   },
   filename: (req, file, cb) => {
     file.originalname = new Date().getTime() + file.originalname;
@@ -435,6 +436,7 @@ router.post(
             .json({ status: "0", message: "Order detail not found." });
         } else {
           if (result.length > 0) {
+            
             result = result[0];
             let data = {
               order_id: result.order_id,
@@ -663,9 +665,12 @@ router.post(
 router.post(
   "/cancel-order",
   verifyToken,
-  upload.single("reason_image"),
+  upload.single("avatar"),
   [
-    (check("order_id").isNumeric(), check("return_type").isNumeric(), check(""))
+    check("order_id").isString(),
+    check("item_id").isString(),
+    check("reason").isString(),
+    check("return_type").isString()
   ],
   (req, res) => {
     const errors = validationResult(req);
@@ -676,48 +681,176 @@ router.post(
         errors: errors.array()
       });
     } else {
-      let order_id = req.body.order_id;
-      switch (req.body.return_type) {
-        case 1:
-          let sql = "select * from  customer_order where order_id=" + order_id;
-          con.query(sql, (err, result) => {
-            if (err) {
-              res.json({ status: "0", message: "Please select valid order" });
-            } else {
-              if (result.length > 0) {
-                if (result[0].status_id <= 2) {
-                  sql =
-                    "insert into track_detail(item_id,status_id) values(" +
-                    order_id +
-                    ",7)";
-                  con.query(sql);
-                  sql =
-                    "update customer_order set status_id=7 where order_id=" +
-                    order_id;
-                  con.query(sql);
-                  res.json({
-                    status: "1",
-                    message: "Order cancelled successfully."
-                  });
-                } else {
-                  res.json({
-                    status: "0",
-                    message:
-                      "Order is already shipped, so you can return order at delivery time"
-                  });
-                }
+      try {
+        let order_id = parseInt(req.body.order_id);
+        let item_id = parseInt(req.body.item_id);
+        let return_type = parseInt(req.body.return_type);
+        let sql, filename;
+        switch (return_type) {
+          case 1:
+            sql =
+              "select * from  customer_order where order_id=" +
+              order_id +
+              " and user_id=" +
+              req.userId;
+            con.query(sql, (err, result) => {
+              if (err) {
+                res.json({ status: "0", message: "Please select valid order" });
               } else {
-                res.json({ status: "0", message: "Order not found" });
+                if (result.length > 0) {
+                  if (result[0].status_id <= 2) {
+                    sql =
+                      "insert into track_detail(item_id,status_id) values(" +
+                      order_id +
+                      ",7)";
+                    con.query(sql);
+                    sql =
+                      "update customer_order set status_id=7 where order_id=" +
+                      order_id;
+                    con.query(sql);
+                    res.json({
+                      status: "1",
+                      message: "Order cancelled successfully."
+                    });
+                  } else {
+                    if (result[0].status_id == 7) {
+                      res.status(200).json({
+                        status: "0",
+                        message: "Order is already cancelled"
+                      });
+                    } else {
+                      res.json({
+                        status: "0",
+                        message:
+                          "Order is already shipped, so you can return order at delivery time"
+                      });
+                    }
+                  }
+                } else {
+                  res.json({ status: "0", message: "Order not found" });
+                }
               }
+            });
+            break;
+
+          case 2:
+            //Is_Out_Of_Stock
+            filename = "";
+            if (req.file.originalname != "") {
+              filename = req.file.originalname;
             }
-          });
-          break;
+            sql =
+              "select * from return_request where order_id=" +
+              order_id +
+              " and item_id=" +
+              item_id;
+            con.query(sql, (err, result) => {
+              if (err) {
+                res.json({
+                  status: "0",
+                  message: "Order return is not placed"
+                });
+              } else {
+                if (result.length > 0) {
+                  try {
+                    let fs = require("fs");
+                    fs.unlinkSync(
+                      path.join(__dirname, "../assets/return" + result[0].image)
+                    );
+                  } catch (error) {}
+                }
+                sql =
+                  "replace into return_request(order_id,item_id,type,reason,image) values(" +
+                  order_id +
+                  "," +
+                  item_id +
+                  ",0,'" +
+                  req.body.reason +
+                  "','" +
+                  filename +
+                  "')";
+                con.query(sql, (err, data) => {
+                  if (err) {
+                    res.status(200).json({
+                      status: "0",
+                      message: "Your order return request already placed."
+                    });
+                  } else {
+                    res.status(200).json({
+                      status: "1",
+                      message: "Order return request is placed successfully"
+                    });
+                  }
+                });
+              }
+            });
+            break;
 
-        case 2:
-          break;
+          case 3:
+            filename = "";
+            if (req.file.originalname != "") {
+              filename = req.file.originalname;
+            }
+            sql =
+              "select * from return_request where order_id=" +
+              order_id +
+              " and item_id=" +
+              item_id;
+            con.query(sql, (err, result) => {
+              if (err) {
+                res.json({
+                  status: "0",
+                  message: "Order replace is not placed"
+                });
+              } else {
+                if (result.length > 0) {
+                  try {
+                    let fs = require("fs");
+                    fs.unlinkSync(
+                      path.join(
+                        __dirname,
+                        "../../dist/admin/assets/return" + result[0].image
+                      )
+                    );
+                  } catch (error) {}
+                }
+                sql =
+                  "replace into return_request(order_id,item_id,type,reason,image) values(" +
+                  order_id +
+                  "," +
+                  item_id +
+                  ",1,'" +
+                  req.body.reason +
+                  "','" +
+                  filename +
+                  "')";
+                con.query(sql, (err, data) => {
+                  if (err) {
+                    res.status(200).json({
+                      status: "0",
+                      message: "Your order replace request already placed."
+                    });
+                  } else {
+                    res.status(200).json({
+                      status: "1",
+                      message: "Order replace request is placed successfully"
+                    });
+                  }
+                });
+              }
+            });
+            break;
 
-        default:
-          break;
+          default:
+            res.json({
+              status: "0",
+              message: "Please provide valid return_type"
+            });
+            break;
+        }
+      } catch (error) {
+        console.log(error);
+        res.json({ status: "0", message: "Please provide valid data" });
       }
     }
   }

@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../../dist/admin/assets/profile"));
+    cb(null, path.join(__dirname, "../assets/profile"));
   },
   filename: (req, file, cb) => {
     file.originalname = new Date().getTime() + file.originalname;
@@ -565,6 +565,13 @@ router.post("/login-user", (req, res) => {
         ) {
           let payload = { subject: result[0].id };
           let jwt_token = jwt.sign(payload, "MysupersecreteKey");
+          sql =
+            "insert into meta(meta_key,meta_value,user_id) values('noti_token','" +
+            req.body.fcmToken +
+            "'," +
+            result[0].id +
+            ")";
+          con.query(sql);
           res.status(200).send({
             status: "1",
             message: "Logged in successfully.",
@@ -741,6 +748,36 @@ router.post(
               message: "Email/Mobile provided by you is not registered."
             });
           }
+        }
+      });
+    }
+  }
+);
+
+router.post(
+  "/logout-user",
+  [check("fcmToken").isString()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      res.status(200).json({ status: "0", message: "Enter Valid Data" });
+    } else {
+      let sql =
+        "delete from meta where user_id=" +
+        req.userId +
+        " and meta_key='noti_token' and meta_value='" +
+        req.body.fcmToken +
+        "'";
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({ status: "0", message: "User not logged out" });
+        } else {
+          res
+            .status(200)
+            .json({ status: "1", message: "Logged out successfully" });
         }
       });
     }
