@@ -275,7 +275,7 @@ router.post(
     } else {
       let id = req.body.id;
       let sql =
-        "select v.variant_id,v.name,p.description,c.name as category,IFNULL((select quantity from cart where variant_id=v.variant_id and mobile_required=0),0) as cart_quantity,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
+        "select v.variant_id,v.name,p.description,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as countQuantity,c.name as category,IFNULL((select quantity from cart where variant_id=v.variant_id and mobile_required=0),0) as cart_quantity,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,c.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
         id;
       con.query(sql, (err, products) => {
         if (err) {
@@ -444,6 +444,19 @@ router.post(
                                       products[0].is_added_cart = "1";
                                     } else {
                                       products[0].is_added_cart = "0";
+                                    }
+                                    if(products[0].countQuantity>0){
+                                      if(products[0].sum_quantity>0){
+                                        products[0].Is_Out_Of_Stock=0;
+                                      } else {
+                                        products[0].Is_Out_Of_Stock=1;
+                                      }
+                                    } else {
+                                      if(products[0].countQuantity>0){
+                                        products[0].Is_Out_Of_Stock=0;
+                                      } else {
+                                        products[0].Is_Out_Of_Stock=1;
+                                      }
                                     }
                                     json = JSON.stringify(products);
                                     products = JSON.parse(json, (key, val) =>

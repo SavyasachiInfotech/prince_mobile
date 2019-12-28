@@ -42,32 +42,37 @@ router.post("/add-cart", verifyToken, (req, res) => {
       res.json(200).json({ status: "0", message: "Enter valid data" });
       break;
     } else {
-      if (i == cart.length - 1) {
-        sql +=
-          "(" +
-          req.userId +
-          "," +
-          cart[i].variant_id +
-          "," +
-          cart[i].quantity +
-          "," +
-          cart[i].mobile_required +
-          "," +
-          cart[i].mobile_id +
-          ");";
+      if (cart[i].quantity > 0) {
+        if (i == cart.length - 1) {
+          sql +=
+            "(" +
+            req.userId +
+            "," +
+            cart[i].variant_id +
+            "," +
+            cart[i].quantity +
+            "," +
+            cart[i].mobile_required +
+            "," +
+            cart[i].mobile_id +
+            ");";
+        } else {
+          sql +=
+            "(" +
+            req.userId +
+            "," +
+            cart[i].variant_id +
+            "," +
+            cart[i].quantity +
+            "," +
+            cart[i].mobile_required +
+            "," +
+            cart[i].mobile_id +
+            "),";
+        }
       } else {
-        sql +=
-          "(" +
-          req.userId +
-          "," +
-          cart[i].variant_id +
-          "," +
-          cart[i].quantity +
-          "," +
-          cart[i].mobile_required +
-          "," +
-          cart[i].mobile_id +
-          "),";
+        res.json({ status: "0", message: "Please enter quantity > 0" });
+        break;
       }
     }
   }
