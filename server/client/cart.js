@@ -33,47 +33,37 @@ router.post("/add-cart", verifyToken, (req, res) => {
   let sql =
     "replace into cart(cart_id,variant_id,quantity,mobile_required,mobile_id) values";
   for (let i = 0; i < cart.length; i++) {
-    if (
-      isNaN(cart[i].variant_id) ||
-      isNaN(cart[i].quantity) ||
-      isNaN(cart[i].mobile_id) ||
-      isNaN(cart[i].mobile_required)
-    ) {
-      res.json(200).json({ status: "0", message: "Enter valid data" });
-      break;
-    } else {
-      if (cart[i].quantity > 0) {
-        if (i == cart.length - 1) {
-          sql +=
-            "(" +
-            req.userId +
-            "," +
-            cart[i].variant_id +
-            "," +
-            cart[i].quantity +
-            "," +
-            cart[i].mobile_required +
-            "," +
-            cart[i].mobile_id +
-            ");";
-        } else {
-          sql +=
-            "(" +
-            req.userId +
-            "," +
-            cart[i].variant_id +
-            "," +
-            cart[i].quantity +
-            "," +
-            cart[i].mobile_required +
-            "," +
-            cart[i].mobile_id +
-            "),";
-        }
+    if (cart[i].quantity > 0) {
+      if (i == cart.length - 1) {
+        sql +=
+          "(" +
+          req.userId +
+          "," +
+          cart[i].variant_id +
+          "," +
+          cart[i].quantity +
+          "," +
+          cart[i].mobile_required +
+          "," +
+          cart[i].mobile_id +
+          ");";
       } else {
-        res.json({ status: "0", message: "Please enter quantity > 0" });
-        break;
+        sql +=
+          "(" +
+          req.userId +
+          "," +
+          cart[i].variant_id +
+          "," +
+          cart[i].quantity +
+          "," +
+          cart[i].mobile_required +
+          "," +
+          cart[i].mobile_id +
+          "),";
       }
+    } else {
+      res.json({ status: "0", message: "Please enter quantity > 0" });
+      break;
     }
   }
 

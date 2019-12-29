@@ -37,7 +37,7 @@ router.get("/get-homepage-data", (req, res) => {
     } else {
       banners = result;
       sql =
-        "select category_id,name,ifnull(image,'') as image,parent_id from category";
+        "select category_id,name,ifnull(image,'') as image,parent_id from category where is_dispaly=1";
       con.query(sql, (err, category) => {
         if (err) {
           console.log(err);
@@ -287,7 +287,7 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
     } else {
       banners = result;
       sql =
-        "select category_id,name,ifnull(image,'') as image,parent_id from category";
+        "select category_id,name,ifnull(image,'') as image,parent_id from category where is_display=1";
       con.query(sql, (err, category) => {
         if (err) {
           console.log(err);

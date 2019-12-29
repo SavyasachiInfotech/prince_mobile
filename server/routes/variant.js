@@ -26,7 +26,7 @@ function verifyToken(req, res, next) {
 }
 
 router.get("/get-finished-quantity", verifyToken, (req, res) => {
-  let sql = "select * from product_variant where quantity<5 order by quantity";
+  let sql = "select * from product_variant where quantity<min_qty order by quantity";
   con.query(sql,(err,result)=>{
     if(err){
       console.log(err);
