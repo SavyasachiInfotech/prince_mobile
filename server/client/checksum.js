@@ -112,9 +112,7 @@ router.post(
                         paramarray["CHANNEL_ID"] = process.env.CHANNELID; //Provided by Paytm
                         paramarray["TXN_AMOUNT"] = price; // transaction amount
                         paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
-                        paramarray["CALLBACK_URL"] =
-                          "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                          result.insertId; //Provided by Paytm
+                        paramarray["CALLBACK_URL"] = process.env.CALLBACKURL; //Provided by Paytm
                         paramarray["EMAIL"] = user[0].email; // customer email id
                         paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
                         paytm_checksum.genchecksum(
@@ -133,9 +131,7 @@ router.post(
                               channel_id: process.env.CHANNELID,
                               txn_amount: price,
                               website: process.env.WEBSITE,
-                              callback_url:
-                                "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                                result.insertId,
+                              callback_url: process.env.CALLBACKURL,
                               email: user[0].email,
                               mobile_no: user[0].mobile1
                             });
