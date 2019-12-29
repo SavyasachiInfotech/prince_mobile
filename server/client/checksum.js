@@ -106,13 +106,15 @@ router.post(
                       if (user.length > 0) {
                         var paramarray = {};
                         paramarray["MID"] = process.env.MID; //Provided by Paytm
-                        paramarray["ORDER_ID"] = result.insertId; //unique OrderId for every request
-                        paramarray["CUST_ID"] = req.userId; // unique customer identifier
+                        paramarray["ORDER_ID"] = result.insertId.toString(); //unique OrderId for every request
+                        paramarray["CUST_ID"] = req.userId.toString(); // unique customer identifier
                         paramarray["INDUSTRY_TYPE_ID"] = process.env.INDUTYPEID; //Provided by Paytm
                         paramarray["CHANNEL_ID"] = process.env.CHANNELID; //Provided by Paytm
-                        paramarray["TXN_AMOUNT"] = price; // transaction amount
+                        paramarray["TXN_AMOUNT"] = price.toString(); // transaction amount
                         paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
-                        paramarray["CALLBACK_URL"] = process.env.CALLBACKURL; //Provided by Paytm
+                        paramarray["CALLBACK_URL"] =
+                          "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                          result.insertId; //Provided by Paytm
                         // paramarray["EMAIL"] = user[0].email; // customer email id
                         paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
                         paramarray["MOBILE_NO"] = "9737156062"; // customer 10 digit mobile no.
@@ -125,14 +127,16 @@ router.post(
                               status: "1",
                               message: "Checksum generated successfully.",
                               checksum: checksum,
-                              order_id: result.insertId,
+                              order_id: result.insertId.toString(),
                               mid: process.env.MID,
-                              cust_id: req.userId,
+                              cust_id: req.userId.toString(),
                               industry_type_id: process.env.INDUTYPEID,
                               channel_id: process.env.CHANNELID,
-                              txn_amount: price,
+                              txn_amount: price.toString(),
                               website: process.env.WEBSITE,
-                              callback_url: process.env.CALLBACKURL,
+                              callback_url:
+                                "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                result.insertId,
                               email: "pmdhankecha.18@gmail.com",
                               mobile_no: "9737156062"
                             });
