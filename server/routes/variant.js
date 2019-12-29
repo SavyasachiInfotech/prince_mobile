@@ -115,6 +115,7 @@ router.post(
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log("dsfds")
       res.status(200).json({
         status: process.env.ERROR,
         message: "Invalid Input Found",
@@ -164,6 +165,7 @@ router.post(
           }
           con.query(sql, (err, data) => {
             if (err) {
+              console.log(err)
               res
                 .status(200)
                 .json({
@@ -199,12 +201,13 @@ router.post(
                         "," +
                         variant.discount +
                         ")";
-                      if (i < variant.mobiles.length - 2) {
+                      if (i <= variant.mobiles.length - 2) {
                         sql += ",";
                       }
                     }
                     con.query(sql, (err, data) => {
                       if (err) {
+                        console.log(err);
                         res
                           .status(200)
                           .json({ status: 400, message: "Mobiles not added." });
