@@ -113,8 +113,9 @@ router.post(
                         paramarray["TXN_AMOUNT"] = price; // transaction amount
                         paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
                         paramarray["CALLBACK_URL"] = process.env.CALLBACKURL; //Provided by Paytm
-                        paramarray["EMAIL"] = user[0].email; // customer email id
-                        paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
+                        // paramarray["EMAIL"] = user[0].email; // customer email id
+                        paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
+                        paramarray["MOBILE_NO"] = "9737156062"; // customer 10 digit mobile no.
                         paytm_checksum.genchecksum(
                           paramarray,
                           paytm_config.MERCHANT_KEY,
@@ -132,8 +133,8 @@ router.post(
                               txn_amount: price,
                               website: process.env.WEBSITE,
                               callback_url: process.env.CALLBACKURL,
-                              email: user[0].email,
-                              mobile_no: user[0].mobile1
+                              email: "pmdhankecha.18@gmail.com",
+                              mobile_no: "9737156062"
                             });
                           }
                         );
