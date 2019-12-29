@@ -134,7 +134,8 @@ router.post(
                               txn_amount: price,
                               website: process.env.WEBSITE,
                               callback_url:
-                                "https://pguat.paytm.com/paytmchecksum/paytmCallback.jsp",
+                                "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                result.insertId,
                               email: user[0].email,
                               mobile_no: user[0].mobile1
                             });
