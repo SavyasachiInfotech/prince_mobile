@@ -113,7 +113,8 @@ router.post(
                         paramarray["TXN_AMOUNT"] = price; // transaction amount
                         paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
                         paramarray["CALLBACK_URL"] =
-                          "https://pguat.paytm.com/paytmchecksum/paytmCallback.jsp"; //Provided by Paytm
+                          "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                          result.insertId; //Provided by Paytm
                         paramarray["EMAIL"] = user[0].email; // customer email id
                         paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
                         paytm_checksum.genchecksum(
