@@ -124,7 +124,8 @@ router.post(
                             res.status(200).json({
                               status: "1",
                               message: "Checksum generated successfully.",
-                              checksum: checksum
+                              checksum: checksum,
+                              order_id: result.insertId
                             });
                           }
                         );
