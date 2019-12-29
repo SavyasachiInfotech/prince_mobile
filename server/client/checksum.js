@@ -125,7 +125,17 @@ router.post(
                               status: "1",
                               message: "Checksum generated successfully.",
                               checksum: checksum,
-                              order_id: result.insertId
+                              order_id: result.insertId,
+                              mid: process.env.MID,
+                              cust_id: req.userId,
+                              industry_type_id: process.env.INDUTYPEID,
+                              channel_id: process.env.CHANNELID,
+                              txn_amount: price,
+                              website: process.env.WEBSITE,
+                              callback_url:
+                                "https://pguat.paytm.com/paytmchecksum/paytmCallback.jsp",
+                              email: user[0].email,
+                              mobile_no: user[0].mobile1
                             });
                           }
                         );
