@@ -123,7 +123,8 @@ router.post(
                             console.log("Checksum: ", checksum, "\n");
                             res.status(200).json({
                               status: "1",
-                              message: "Checksum generated successfully."
+                              message: "Checksum generated successfully.",
+                              checksum: checksum
                             });
                           }
                         );
