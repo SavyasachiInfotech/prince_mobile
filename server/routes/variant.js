@@ -26,13 +26,25 @@ function verifyToken(req, res, next) {
 }
 
 router.get("/get-finished-quantity", verifyToken, (req, res) => {
-  let sql = "select * from product_variant where quantity<min_qty order by quantity";
-  con.query(sql,(err,result)=>{
-    if(err){
+  let sql =
+    "select * from product_variant where quantity<min_qty order by quantity";
+  con.query(sql, (err, result) => {
+    if (err) {
       console.log(err);
-      res.status(200).json({status:400, message:"No Products found of finished quantity"});
+      res
+        .status(200)
+        .json({
+          status: 400,
+          message: "No Products found of finished quantity"
+        });
     } else {
-      res.status(200).json({status:200, message:"Getting product of finished quantity",data:result});
+      res
+        .status(200)
+        .json({
+          status: 200,
+          message: "Getting product of finished quantity",
+          data: result
+        });
     }
   });
 });
@@ -115,7 +127,7 @@ router.post(
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log("dsfds")
+      console.log("dsfds");
       res.status(200).json({
         status: process.env.ERROR,
         message: "Invalid Input Found",
@@ -165,13 +177,11 @@ router.post(
           }
           con.query(sql, (err, data) => {
             if (err) {
-              console.log(err)
-              res
-                .status(200)
-                .json({
-                  status: 200,
-                  message: "Variant is added successfully."
-                });
+              console.log(err);
+              res.status(200).json({
+                status: 200,
+                message: "Variant is added successfully."
+              });
             } else {
               let att = variant.attributes;
 
@@ -212,22 +222,18 @@ router.post(
                           .status(200)
                           .json({ status: 400, message: "Mobiles not added." });
                       } else {
-                        res
-                          .status(200)
-                          .json({
-                            status: 200,
-                            message: "Variant is added successfully."
-                          });
+                        res.status(200).json({
+                          status: 200,
+                          message: "Variant is added successfully."
+                        });
                       }
                     });
                   }
                 } else {
-                  res
-                    .status(200)
-                    .json({
-                      status: 200,
-                      message: "Variant is added successfully."
-                    });
+                  res.status(200).json({
+                    status: 200,
+                    message: "Variant is added successfully."
+                  });
                 }
               });
             }
@@ -279,15 +285,13 @@ router.post(
                     .status(200)
                     .json({ status: 400, message: "Mobiles not found" });
                 } else {
-                  res
-                    .status(200)
-                    .json({
-                      status: 200,
-                      message: "Getting attribute successfully",
-                      attributes: result,
-                      specifications: data,
-                      mobiles: mobile
-                    });
+                  res.status(200).json({
+                    status: 200,
+                    message: "Getting attribute successfully",
+                    attributes: result,
+                    specifications: data,
+                    mobiles: mobile
+                  });
                 }
               });
             }
@@ -360,12 +364,10 @@ router.put(
             variant.variant_id;
           con.query(sql, (err, ddata) => {
             if (err) {
-              res
-                .status(200)
-                .json({
-                  status: 200,
-                  message: "Variant updated successfully."
-                });
+              res.status(200).json({
+                status: 200,
+                message: "Variant updated successfully."
+              });
             } else {
               spec = variant.specifications;
               sql = "insert into product_specification values";
@@ -379,24 +381,20 @@ router.put(
               }
               con.query(sql, (err, sdata) => {
                 if (err) {
-                  res
-                    .status(200)
-                    .json({
-                      status: 200,
-                      message: "Variant updated successfully."
-                    });
+                  res.status(200).json({
+                    status: 200,
+                    message: "Variant updated successfully."
+                  });
                 } else {
                   sql =
                     "delete from variant_attribute where variant_id=" +
                     variant.variant_id;
                   con.query(sql, (err, ddata) => {
                     if (err) {
-                      res
-                        .status(200)
-                        .json({
-                          status: 200,
-                          message: "Variant updated successfully."
-                        });
+                      res.status(200).json({
+                        status: 200,
+                        message: "Variant updated successfully."
+                      });
                     } else {
                       let att = variant.attributes;
                       sql = "insert into variant_attribute values";
@@ -413,6 +411,7 @@ router.put(
                           "delete from variant_mobile where variant_id=" +
                           variant.variant_id;
                         con.query(sql, (err, data) => {
+                          console.log(err);
                           if (variant.mobiles) {
                             if (variant.mobiles.length > 0) {
                               sql = "insert into variant_mobile values ";
@@ -429,36 +428,30 @@ router.put(
                                   "," +
                                   variant.discount +
                                   ")";
-                                if (i < variant.mobiles.length - 2) {
+                                if (i <= variant.mobiles.length - 2) {
                                   sql += ",";
                                 }
                               }
                               con.query(sql, (err, data) => {
                                 if (err) {
-                                  res
-                                    .status(200)
-                                    .json({
-                                      status: 400,
-                                      message: "Mobiles not added."
-                                    });
+                                  console.log(err);
+                                  res.status(200).json({
+                                    status: 400,
+                                    message: "Mobiles not added."
+                                  });
                                 } else {
-                                  res
-                                    .status(200)
-                                    .json({
-                                      status: 200,
-                                      message:
-                                        "Variant is updated successfully."
-                                    });
+                                  res.status(200).json({
+                                    status: 200,
+                                    message: "Variant is updated successfully."
+                                  });
                                 }
                               });
                             }
                           } else {
-                            res
-                              .status(200)
-                              .json({
-                                status: 200,
-                                message: "Variant updated successfully."
-                              });
+                            res.status(200).json({
+                              status: 200,
+                              message: "Variant updated successfully."
+                            });
                           }
                         });
                       });

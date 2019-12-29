@@ -32,32 +32,37 @@ function verifyToken(req, res, next) {
   next();
 }
 
-router.post("/generate_checksum", verifyToken, (req, res) => {
-  var paramarray = {};
-  paramarray["MID"] = process.env.MID; //Provided by Paytm
-  paramarray["ORDER_ID"] = "ORDER00001"; //unique OrderId for every request
-  paramarray["CUST_ID"] = "CUST0001"; // unique customer identifier
-  paramarray["INDUSTRY_TYPE_ID"] = process.env.INDUTYPEID; //Provided by Paytm
-  paramarray["CHANNEL_ID"] = process.env.CHANNELID; //Provided by Paytm
-  paramarray["TXN_AMOUNT"] = "1.00"; // transaction amount
-  paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
-  paramarray["CALLBACK_URL"] =
-    "https://pguat.paytm.com/paytmchecksum/paytmCallback.jsp"; //Provided by Paytm
-  paramarray["EMAIL"] = "abc@gmail.com"; // customer email id
-  paramarray["MOBILE_NO"] = "9999999999"; // customer 10 digit mobile no.
-  paytm_checksum.genchecksum(paramarray, paytm_config.MERCHANT_KEY, function(
-    err,
-    checksum
-  ) {
-    console.log("Checksum: ", checksum, "\n");
-    response.writeHead(200, {
-      "Content-type": "text/json",
-      "Cache-Control": "no-cache"
+router.post(
+  "/generate_checksum",
+  [check("variant_id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    var paramarray = {};
+    paramarray["MID"] = process.env.MID; //Provided by Paytm
+    paramarray["ORDER_ID"] = "ORDER00001"; //unique OrderId for every request
+    paramarray["CUST_ID"] = "CUST0001"; // unique customer identifier
+    paramarray["INDUSTRY_TYPE_ID"] = process.env.INDUTYPEID; //Provided by Paytm
+    paramarray["CHANNEL_ID"] = process.env.CHANNELID; //Provided by Paytm
+    paramarray["TXN_AMOUNT"] = "1.00"; // transaction amount
+    paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
+    paramarray["CALLBACK_URL"] =
+      "https://pguat.paytm.com/paytmchecksum/paytmCallback.jsp"; //Provided by Paytm
+    paramarray["EMAIL"] = "abc@gmail.com"; // customer email id
+    paramarray["MOBILE_NO"] = "9999999999"; // customer 10 digit mobile no.
+    paytm_checksum.genchecksum(paramarray, paytm_config.MERCHANT_KEY, function(
+      err,
+      checksum
+    ) {
+      console.log("Checksum: ", checksum, "\n");
+      response.writeHead(200, {
+        "Content-type": "text/json",
+        "Cache-Control": "no-cache"
+      });
+      response.write(JSON.stringify(checksum));
+      response.end();
     });
-    response.write(JSON.stringify(checksum));
-    response.end();
-  });
-});
+  }
+);
 
 router.post("/verify_checksum", verifyToken, (req, res) => {
   var fullBody = "";
