@@ -11,8 +11,6 @@ function paramsToString(params, mandatoryflag) {
   var tempKeys = Object.keys(params);
   tempKeys.sort();
   tempKeys.forEach(function(key) {
-    console.log(key);
-    console.log(params[key]);
     // var n = params[key].includes("REFUND");
     // var m = params[key].includes("|");
     // if (n == true) {
@@ -120,11 +118,10 @@ function paramsToStringrefund(params, mandatoryflag) {
   var tempKeys = Object.keys(params);
   tempKeys.sort();
   tempKeys.forEach(function(key) {
-    //  var m = params[key].includes("|");
-    //         if(m == true)
-    //       {
-    //         params[key] = "";
-    //       }
+    var m = params[key].includes("|");
+    if (m == true) {
+      params[key] = "";
+    }
     if (key !== "CHECKSUMHASH") {
       if (params[key] === "null") params[key] = "";
       if (!mandatoryflag || mandatoryParams.indexOf(key) !== -1) {

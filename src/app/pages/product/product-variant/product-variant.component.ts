@@ -63,6 +63,7 @@ export class ProductVariantComponent implements OnInit {
         if (res.status == 200) {
           //@ts-ignore
           this.taxes = res.data;
+          this.variant.tax_id = this.taxes[0].tax_id;
         }
       });
       this.getAttributes();
@@ -122,7 +123,10 @@ export class ProductVariantComponent implements OnInit {
     this.variant = new Variant();
     this.variant.image_required = false;
     this.variant.accept_promocode = true;
-    this.variant.parent = false;
+    this.variant.parent = true;
+
+    this.variant.quantity = 0;
+    this.variant.min_qty = 0;
     this.selectedAttributes = new Array();
     this.selectedSpecifications = new Array();
   }

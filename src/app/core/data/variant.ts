@@ -12,5 +12,7 @@ export class Variant {
 
   constructor() {
     this.parent = true;
+    this.min_qty = 0;
+    this.quantity = 0;
   }
 }
