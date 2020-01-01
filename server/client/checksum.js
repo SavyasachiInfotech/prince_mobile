@@ -231,6 +231,7 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
         sql = "select * from paytm_details where id=" + decodedBody.ORDERID;
         con.query(sql, (err, result) => {
           if (err) {
+            console.log(err);
             sql =
               "insert into refund(paytm_id,amount,res,order_id) values('" +
               decodedBody.TXNID +
@@ -265,6 +266,7 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
               result[0].variant_id;
             con.query(sql, (err, cart) => {
               if (err) {
+                console.log(err);
                 sql =
                   "insert into refund(paytm_id,amount,res,order_id) values('" +
                   decodedBody.TXNID +
@@ -300,6 +302,7 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                   ",0,0)";
                 con.query(sql, (err, order) => {
                   if (err) {
+                    console.log(err);
                     sql =
                       "insert into refund(paytm_id,amount,res,order_id) values('" +
                       decodedBody.TXNID +
@@ -410,6 +413,7 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                     if (queryBit == 0) {
                       con.query(sql, (err, order_detail) => {
                         if (err) {
+                          console.log(err);
                           deleteOrder(order_id);
                           sql =
                             "insert into refund(paytm_id,amount,res,order_id) values('" +
