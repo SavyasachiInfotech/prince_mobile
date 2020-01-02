@@ -241,15 +241,45 @@ router.post(
                     message: "Please provide valid data"
                   });
                 } else {
-                  let totalPages = Math.ceil(count[0].total / limit);
-                  res.status(200).json({
-                    status: "1",
-                    message: "Getting Products successfully.",
-                    products: result,
-                    currentPage: (data.pageno + 1).toString(),
-                    totalPages: totalPages.toString(),
-                    totalProduct: count[0].total.toString()
-                  });
+                  if (data.flag == 0) {
+                    if (data.category_id > 0) {
+                      sql =
+                        "select * from category where category_id=" +
+                        data.category_id;
+                      con.query(sql, (err, category) => {
+                        let totalPages = Math.ceil(count[0].total / limit);
+                        let images;
+                        if (category.length > 0) {
+                          images = JSON.parse(category[0].promo_images);
+                        } else {
+                          images = [];
+                        }
+                        for (let i = 0; i < images.length; i++) {
+                          images[i] = process.env.CATEGORY + images[i];
+                        }
+                        res.status(200).json({
+                          status: "1",
+                          message: "Getting Products successfully.",
+                          products: result,
+                          currentPage: (data.pageno + 1).toString(),
+                          totalPages: totalPages.toString(),
+                          totalProduct: count[0].total.toString(),
+                          category_image: images
+                        });
+                      });
+                    }
+                  } else {
+                    let totalPages = Math.ceil(count[0].total / limit);
+                    res.status(200).json({
+                      status: "1",
+                      message: "Getting Products successfully.",
+                      products: result,
+                      currentPage: (data.pageno + 1).toString(),
+                      totalPages: totalPages.toString(),
+                      totalProduct: count[0].total.toString(),
+                      category_image: []
+                    });
+                  }
                 }
               });
             }
@@ -329,9 +359,9 @@ router.post(
                           });
                           delete products[0].cart_quantity;
                         }
-                        for(let i=0;i<mobiles.length;i++){
-                          if(mobiles[i].max_quantity<1){
-                            mobiles.splice(i,1);
+                        for (let i = 0; i < mobiles.length; i++) {
+                          if (mobiles[i].max_quantity < 1) {
+                            mobiles.splice(i, 1);
                           }
                         }
                         sql =
@@ -355,12 +385,14 @@ router.post(
                                   message: "Offers not detected"
                                 });
                               } else {
-                                if(products[0].image_required==1){
-                                  products[0].tnc_to_buy="<div><ul><li>Make online payment</li></ul></div>"
-                                  products[0].how_to_buy="<div><ul><li>First you need to Pay for buying product</li><li>After successful payment you will get order id</li><li>You need to send your image with order id to us in chat</li></ul></div>";
+                                if (products[0].image_required == 1) {
+                                  products[0].tnc_to_buy =
+                                    "<div><ul><li>Make online payment</li></ul></div>";
+                                  products[0].how_to_buy =
+                                    "<div><ul><li>First you need to Pay for buying product</li><li>After successful payment you will get order id</li><li>You need to send your image with order id to us in chat</li></ul></div>";
                                 } else {
-                                  products[0].tnc_to_buy=""
-                                  products[0].how_to_buy="";
+                                  products[0].tnc_to_buy = "";
+                                  products[0].how_to_buy = "";
                                 }
                                 if (promo.length > 0) {
                                   products[0].offers = new Array();
@@ -445,17 +477,17 @@ router.post(
                                     } else {
                                       products[0].is_added_cart = "0";
                                     }
-                                    if(products[0].countQuantity>0){
-                                      if(products[0].sum_quantity>0){
-                                        products[0].Is_Out_Of_Stock=0;
+                                    if (products[0].countQuantity > 0) {
+                                      if (products[0].sum_quantity > 0) {
+                                        products[0].Is_Out_Of_Stock = 0;
                                       } else {
-                                        products[0].Is_Out_Of_Stock=1;
+                                        products[0].Is_Out_Of_Stock = 1;
                                       }
                                     } else {
-                                      if(products[0].countQuantity>0){
-                                        products[0].Is_Out_Of_Stock=0;
+                                      if (products[0].countQuantity > 0) {
+                                        products[0].Is_Out_Of_Stock = 0;
                                       } else {
-                                        products[0].Is_Out_Of_Stock=1;
+                                        products[0].Is_Out_Of_Stock = 1;
                                       }
                                     }
                                     json = JSON.stringify(products);

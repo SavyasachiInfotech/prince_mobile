@@ -36,56 +36,113 @@ router.get("/get-specifications", verifyToken, (req, res) => {
       console.log(err);
     } else {
       if (result.length > 0) {
-        res.status(200).json({ status: process.env.SUCCESS, message: "Getting specifications successfully.", data: result });
+        res.status(200).json({
+          status: process.env.SUCCESS,
+          message: "Getting specifications successfully.",
+          data: result
+        });
       } else {
-        res.status(200).json({ status: process.env.NOT_FOUND, message: process.env.NO_RECORD });
+        res.status(200).json({
+          status: process.env.NOT_FOUND,
+          message: process.env.NO_RECORD
+        });
       }
     }
   });
 });
 
-router.post("/add-specifications", [check("name").isString()], verifyToken, (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(200).json({
-      status: process.env.ERROR,
-      message: "Invalid Input Found",
-      errors: errors.array()
-    });
-  } else {
-    let specification = req.body;
-    let sql = 'insert into specification(name) values("' + specification.name + '")';
-    con.query(sql, (err, result) => {
-      if (err) {
-        console.log(err);
-        res.status(200).json({ status: 400, message: "Specification is not added." });
-      } else {
-        res.status(200).json({ status: 200, message: "Specification is added successfully." })
-      }
-    });
-  }
+router.get("/get-specification-by-id/:id", verifyToken, (req, res) => {
+  let sql =
+    "select * from specification where specification_id=" + req.params.id;
+  con.query(sql, (err, result) => {
+    if (err) {
+      res
+        .status(200)
+        .json({ status: 400, message: "Please select valid specification" });
+    } else {
+      res.status(200).json({
+        status: 200,
+        message: "Getting specification detail",
+        data: result
+      });
+    }
+  });
 });
 
-router.put("/update-specifications", [check("name").isString(), check("id").isNumeric()], verifyToken, (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(200).json({
-      status: process.env.ERROR,
-      message: "Invalid Input Found",
-      errors: errors.array()
-    });
-  } else {
-    let specification = req.body;
-    let sql = 'update specification set name="' + specification.name + "' where id=" + specification.id;
-    con.query(sql, (err, result) => {
-      if (err) {
-        console.log(err);
-        res.status(200).json({ status: process.env.ERROR, message: "Specification is not updated." });
-      } else {
-        res.status(200).json({ status: process.env.SUCCESS, message: "Specification is updated successfully." });
-      }
-    });
+router.post(
+  "/add-specifications",
+  [check("key").isString(), check("value").isString()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: process.env.ERROR,
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let specification = req.body;
+      let sql =
+        'insert into specification(specification_key,specification_value) values("' +
+        specification.key +
+        '","' +
+        specification.value +
+        '")';
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(200)
+            .json({ status: 400, message: "Specification is not added." });
+        } else {
+          res.status(200).json({
+            status: 200,
+            message: "Specification is added successfully."
+          });
+        }
+      });
+    }
   }
-});
+);
+
+router.put(
+  "/update-specifications",
+  [check("key").isString(), check("id").isNumeric(), check("value").isString()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: process.env.ERROR,
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let specification = req.body;
+      let sql =
+        'update specification set specification_key="' +
+        specification.key +
+        '",specification_value="' +
+        specification.value +
+        '" where specification_id=' +
+        specification.id;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({
+            status: process.env.ERROR,
+            message: "Specification is not updated."
+          });
+        } else {
+          res.status(200).json({
+            status: process.env.SUCCESS,
+            message: "Specification is updated successfully."
+          });
+        }
+      });
+    }
+  }
+);
 
 module.exports = router;

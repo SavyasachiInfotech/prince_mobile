@@ -19,17 +19,37 @@
         <div class="card">
           <div class="card-body">
             <div class="form-body">
-              <h5 class='card-title'>Specification</h5>
-              <a class="link" routerLink="../add-specifications/0">+ Add Specification</a>
+              <h5 class="card-title">Specification</h5>
+              <a class="link" routerLink="../add-specification/0"
+                >+ Add Specification</a
+              >
             </div>
             <div class="table-responsive">
               <table class="table product-overview" id="table">
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th></th>
+                    <th>Key</th>
+                    <th>Value</th>
+                    <th>Edit</th>
                   </tr>
                 </thead>
+                <tbody>
+                  <tr *ngFor="let specification of specifications">
+                    <td>{{ specification.specification_id }}</td>
+                    <td>{{ specification.specification_key }}</td>
+                    <td>{{ specification.specification_value }}</td>
+                    <td>
+                      <a
+                        routerLink="../add-specification/{{
+                          specification.specification_id
+                        }}"
+                      >
+                        <i class="material-icons">edit</i>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </div>
