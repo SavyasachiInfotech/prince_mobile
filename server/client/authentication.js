@@ -602,80 +602,125 @@ router.post("/login-user", (req, res) => {
 
 router.post("/forget-password", (req, res) => {
   let data = req.body;
-  if (data.email.length > 400 && data.email.length < 1) {
-    res
-      .status(200)
-      .json({ status: "0", message: "Enter valid Email or Mobile" });
+  if (data.mobile.length != 10) {
+    res.status(200).json({ status: "0", message: "Enter valid Mobile" });
   } else {
-    let mobile;
-    if (isNaN(data.email)) {
-      mobile = -4;
-    } else {
-      mobile = data.email;
-    }
-    let sql =
-      'select * from customer where email="' +
-      data.email +
-      '" or mobile1=' +
-      mobile;
+    let sql = "select * from customer where mobile1=" + data.mobile;
     con.query(sql, (err, result) => {
       if (err) {
         console.log(err);
-        res
-          .status(200)
-          .json({ status: "0", message: "Enter proper email or mobile" });
+        res.status(200).json({ status: "0", message: "Enter proper mobile" });
       } else {
         if (result.length > 0) {
-          let pass = Math.ceil(Math.random() * 10000000000);
-          pass = md5(pass);
-          pass = pass.substr(0, 8);
-          var mailOptions = {
-            from: "youremail@gmail.com",
-            to: result[0].email,
-            subject: "Forget Password - Prince Mobile",
-            html:
-              "<h1>Forget Password</h1><br><br>You can use this password for temporary time. Once you getting login with this password, you can change this password with your new password.<br><br><br> <b>Temporary Passowrd :</b> &nbsp;&nbsp; " +
-              pass
-          };
-          transporter.sendMail(mailOptions, (err, info) => {
+          let otp = Math.floor(100000 + Math.random() * 900000);
+          sql =
+            "update customer set reset_token='" +
+            otp +
+            "' where mobile1=" +
+            data.mobile;
+          con.query(sql, (err, pass) => {
             if (err) {
               console.log(err);
-              res.status(200).json({
+              res.json({
                 status: "0",
-                message: "Request not proceede. Please try again later."
-              });
-            }
-          });
-          pass = md5(pass);
-
-          sql =
-            "update customer set password='" +
-            pass +
-            "' where id=" +
-            result[0].id;
-          con.query(sql, (err, data) => {
-            if (err) {
-              res.status(200).json({
-                status: "0",
-                message: "Request can not proceed. Please try again later."
+                message: "Forgot password request is not accepted."
               });
             } else {
-              res.status(200).json({
+              let http = require("http");
+              let path =
+                process.env.SMSPARAMS +
+                result[0].mobile1 +
+                "&sid=" +
+                process.env.SMSSENDERID +
+                "&msg=Your Reset Password OTP is " +
+                String(otp) +
+                process.env.SMSLAST +
+                " Please don't share it with anyone.";
+              http.get(process.env.SMSHOST + path, res => {});
+              res.json({
                 status: "1",
-                message: "Request proceeded. Please check your email."
+                message:
+                  "OTP for forgot password sent to your mobile. Please use it for reset the password"
               });
             }
           });
         } else {
           res.status(200).json({
             status: "0",
-            message: "Your email/mobile is not registered."
+            message: "Your mobile is not registered."
           });
         }
       }
     });
   }
 });
+
+router.post(
+  "/reset-password",
+  [
+    check("password")
+      .isString()
+      .isLength({ min: 1, max: 40 }),
+    check("otp")
+      .isString()
+      .isLength({ min: 6, max: 6 }),
+    check("mobile").isNumeric({ min: 10 })
+  ],
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      res.status(200).json({ status: "0", message: "Enter Valid Data" });
+    } else {
+      let data = req.body;
+      let sql = "select * from customer where mobile1=" + data.mobile;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.json({
+            status: "0",
+            message: "Please provide registered mobile no"
+          });
+        } else {
+          if (result.length > 0) {
+            if (result[0].reset_token == data.otp) {
+              sql =
+                "update customer set password='" +
+                md5(data.password) +
+                "', reset_token='' where mobile1=" +
+                data.mobile;
+              con.query(sql, (err, reset) => {
+                if (err) {
+                  console.log(err);
+                  res.json({
+                    status: "0",
+                    message: "Password not resetted. Please try again."
+                  });
+                } else {
+                  res.json({
+                    status: "1",
+                    message:
+                      "Password is resetted successfully. Please Login to System."
+                  });
+                }
+              });
+            } else {
+              res.json({
+                status: "0",
+                message: "Please provide right OTP sent to your mobile no"
+              });
+            }
+          } else {
+            res.json({
+              status: "0",
+              message: "Please provide registered mobile no"
+            });
+          }
+        }
+      });
+    }
+  }
+);
 
 router.post(
   "/change-password",

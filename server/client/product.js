@@ -255,7 +255,9 @@ router.post(
                           images = [];
                         }
                         for (let i = 0; i < images.length; i++) {
-                          images[i] = process.env.CATEGORY + images[i];
+                          images[i] = {
+                            image: process.env.CATEGORY + images[i]
+                          };
                         }
                         res.status(200).json({
                           status: "1",

@@ -425,9 +425,9 @@ router.post(
     } else {
       let item = req.body.item_id;
       let sql =
-        "select co.*,od.*,ca.*,s.status from customer_order co,order_detail od,customer_address ca,status s where od.item_id=" +
+        "select co.*,od.*,ca.*,s.status,v.image_required from customer_order co,order_detail od,product_variant v,customer_address ca,status s where od.item_id=" +
         item +
-        " and co.order_id=od.order_id and co.address_id=ca.address_id and s.id=co.status_id";
+        " and od.variant_id=v.variant_id and co.order_id=od.order_id and co.address_id=ca.address_id and s.id=co.status_id";
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
@@ -436,10 +436,10 @@ router.post(
             .json({ status: "0", message: "Order detail not found." });
         } else {
           if (result.length > 0) {
-            
             result = result[0];
             let data = {
               order_id: result.order_id,
+              item_id: item.toString(),
               iscod: result.iscod,
               flatno: result.flatno,
               colony: result.colony,
@@ -455,12 +455,27 @@ router.post(
               shippincode: result.pincode,
               status: result.status,
               estimate_date: "",
-              added_date: result.added_date,
-              is_cancelable: 1,
-              is_replacable: 1,
-              is_returnable: 1
+              added_date: result.added_date
             };
+            if (result.status_id < 3) {
+              data.is_cancelable = 1;
+            } else {
+              data.is_cancelable = 1;
+            }
             let product = JSON.parse(result.variant);
+            let diff =
+              (new Date() - new Date(result.added_date)) /
+              (1000 * 60 * 60 * 24);
+            if (product.warranty <= diff && result.status_id == 4) {
+              data.is_replacable = 1;
+            } else {
+              data.is_replacable = 0;
+            }
+            if (result.status_id == 4 && result.image_required != 1) {
+              data.is_returnable = 1;
+            } else {
+              data.is_returnable = 0;
+            }
             data.quantity = product.cart_quantity;
             data.name = product.name;
             data.price = product.price;
@@ -776,6 +791,10 @@ router.post(
                       message: "Your order return request already placed."
                     });
                   } else {
+                    sql =
+                      "update customer_order set status_id=9 where order_id=" +
+                      order_id;
+                    con.query(sql);
                     res.status(200).json({
                       status: "1",
                       message: "Order return request is placed successfully"
@@ -831,6 +850,10 @@ router.post(
                       message: "Your order replace request already placed."
                     });
                   } else {
+                    sql =
+                      "update customer_order set status_id=10 where order_id=" +
+                      order_id;
+                    con.query(sql);
                     res.status(200).json({
                       status: "1",
                       message: "Order replace request is placed successfully"
