@@ -1,6 +1,9 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
 const {
   check,
   validationResult,
@@ -9,6 +12,16 @@ const {
 } = require("express-validator");
 const con = require("../database-connection");
 const limit = 30;
+
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, path.join(__dirname, "../", "assets/categories"));
+  },
+  filename: function(req, file, cb) {
+    file.originalname = new Date().getTime() + file.originalname;
+    cb(null, filename);
+  }
+});
 
 /** Verify the user token */
 
@@ -191,6 +204,7 @@ router.post(
     check("is_display").isBoolean()
   ],
   verifyToken,
+  upload.single("avatar"),
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -242,6 +256,7 @@ router.post(
     // check("mobile_required").isBoolean()
   ],
   verifyToken,
+  upload.single("avatar"),
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -249,7 +264,7 @@ router.post(
     } else {
       let category = req.body;
       let sql =
-        "insert into category(name,description,parent_id,is_display) values('" +
+        "insert into category(name,description,parent_id,is_display,image) values('" +
         category.name.replace("'", "''") +
         "','" +
         category.description.replace("'", "''") +
@@ -257,11 +272,13 @@ router.post(
         category.parent_id +
         "," +
         category.is_display +
-        // "," +
-        // category.image_required +
-        // "," +
-        // category.mobile_required +
-        ")";
+        ",'" +
+        req.file.originalname +
+        "')";
+      // "," +
+      // category.image_required +
+      // "," +
+      // category.mobile_required +
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {
@@ -301,19 +318,38 @@ router.put(
       res.status(200).json({ status: 400, errors: errors.array() });
     } else {
       let category = req.body;
-      let sql =
-        "update category set name='" +
-        category.name +
-        "', description='" +
-        category.description +
-        "', image_required=" +
-        category.image_required +
-        ", mobile_required=" +
-        category.mobile_required +
-        ", is_display=" +
-        category.is_display +
-        " where category_id=" +
-        category.category_id;
+      if (req.file) {
+        sql =
+          "update category set name='" +
+          category.name +
+          "', description='" +
+          category.description +
+          "', image_required=" +
+          category.image_required +
+          ", mobile_required=" +
+          category.mobile_required +
+          ", is_display=" +
+          category.is_display +
+          ", image='" +
+          req.file.originalname +
+          "' where category_id=" +
+          category.category_id;
+      } else {
+        sql =
+          "update category set name='" +
+          category.name +
+          "', description='" +
+          category.description +
+          "', image_required=" +
+          category.image_required +
+          ", mobile_required=" +
+          category.mobile_required +
+          ", is_display=" +
+          category.is_display +
+          " where category_id=" +
+          category.category_id;
+      }
+
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {
