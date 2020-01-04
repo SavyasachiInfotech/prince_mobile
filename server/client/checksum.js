@@ -69,11 +69,12 @@ router.post(
         } else {
           console.log(data);
           if (data.length > 0) {
-            let price = 0,
-              qty = 1;
+            let price = 0;
+            let qty = 1;
+            console.log(data.length);
             for (let i = 0; i < data.length; i++) {
-              if (data[i].quantity <= data[i].ava_quantity) {
-                price = price + data[i].price;
+              if (data[i].quantity <= data[i].ava_quanity) {
+                price = price + (data[i].price*data[i].quantity);
               } else {
                 qty = 0;
                 break;
