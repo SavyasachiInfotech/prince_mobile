@@ -56,7 +56,7 @@ router.post(
           " and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id";
       } else {
         sql =
-          "select c.*,v.price, v.quantity as ava_quanity from cart c, product_variant v where c.cart_id=" +
+          "select c.*,v.price, v.quantity as ava_quantity from cart c, product_variant v where c.cart_id=" +
           req.userId +
           " and c.variant_id=" +
           req.body.variant_id +
@@ -73,7 +73,7 @@ router.post(
             let qty = 1;
             console.log(data.length);
             for (let i = 0; i < data.length; i++) {
-              if (data[i].quantity <= data[i].ava_quanity) {
+              if (data[i].quantity <= data[i].ava_quantity) {
                 price = price + (data[i].price*data[i].quantity);
               } else {
                 qty = 0;
