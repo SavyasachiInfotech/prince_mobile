@@ -365,6 +365,11 @@ router.post(
                                       con.query(sql, (err, result) => {});
                                     }
                                     sql =
+                                      "insert into track_detail(item_id,status_id) values(" +
+                                      order_id +
+                                      ",0)";
+                                    con.query(sql);
+                                    sql =
                                       "delete from cart where cart_id=" +
                                       req.userId +
                                       " and variant_id=" +

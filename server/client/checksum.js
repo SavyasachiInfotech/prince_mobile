@@ -74,7 +74,7 @@ router.post(
             console.log(data.length);
             for (let i = 0; i < data.length; i++) {
               if (data[i].quantity <= data[i].ava_quantity) {
-                price = price + (data[i].price*data[i].quantity);
+                price = price + data[i].price * data[i].quantity;
               } else {
                 qty = 0;
                 break;
@@ -300,7 +300,9 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                   req.userId +
                   "," +
                   req.body.address_id +
-                  ",0,0,"+result[0].variant_id+")";
+                  ",0,0," +
+                  result[0].variant_id +
+                  ")";
                 con.query(sql, (err, order) => {
                   if (err) {
                     console.log(err);
@@ -533,6 +535,11 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                                 }
                                 con.query(sql, (err, result) => {});
                               }
+                              sql =
+                                "insert into track_detail(item_id,status_id) values(" +
+                                order_id +
+                                ",0)";
+                              con.query(sql);
                               sql =
                                 "delete from cart where cart_id=" +
                                 req.userId +
