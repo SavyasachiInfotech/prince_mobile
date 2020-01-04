@@ -640,7 +640,8 @@ router.post("/forget-password", (req, res) => {
               res.json({
                 status: "1",
                 message:
-                  "OTP for forgot password sent to your mobile. Please use it for reset the password"
+                  "OTP for forgot password sent to your mobile. Please use it for reset the password",
+                otp: otp.toString()
               });
             }
           });
