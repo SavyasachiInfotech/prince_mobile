@@ -23,6 +23,10 @@ var storage = multer.diskStorage({
   }
 });
 
+var upload = multer({
+  storage: storage
+});
+
 /** Verify the user token */
 
 function verifyToken(req, res, next) {
