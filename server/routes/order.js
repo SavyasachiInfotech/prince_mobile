@@ -39,6 +39,7 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
     limit;
   con.query(sql, (err, result) => {
     if (err) {
+      console.log(err);
       res.status(200).json({ status: 400, message: "Orders not found." });
     } else {
       sql =
