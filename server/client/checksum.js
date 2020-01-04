@@ -296,11 +296,11 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                 });
               } else {
                 sql =
-                  "insert into customer_order(user_id,address_id,promo_id,iscod) values(" +
+                  "insert into customer_order(user_id,address_id,promo_id,iscod,variant_id) values(" +
                   req.userId +
                   "," +
                   req.body.address_id +
-                  ",0,0)";
+                  ",0,0,"+result[0].variant_id+")";
                 con.query(sql, (err, order) => {
                   if (err) {
                     console.log(err);
