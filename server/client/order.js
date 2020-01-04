@@ -368,7 +368,9 @@ router.post(
                                       "insert into track_detail(item_id,status_id) values(" +
                                       order_id +
                                       ",0)";
-                                    con.query(sql);
+                                    con.query(sql, (err, data) => {
+                                      console.log(err);
+                                    });
                                     sql =
                                       "delete from cart where cart_id=" +
                                       req.userId +
