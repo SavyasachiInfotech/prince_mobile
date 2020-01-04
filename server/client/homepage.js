@@ -309,7 +309,7 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
                 }
                 let trend;
                 sql =
-                  "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.order_count DESC limit 0,5";
+                  "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.order_count DESC limit 0,5";
                 con.query(sql, (err, trending) => {
                   if (err) {
                     console.log(err);
