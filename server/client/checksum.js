@@ -544,7 +544,7 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                                 "delete from cart where cart_id=" +
                                 req.userId +
                                 " and variant_id=" +
-                                req.body.variant_id;
+                                result[0].variant_id;
                               con.query(sql, (err, result) => {
                                 console.log(err);
                                 res.status(200).json({
