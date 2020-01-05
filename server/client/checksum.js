@@ -34,12 +34,11 @@ function verifyToken(req, res, next) {
 
 router.post(
   "/generate_checksum",
-  [check("variant_id").isNumeric(), check("mobile_required").isNumeric()],
+  [check("variant_id").isNumeric(), check("mobile_required").isNumeric(),check("promo_id").isNumeric()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log("dsfds");
       res.status(200).json({
         status: process.env.ERROR,
         message: "Invalid Input Found",
@@ -81,8 +80,9 @@ router.post(
               }
             }
             if (qty == 1) {
-              sql =
-                "insert into paytm_details(variant_id,user_id,price,mobile_required) values(" +
+              if(req.body.promo_id==0){
+                sql =
+                "insert into paytm_details(variant_id,user_id,price,mobile_required,promo_id) values(" +
                 req.body.variant_id +
                 "," +
                 req.userId +
@@ -90,7 +90,7 @@ router.post(
                 price +
                 "," +
                 req.body.mobile_required +
-                ")";
+                ",0)";
               con.query(sql, (err, result) => {
                 if (err) {
                   console.log(err);
@@ -159,6 +159,135 @@ router.post(
                   });
                 }
               });
+              } else {
+                sql =
+                          "select * from promocode where id=" + data.promo_id;
+                        con.query(sql, (err, promo) => {
+                          if (err) {
+                            console.log(err);
+                            deleteOrder(order_id);
+                            res.status(200).json({
+                              status: "0",
+                              message:
+                                "Order not placed. Please apply valid promocode."
+                            });
+                          } else {
+                            if (promo.length > 0) {
+                              if (
+                                promo[0].min_limit <= price
+                              ) {
+                                let discount;
+                                if (promo[0].discount_type == 1) {
+                                  discount = promo[0].max_discount;
+                                } else {
+                                  discount =
+                                    (price *
+                                      promo[0].discount) /
+                                    100;
+                                  if (discount > promo[0].max_discount) {
+                                    discount = promo[0].max_discount;
+                                  }
+                                }
+                                price =
+                                  price - discount;
+                                  sql =
+                                  "insert into paytm_details(variant_id,user_id,price,mobile_required,promo_id) values(" +
+                                  req.body.variant_id +
+                                  "," +
+                                  req.userId +
+                                  "," +
+                                  price +
+                                  "," +
+                                  req.body.mobile_required +","+req.body.promo_id+
+                                  ")";
+                                con.query(sql, (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                    res
+                                      .status(200)
+                                      .json({ status: "0", message: "Order not placed" });
+                                  } else {
+                                    sql = "select * from customer where id=" + req.userId;
+                                    con.query(sql, (err, user) => {
+                                      if (err) {
+                                        console.log(err);
+                                        res
+                                          .status(200)
+                                          .json({ status: "0", message: "Order not placed" });
+                                      } else {
+                                        if (user.length > 0) {
+                                          var paramarray = {};
+                                          paramarray["MID"] = process.env.MID; //Provided by Paytm
+                                          paramarray["ORDER_ID"] = result.insertId.toString(); //unique OrderId for every req
+                                          paramarray["CUST_ID"] = req.userId.toString(); // unique customer identifier
+                                          paramarray["INDUSTRY_TYPE_ID"] = process.env.INDUTYPEID; //Provided by Paytm
+                                          paramarray["CHANNEL_ID"] = process.env.CHANNELID; //Provided by Paytm
+                                          paramarray["TXN_AMOUNT"] = price.toString(); // transaction amount
+                                          paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
+                                          paramarray["CALLBACK_URL"] =
+                                            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                            result.insertId; //Provided by Paytm
+                                          // paramarray["EMAIL"] = user[0].email; // customer email id
+                                          paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
+                                          paramarray["MOBILE_NO"] = "9737156062"; // customer 10 digit mobile no.
+                                          paytm_checksum.genchecksum(
+                                            paramarray,
+                                            paytm_config.MERCHANT_KEY,
+                                            function(err, checksum) {
+                                              console.log(checksum);
+                                              console.log(
+                                                "Checksum: ",
+                                                JSON.stringify(checksum),
+                                                "\n"
+                                              );
+                                              res.status(200).json({
+                                                status: "1",
+                                                message: "Checksum generated successfully.",
+                                                checksum: checksum,
+                                                order_id: result.insertId.toString(),
+                                                mid: process.env.MID,
+                                                cust_id: req.userId.toString(),
+                                                industry_type_id: process.env.INDUTYPEID,
+                                                channel_id: process.env.CHANNELID,
+                                                txn_amount: price.toString(),
+                                                website: process.env.WEBSITE,
+                                                callback_url:
+                                                  "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                                  result.insertId,
+                                                email: "pmdhankecha.18@gmail.com",
+                                                mobile_no: "9737156062"
+                                              });
+                                            }
+                                          );
+                                        } else {
+                                          res
+                                            .status(200)
+                                            .json({ status: "0", message: "Order not placed." });
+                                        }
+                                      }
+                                    });
+                                  }
+                                });
+                               
+                                
+                              } else {
+                                deleteOrder(order_id);
+                                res.status(200).json({
+                                  status: "0",
+                                  message:
+                                    "Order not placed. Your order amount is not eligible for promocode"
+                                });
+                              }
+                            } else {
+                              res.status(200).json({
+                                status: "0",
+                                message: "Please apply valid promocode."
+                              });
+                            }
+                          }
+                        });
+              }
+              
             } else {
               res.status(200).json({
                 status: "0",
@@ -296,12 +425,14 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                 });
               } else {
                 sql =
-                  "insert into customer_order(user_id,address_id,promo_id,iscod,variant_id) values(" +
+                  "insert into customer_order(user_id,address_id,promo_id,iscod,variant_id,promo_id) values(" +
                   req.userId +
                   "," +
                   req.body.address_id +
                   ",0,0," +
                   result[0].variant_id +
+                  ","+
+                  result[0].promo_id+
                   ")";
                 con.query(sql, (err, order) => {
                   if (err) {

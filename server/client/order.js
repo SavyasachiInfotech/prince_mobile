@@ -473,6 +473,7 @@ router.post(
               estimate_date: "",
               added_date: result.added_date
             };
+
             if (result.status_id < 3) {
               data.is_cancelable = 1;
             } else {
@@ -514,11 +515,36 @@ router.post(
             data = JSON.parse(json, (key, val) =>
               typeof val !== "object" && val !== null ? String(val) : val
             );
-            res.status(200).json({
-              status: "1",
-              message: "Getting order detail successfully.",
-              order_detail: data
-            });
+            if (data.iscod == 1) {
+              sql = "select * from meta where id=1";
+              con.query(sql, (err, cod) => {
+                if (err) {
+                  console.log(err);
+                  data.cod_message = "";
+                } else {
+                  if (cod.length > 0) {
+                    data.cod_message =
+                      "Extra " +
+                      cod[0].meta_value +
+                      " Rs. charge added on whole order for Cash On Delivery";
+                  } else {
+                    data.cod_message = "";
+                  }
+                  res.status(200).json({
+                    status: "1",
+                    message: "Getting order detail successfully.",
+                    order_detail: data
+                  });
+                }
+              });
+            } else {
+              data.cod_message = "";
+              res.status(200).json({
+                status: "1",
+                message: "Getting order detail successfully.",
+                order_detail: data
+              });
+            }
           } else {
             res
               .status(200)

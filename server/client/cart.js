@@ -30,7 +30,7 @@ function verifyToken(req, res, next) {
 
 router.post("/add-cart", verifyToken, (req, res) => {
   let cart = req.body.cart;
-//  let sql=""
+  //  let sql=""
   sql =
     "replace into cart(cart_id,variant_id,quantity,mobile_required,mobile_id) values";
   for (let i = 0; i < cart.length; i++) {
@@ -269,6 +269,7 @@ router.post(
             .status(200)
             .json({ status: 0, message: "Please select valid cart product" });
         } else {
+          let net_total = 0;
           for (let i = 0; i < result.length; i++) {
             if (!data.mobile_required) {
               result[i].model_name = "";
@@ -282,7 +283,7 @@ router.post(
             }
             result[i].mrp =
               result[i].price + (result[i].price * result[i].discount) / 100;
-
+            net_total = net_total + result[i].price * result[i].min_qty;
             // result[i].total_price=result[i].price*
           }
           let other_details = { is_code: "0" };
@@ -321,7 +322,8 @@ router.post(
                   cart_data: result,
                   offers_details: offers,
                   other_details: other_details,
-                  image_required: image
+                  image_required: image,
+                  net_total: net_total.toString()
                 });
               });
             }

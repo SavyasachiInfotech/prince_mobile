@@ -345,6 +345,7 @@ router.post(
                       " and v.variant_id=" +
                       id;
                     con.query(sql, (err, mobiles) => {
+                      let net_total=0;
                       if (err) {
                         console.log(err);
                       } else {
@@ -362,6 +363,7 @@ router.post(
                           delete products[0].cart_quantity;
                         }
                         for (let i = 0; i < mobiles.length; i++) {
+                          net_total=net_total+(mobiles[i].min_qty*mobiles[i].price);
                           if (mobiles[i].max_quantity < 1) {
                             mobiles.splice(i, 1);
                           }
@@ -502,7 +504,8 @@ router.post(
                                       status: "1",
                                       message:
                                         "Getting product detail successfully.",
-                                      products: products
+                                      products: products,
+                                      net_total:net_total.toString()
                                     });
                                   }
                                 });
