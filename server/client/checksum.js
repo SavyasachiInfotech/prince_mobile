@@ -546,6 +546,7 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                                 " and variant_id=" +
                                 req.body.variant_id;
                               con.query(sql, (err, result) => {
+                                console.log(err);
                                 res.status(200).json({
                                   status: 1,
                                   message: "Order placed successfully."
