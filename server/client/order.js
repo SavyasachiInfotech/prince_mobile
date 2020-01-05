@@ -647,7 +647,7 @@ router.post(
           sql = "select * from track_detail where item_id=" + item_id;
           con.query(sql, (err, trackdata) => {
             if (err) {
-              console.log(er);
+              console.log(err);
               res
                 .status(200)
                 .json({ status: "0", message: "Order not tracked." });
