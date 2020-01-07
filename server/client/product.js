@@ -307,7 +307,9 @@ router.post(
     } else {
       let id = req.body.id;
       let sql =
-        "select v.variant_id,v.name,p.description,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as countQuantity,c.name as category,IFNULL((select quantity from cart where variant_id=v.variant_id and mobile_required=0),0) as cart_quantity,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,v.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
+        "select v.variant_id,v.name,p.description,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as countQuantity,c.name as category,IFNULL((select quantity from cart where variant_id=v.variant_id and mobile_required=0 and cart_id=" +
+        req.userId +
+        "),0) as cart_quantity,v.price,v.discount,v.min_qty,v.quantity,v.extra_detail,v.avg_rating,v.main_image,t.tax,v.image_required,c.mobile_required from product_variant v, product p, tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and c.category_id=p.category_id and p.product_id=v.product_id and v.variant_id=" +
         id;
       con.query(sql, (err, products) => {
         if (err) {
@@ -345,7 +347,7 @@ router.post(
                       " and v.variant_id=" +
                       id;
                     con.query(sql, (err, mobiles) => {
-                      let net_total=0;
+                      let net_total = 0;
                       if (err) {
                         console.log(err);
                       } else {
@@ -363,7 +365,8 @@ router.post(
                           delete products[0].cart_quantity;
                         }
                         for (let i = 0; i < mobiles.length; i++) {
-                          net_total=net_total+(mobiles[i].min_qty*mobiles[i].price);
+                          net_total =
+                            net_total + mobiles[i].min_qty * mobiles[i].price;
                           if (mobiles[i].max_quantity < 1) {
                             mobiles.splice(i, 1);
                           }
@@ -505,7 +508,7 @@ router.post(
                                       message:
                                         "Getting product detail successfully.",
                                       products: products,
-                                      net_total:net_total.toString()
+                                      net_total: net_total.toString()
                                     });
                                   }
                                 });
