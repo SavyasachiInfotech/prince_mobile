@@ -14,5 +14,6 @@ export class Variant {
     this.parent = true;
     this.min_qty = 0;
     this.quantity = 0;
+    this.tax_id=4;
   }
 }

@@ -63,65 +63,76 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
 
 router.post("/change-status", verifyToken, (req, res) => {
   order = req.body;
-  let sql =
-    "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
-    order.order_id +
-    " and o.varaint_id=v.variant_id and a.address_id=o.address_id";
-  // con.query(sql,(err,orderdata)=>{
-  //   if(err){
+
+  bookShipment(order);
+  // let sql =
+  //   "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
+  //   order.order_id +
+  //   " and o.varaint_id=v.variant_id and a.address_id=o.address_id";
+  // con.query(sql, (err, orderdata) => {
+  //   if (err) {
   //     console.log(err);
-  //     res.status(200).json({status:400, message:"Order status not changed."});
+  //     res
+  //       .status(200)
+  //       .json({ status: 400, message: "Order status not changed." });
   //   } else {
-  //     if(orderdata.length>0){
-  //       orderdata=orderdata[0];
-  //       let shipment={
-  //         InvoiceNo:order.order_id.toString(),
-  //         PickupCode:"395010",
-  //         ShowDifferenceSender:"No",
-  //         CustomerFirstName:orderdata.first_name,
-  //         CustomerLastName:orderdata.last_name,
-  //         CustomerAddress1:orderdata.flatno,
-  //         CustomerAddress2:orderdata.colony,
-  //         CustomerAddress3:orderdata.landmark,
-  //         CustomerPincode:orderdata.pincode,
-  //         CustomerCity:orderdata.city,
-  //         CustomerState:orderdata.state,
-  //         CustomerMobile:orderdata.mobile,
-  //         Weight:orderdata.total_weight,
-  //         Length:"20",
-  //         ProductDetail:orderdata.name,
-  //         InvoiceAmount:orderdata.order_amount,
-  //         CollectableAmount:orderdata.collectable_amount,
-  //         CheckoutMode:"Auto",
-  //         IsSellerRegUnderGST:"No",
-  //         InvoiceDate:new Date(orderdata.order_date).toJSON().substr(0,10)
-  //       }
-  //       if(orderdata.iscod==1){
-  //         shipment.PaymentType="COD";
+  //     if (orderdata.length > 0) {
+  //       orderdata = orderdata[0];
+  //       let shipment = {
+  //         InvoiceNo: order.order_id.toString(),
+  //         PickupCode: "395010",
+  //         ShowDifferenceSender: "No",
+  //         CustomerFirstName: orderdata.first_name,
+  //         CustomerLastName: orderdata.last_name,
+  //         CustomerAddress1: orderdata.flatno,
+  //         CustomerAddress2: orderdata.colony,
+  //         CustomerAddress3: orderdata.landmark,
+  //         CustomerPincode: orderdata.pincode,
+  //         CustomerCity: orderdata.city,
+  //         CustomerState: orderdata.state,
+  //         CustomerMobile: orderdata.mobile,
+  //         Weight: orderdata.total_weight,
+  //         Length: "20",
+  //         ProductDetail: orderdata.name,
+  //         InvoiceAmount: orderdata.order_amount,
+  //         CollectableAmount: orderdata.collectable_amount,
+  //         CheckoutMode: "Auto",
+  //         IsSellerRegUnderGST: "No",
+  //         InvoiceDate: new Date(orderdata.order_date).toJSON().substr(0, 10)
+  //       };
+  //       if (orderdata.iscod == 1) {
+  //         shipment.PaymentType = "COD";
   //       } else {
-  //         shipment.PaymentType="Prepaid";
+  //         shipment.PaymentType = "Prepaid";
   //       }
-  //       let http=require('http');
-  //       http.post(process.env.ZIPPINGBASEURL+"BookShipment",{
-  //         "oauth":
+  //       console.log(shipment);
+  //       let http = require("http");
+  //       http.post(
+  //         process.env.ZIPPINGBASEURL + "BookShipment",
   //         {
-  //           username:process.env.ZIPPINGUNAME,
-  //           key:process.env.ZIPPINGPASS,
-  //           version:"1"
+  //           oauth: {
+  //             username: process.env.ZIPPINGUNAME,
+  //             key: process.env.ZIPPINGPASS,
+  //             version: "1"
+  //           },
+  //           ManifestDetails: shipment
   //         },
-  //       ManifestDetails: shipment
-  //       },(err,shipdata)=>{
-  //         if(err){
-  //           console.log(err);
-  //           res.status
+  //         (err, shipdata) => {
+  //           if (err) {
+  //             console.log(err);
+  //             res.status;
+  //           }
   //         }
-  //       });
+  //       );
   //     } else {
-  //       res.status(200).json({status:400, message:"Order status not changed"});
+  //       res
+  //         .status(200)
+  //         .json({ status: 400, message: "Order status not changed" });
   //     }
   //   }
   // });
-  sql =
+
+  let sql =
     "update customer_order set status_id=" +
     req.body.status +
     " where order_id=" +
@@ -150,6 +161,80 @@ router.post("/change-status", verifyToken, (req, res) => {
     }
   });
 });
+
+function bookShipment(order) {
+  let sql =
+    "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
+    order.order_id +
+    " and o.variant_id=v.variant_id and a.address_id=o.address_id";
+  con.query(sql, (err, orderdata) => {
+    if (err) {
+      console.log(err);
+      res
+        .status(200)
+        .json({ status: 400, message: "Order status not changed." });
+    } else {
+      if (orderdata.length > 0) {
+        orderdata = orderdata[0];
+        let shipment = {
+          // InvoiceNo: order.order_id.toString(),
+          InvoiceNo: "Parth123456",
+          PickupCode: "395010",
+          ShowDifferenceSender: "No",
+          CustomerFirstName: orderdata.first_name,
+          CustomerLastName: orderdata.last_name,
+          CustomerAddress1: orderdata.flatno,
+          CustomerAddress2: orderdata.colony,
+          CustomerAddress3: orderdata.landmark,
+          CustomerPincode: orderdata.pincode,
+          CustomerCity: orderdata.city,
+          CustomerState: orderdata.state,
+          CustomerMobile: orderdata.mobile,
+          Weight: orderdata.total_weight,
+          Length: "20",
+          ProductDetail: orderdata.name,
+          InvoiceAmount: orderdata.order_amount,
+          CollectableAmount: orderdata.collectable_amount,
+          CheckoutMode: "Auto",
+          IsSellerRegUnderGST: "No",
+          InvoiceDate: new Date(orderdata.order_date).toJSON().substr(0, 10)
+        };
+        if (orderdata.iscod == 1) {
+          shipment.PaymentType = "COD";
+        } else {
+          shipment.PaymentType = "Prepaid";
+        }
+        // console.log(shipment);
+        let http = require("http");
+        let options = {
+          host: process.env.ZIPPINGBASEURL,
+          path: "/Api/BookShipment",
+          body: {
+            oauth: {
+              username: process.env.ZIPPINGUNAME,
+              key: process.env.ZIPPINGPASS,
+              version: "1"
+            },
+            ManifestDetails: shipment
+          },
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            accept: "application/json"
+          },
+          json: true
+        };
+        http.request(options, shipdata => {
+          console.log(shipdata);
+        });
+      } else {
+        res
+          .status(200)
+          .json({ status: 400, message: "Order status not changed" });
+      }
+    }
+  });
+}
 
 router.post("/get-order-detail", verifyToken, (req, res) => {
   let order_id = req.body.order_id;

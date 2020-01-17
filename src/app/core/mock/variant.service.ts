@@ -16,6 +16,8 @@ export class VariantService {
     this._config.apiBaseUrl + this.service + "add-variants";
   private _updateVariantUrl =
     this._config.apiBaseUrl + this.service + "/update-variant";
+  private _deleteVariantUrl =
+    this._config.apiBaseUrl + this.service + "delete-variant";
   private editUploadedImageUrl =
     this._config.apiBaseUrl + "upload-image/editImageUpload";
   private uploadImageUrl =
@@ -47,6 +49,11 @@ export class VariantService {
   getvariant(id) {
     let options = this._config.getHeader();
     return this._http.get(this.getvarianturl + id, options);
+  }
+
+  deleteVariant(variant) {
+    let options = this._config.getHeader();
+    return this._http.post<any>(this._deleteVariantUrl, variant, options);
   }
 
   getVariants(variant_id) {

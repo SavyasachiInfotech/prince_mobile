@@ -761,7 +761,7 @@ router.post(
           if (result.length > 0) {
             if (
               result[0].password.toLowerCase() ==
-              data.currentPassword.toLowerCase()
+              md5(data.currentPassword.toLowerCase())
             ) {
               sql =
                 "update customer set password='" +

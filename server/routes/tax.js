@@ -29,41 +29,27 @@ function verifyToken(req, res, next) {
   next();
 }
 
-router.get("/",verifyToken,(req,res)=>{
-    let sql="select * from tax";
-    con.query(sql,(err,result)=>{
-        if(err){
-            console.log(err);
-            res.status(200).json({status:400, message:"Taxes not found"});
-        } else {
-            res.status(200).json({status:200, message:"Getting taxes successfully.",data:result});
-        }
-    });
-}); 
-
-router.post("/add-tax",[check("tax").isNumeric(),check("name").isString()],verifyToken,(req,res)=>{
-    const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(200).json({
-      status: process.env.ERROR,
-      message: "Invalid Input Found",
-      errors: errors.array()
-    });
-  } else {
-    let data=req.body;
-    let sql="insert into tax(tax,name) values("+data.tax+",'"+data.name+"')";
-    con.query(sql,(err,result)=>{
-        if(err){
-            console.log(err);
-            res.status(200).json({status:400, message:"Tax not added"});
-        } else {
-            res.status(200).json({status:200, message:"Tax added successfully"});
-        }
-    });
-  }
+router.get("/", verifyToken, (req, res) => {
+  let sql = "select * from tax order by tax";
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(200).json({ status: 400, message: "Taxes not found" });
+    } else {
+      res.status(200).json({
+        status: 200,
+        message: "Getting taxes successfully.",
+        data: result
+      });
+    }
+  });
 });
 
-router.post("/update-tax",[check("tax_id").isNumeric(),check("tax").isNumeric(),check("name").isString()],verifyToken,(req,res)=>{
+router.post(
+  "/add-tax",
+  [check("tax").isNumeric(), check("name").isString()],
+  verifyToken,
+  (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({
@@ -72,18 +58,64 @@ router.post("/update-tax",[check("tax_id").isNumeric(),check("tax").isNumeric(),
         errors: errors.array()
       });
     } else {
-        let tax=req.body;
-        let sql="update tax set tax="+tax.tax+" , name='"+tax.name+"' where tax_id="+tax.tax_id;
-        con.query(sql,(err,result)=>{
-            if(err){
-                console.log(err);
-                res.status(200).json({status:400, message:"Tax not updated"});
-            } else {
-                res.status(200).json({status:200, message:"Tax updated successfully"});
-            }
-        });
+      let data = req.body;
+      let sql =
+        "insert into tax(tax,name) values(" +
+        data.tax +
+        ",'" +
+        data.name +
+        "')";
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({ status: 400, message: "Tax not added" });
+        } else {
+          res
+            .status(200)
+            .json({ status: 200, message: "Tax added successfully" });
+        }
+      });
     }
-});
+  }
+);
 
+router.post(
+  "/update-tax",
+  [
+    check("tax_id").isNumeric(),
+    check("tax").isNumeric(),
+    check("name").isString()
+  ],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: process.env.ERROR,
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let tax = req.body;
+      let sql =
+        "update tax set tax=" +
+        tax.tax +
+        " , name='" +
+        tax.name +
+        "' where tax_id=" +
+        tax.tax_id;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res.status(200).json({ status: 400, message: "Tax not updated" });
+        } else {
+          res
+            .status(200)
+            .json({ status: 200, message: "Tax updated successfully" });
+        }
+      });
+    }
+  }
+);
 
-module.exports=router;
+module.exports = router;

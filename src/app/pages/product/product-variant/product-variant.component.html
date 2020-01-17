@@ -272,13 +272,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let variant of variants">
+                                    <tr *ngFor="let variant of variants;let i=index">
                                         <td>{{variant.variant_id}}</td>
                                         <td>{{variant.name}}</td>
                                         <td>{{variant.price}}</td>
                                         <td>{{variant.discount}}</td>
                                         <td>{{variant.quantity}}</td>
-                                        <td><i class="material-icons" (click)="editVariant(variant)">edit</i></td>
+                                        <td><i class="material-icons" (click)="editVariant(variant)">edit</i><i class="material-icons delete" (click)="deleteVariant(variant,i)">delete</i></td>
                                         <td>
                                             <a routerLink="../../add-image/{{variant.variant_id}}">+ Add Image</a>
                                         </td>

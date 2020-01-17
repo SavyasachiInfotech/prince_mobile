@@ -63,12 +63,32 @@ export class ProductVariantComponent implements OnInit {
         if (res.status == 200) {
           //@ts-ignore
           this.taxes = res.data;
-          this.variant.tax_id = this.taxes[0].tax_id;
+          this.variant.tax_id = this.taxes.find(tax => tax.tax == 0).tax_id;
         }
       });
       this.getAttributes();
       this.getSpecifications();
     });
+  }
+
+  deleteVariant(variant, i) {
+    if (confirm("Do you want to delete the Variant ?")) {
+      this._variantService
+        .deleteVariant({ variant_id: variant.variant_id })
+        .subscribe(
+          res => {
+            //@ts-ignore
+            if (res.status == 200) {
+              this.variants.splice(i, 1);
+            }
+            //@ts-ignore
+            this._config.showMessage(res.message);
+          },
+          err => {
+            this._config.showMessage("Variant not deleted.");
+          }
+        );
+    }
   }
 
   addMobile() {

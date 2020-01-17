@@ -96,6 +96,7 @@
                       <button
                         class="btn btn-outline-success"
                         *ngIf="currentStatus == 1"
+                        (click)="changeStatus(2, order, i)"
                       >
                         Dispatch Order
                       </button>

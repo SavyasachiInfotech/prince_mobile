@@ -473,7 +473,6 @@ router.post(
               estimate_date: "",
               added_date: result.added_date
             };
-
             if (result.status_id < 3) {
               data.is_cancelable = 1;
             } else {
@@ -530,6 +529,9 @@ router.post(
                   } else {
                     data.cod_message = "";
                   }
+                  if (result.status_id == 7) {
+                    data.is_cancelable = 2;
+                  }
                   res.status(200).json({
                     status: "1",
                     message: "Getting order detail successfully.",
@@ -557,9 +559,9 @@ router.post(
 );
 
 // 0  - For getting on transist orders
-// 5  - For getting cancelled orders
+// 7  - For getting cancelled orders
 // -1 - For all orders
-// 6- For return orders
+// 6  - For return orders
 
 router.post(
   "/get-all-order",
@@ -682,13 +684,30 @@ router.post(
                 if (i < trackdata.length) {
                   trackdata[i].status = 1;
                 } else {
-                  trackdata[i] = {
-                    id: i,
-                    item_id: trackdata[0].item_id,
-                    status_id: i + 1,
-                    added_date: new Date(),
-                    status: 0
-                  };
+                  if (trackdata.length < 1) {
+                    trackdata[i] = {
+                      id: i,
+                      item_id: item_id,
+                      status_id: i,
+                      added_date: new Date(),
+                      status: 0
+                    };
+                  } else {
+                    let date = new Date(trackdata[i - 1].added_date);
+                    if (i == 4) {
+                      date = date.setDate(date.getDate() + 2);
+                    } else {
+                      date = date.setDate(date.getDate() + 1);
+                    }
+
+                    trackdata[i] = {
+                      id: i,
+                      item_id: trackdata[0].item_id,
+                      status_id: i,
+                      added_date: new Date(date),
+                      status: 0
+                    };
+                  }
                 }
               }
               let json = JSON.stringify(result);

@@ -4,13 +4,17 @@
 i {
   cursor: pointer;
 }
-.delete{
+.delete {
   color: red;
   margin-left: 15px;
 }
-.form-control{
+.form-control {
   margin-bottom: 10px;
 }
-.save,.cancel{
-  margin-top:10px;  
+.save,
+.cancel {
+  margin-top: 10px;
+}
+.delete {
+  color: #ea4335 !important;
 }

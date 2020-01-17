@@ -259,28 +259,44 @@ router.post(
                             image: process.env.CATEGORY + images[i]
                           };
                         }
-                        res.status(200).json({
-                          status: "1",
-                          message: "Getting Products successfully.",
-                          products: result,
-                          currentPage: (data.pageno + 1).toString(),
-                          totalPages: totalPages.toString(),
-                          totalProduct: count[0].total.toString(),
-                          category_image: images
-                        });
+                        if(result.length>0) {
+                          res.status(200).json({
+                            status: "1",
+                            message: "Getting Products successfully.",
+                            products: result,
+                            currentPage: (data.pageno + 1).toString(),
+                            totalPages: totalPages.toString(),
+                            totalProduct: count[0].total.toString(),
+                            category_image: images
+                          });
+                        } else {
+                          res.status(200).json({
+                            status: "0",
+                            message: "No Products available.",
+                          });
+                        }
+                        
                       });
                     }
                   } else {
                     let totalPages = Math.ceil(count[0].total / limit);
-                    res.status(200).json({
-                      status: "1",
-                      message: "Getting Products successfully.",
-                      products: result,
-                      currentPage: (data.pageno + 1).toString(),
-                      totalPages: totalPages.toString(),
-                      totalProduct: count[0].total.toString(),
-                      category_image: []
-                    });
+                    if(result.length>0){
+                      res.status(200).json({
+                        status: "1",
+                        message: "Getting Products successfully.",
+                        products: result,
+                        currentPage: (data.pageno + 1).toString(),
+                        totalPages: totalPages.toString(),
+                        totalProduct: count[0].total.toString(),
+                        category_image: []
+                      });
+                    } else {
+                      res.status(200).json({
+                        status: "0",
+                        message: "No Products available.",
+                      });
+                    }
+                    
                   }
                 }
               });

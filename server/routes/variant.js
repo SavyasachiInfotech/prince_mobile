@@ -450,4 +450,29 @@ router.put(
   }
 );
 
+router.post("/delete-variant", verifyToken, (req, res) => {
+  if (req.body.variant_id) {
+    let sql =
+      "delete from variant_attribute where variant_id=" + req.body.variant_id;
+    con.query(sql);
+    sql =
+      "delete from product_specification where variant_id=" +
+      req.body.variant_id;
+    con.query(sql);
+    sql = "delete from variant_mobile where variant_id=" + req.body.variant_id;
+    con.query(sql);
+    sql = "delete from product_variant where variant_id=" + req.body.variant_id;
+    con.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.json({ status: 400, message: "Variant not deleted." });
+      } else {
+        res.json({ status: 200, message: "Variant deleted successfully." });
+      }
+    });
+  } else {
+    res.json({ status: 400, message: "Can not deleted variant" });
+  }
+});
+
 module.exports = router;

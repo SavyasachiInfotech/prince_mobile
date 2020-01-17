@@ -377,11 +377,13 @@ router.post(
                         discount = promoData[0].max_discount;
                       }
                     }
-                    req.body.price = req.body.price - discount;
+                    let finalAmount = req.body.price;
+
+                    finalAmount = finalAmount - discount;
                     res.status(200).json({
                       status: "1",
                       message: "Promocode applied successfully.",
-                      price: req.body.price.toString()
+                      price: finalAmount.toString()
                     });
                   } else {
                     res.status(200).json({

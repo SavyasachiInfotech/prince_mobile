@@ -18,7 +18,37 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Order Id : {{ order.order_id }}</h5>
-            <div>Name : {{ order.name }}</div>
+            <div class="detail"><div class="key">Name </div> : {{ order.name }}</div>
+            <div class="detail"><div class="key">Shipment ID </div> : {{ order.shipment_id }}</div>
+            <div class="detail"><div class="key">AWB No.</div> : {{ order.awbno }}</div>
+            <!-- <div>Promo ID : {{order.promo_id}}</div> -->
+            <div class="detail">
+              <div class="key">Payment</div> :&nbsp;<span *ngIf="order.iscod == 1"> Cash on Delivery</span
+              ><span *ngIf="order.iscod == 0"> Paytm Payment</span>
+            </div>
+            <div class="detail"><div class="key">Collectable Amount</div> : {{ order.collectable_amount }}</div>
+            <div class="detail"><div class="key">Order Amount</div> : {{ order.order_amount }}</div>
+            <div class="detail"><div class="key">Order Date</div> : {{ order.added_date | date: "dd/MM/yyyy" }}</div>
+            <h5 class="card-title item-detail">Items Detail :</h5>
+            <div class="row" *ngFor="let detail of order_details">
+              <div class="col-md-9">
+                <div class="detail">
+                  <div class="key">Model Name </div>: {{detail.model_name}}
+                </div>
+                <div class="detail">
+                  <div class="key">Variant ID </div>: {{detail.variant_id}}
+                </div>
+                <div class="detail">
+                  <div class="key">Product Name </div>: {{detail.variant.name}}
+                </div>
+                <div class="detail">
+                  <div class="key">Quantity </div>: {{detail.quantity}}
+                </div>
+              </div>
+              <div class="col-md-3">
+                <img [src]="detail.variant.thumbnail" height="110px">
+              </div>
+            </div>
           </div>
         </div>
       </div>

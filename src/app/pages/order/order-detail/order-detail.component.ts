@@ -17,17 +17,16 @@ export class OrderDetailComponent implements OnInit {
 
   public order: any = {};
   public order_details: any[] = new Array();
+  public imageBaseUrl = "";
 
   ngOnInit() {
     this._route.params.subscribe(data => {
       this._orderService.getOrderDetail({ order_id: data.id }).subscribe(
         res => {
-          console.log(res);
           //@ts-ignore
           if (res.status == 200) {
             let result: any = res;
             this.order = result.order[0];
-
             this.order_details = result.order_detail;
             for (let i = 0; i < this.order_details.length; i++) {
               this.order_details[i].variant = JSON.parse(
@@ -35,6 +34,7 @@ export class OrderDetailComponent implements OnInit {
               );
             }
             this.order.name = this.order_details[0].variant.name;
+            console.log(this.order_details);
           } else {
             //@ts-ignore
             this._config.showMessage(res.message);
