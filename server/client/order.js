@@ -501,15 +501,13 @@ router.post(
             let mrp =
               product.price * product.cart_quantity -
               (product.price * product.cart_quantity * product.tax) /
-                (100 + product.tax);
+                (100 + product.tax); 
             data.items = mrp.toFixed(2);
             data.taxable_amount = mrp.toFixed(2);
 
             data.tax = ((mrp * product.tax) / 100).toFixed(2);
-            data.total = (
-              Number.parseInt(data.taxable_amount) + Number.parseInt(data.tax)
-            ).toFixed(2);
-
+            data.total = result.collectable_amount.toFixed(2);
+            data.promo_amount=(mrp-parseInt(data.total)).toFixed(2);
             let json = JSON.stringify(data);
             data = JSON.parse(json, (key, val) =>
               typeof val !== "object" && val !== null ? String(val) : val
