@@ -9,11 +9,13 @@ export class Config {
     "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/list-image/";
   public thumbnailUrl =
     "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/thumbnail/";
+  public categoryUrl="http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/category/";
 
   // public apiBaseUrl = "http://localhost:3000/api/";
   // public clientBaseUrl = "http://localhost:3000/";
   // public imageUrl = "http://localhost:3000/list-image/";
   // public thumbnailUrl = "http://localhost:3000/thumbnail/";
+  // public categoryUrl = "http://localhost:3000/category/";
   public displayLimit = 10;
   public err = "No response found from server. Please try again later.";
 

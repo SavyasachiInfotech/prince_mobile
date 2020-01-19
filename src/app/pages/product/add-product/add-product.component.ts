@@ -3,7 +3,7 @@ import { Config } from "src/app/core/data/config";
 import { CategoryService } from "src/app/core/mock/category.service";
 import { InsertProduct } from "src/app/core/data/insert-product";
 import { ProductService } from "src/app/core/mock/product.service";
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "app-add-product",
@@ -13,32 +13,31 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class AddProductComponent implements OnInit {
   categories = new Array();
   subcategories = new Array();
-  allSubCategories=new Array();
-  product: InsertProduct=new InsertProduct();
+  allSubCategories = new Array();
+  product: InsertProduct = new InsertProduct();
   products = new Array();
   editBit = false;
-  product_id:number=0;
+  product_id: number = 0;
 
   constructor(
     private _config: Config,
     private _categoryService: CategoryService,
     private _productService: ProductService,
-    private _route:ActivatedRoute,
-    private _router:Router
+    private _route: ActivatedRoute,
+    private _router: Router
   ) {
-    
     this.cancelProduct();
   }
 
   ngOnInit() {
-    this._route.params.subscribe(data=>{
-      this.product_id=data.id;
-      if(this.product_id>0){
-        this._productService.getProductById(this.product_id).subscribe(res=>{
+    this._route.params.subscribe(data => {
+      this.product_id = data.id;
+      if (this.product_id > 0) {
+        this._productService.getProductById(this.product_id).subscribe(res => {
           //@ts-ignore
-          if(res.status==200){
+          if (res.status == 200) {
             //@ts-ignore
-            this.product=res.product[0];
+            this.product = res.product[0];
             this.getCategories(1);
           } else {
             this.getCategories(0);
@@ -47,10 +46,7 @@ export class AddProductComponent implements OnInit {
       } else {
         this.getCategories(0);
       }
-      
     });
-    
-   
   }
 
   cancelProduct() {
@@ -64,23 +60,28 @@ export class AddProductComponent implements OnInit {
       //@ts-ignore
       if (res.status == 200) {
         //@ts-ignore
-        this.categories = res.categories.filter(item=>item.parent_id==0);
+        this.categories = res.categories.filter(item => item.parent_id == 0);
         //@ts-ignore
-        this.allSubCategories= res.categories.filter(item=>item.parent_id!=0);
-        this.subcategories=this.allSubCategories.filter(item=>item.parent_id==this.product.category_id);
+        this.allSubCategories = res.categories.filter(
+          item => item.parent_id != 0
+        );
+        this.subcategories = this.allSubCategories.filter(
+          item => item.parent_id == this.product.category_id
+        );
         //@ts-ignore
-        if(this.product.parent_id>0 && productBit==1){
-          this.product.subcategory_id=this.product.category_id;
+        if (this.product.parent_id > 0 && productBit == 1) {
+          this.product.subcategory_id = this.product.category_id;
           //@ts-ignore
-          this.product.category_id=this.product.parent_id;
-          
+          this.product.category_id = this.product.parent_id;
         }
       }
     });
   }
 
   getSubCategories() {
-    this.subcategories=this.allSubCategories.filter(item=>item.parent_id==this.product.category_id);
+    this.subcategories = this.allSubCategories.filter(
+      item => item.parent_id == this.product.category_id
+    );
   }
 
   setProduct(product) {
@@ -94,10 +95,10 @@ export class AddProductComponent implements OnInit {
   }
 
   addProduct() {
-    if(this.product.subcategory_id>0){
-      this.product.category_id=this.product.subcategory_id;
+    if (this.product.subcategory_id > 0) {
+      this.product.category_id = this.product.subcategory_id;
     }
-    if (this.product_id>0) {
+    if (this.product_id > 0) {
       this._productService.updateProduct(this.product).subscribe(
         res => {
           alert("Product is updated successfully");

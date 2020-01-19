@@ -36,7 +36,7 @@ export class CategoryImageComponent implements OnInit {
           this.list = JSON.parse(this.variant.promo_images);
           for (let i = 0; i < 6; i++) {
             if (this.list.length > i) {
-              this.images[i] = "http://localhost:3000/category/" + this.list[i];
+              this.images[i] = this._config.categoryUrl + this.list[i];
               this.uploadLabel[i] = "Change Image";
             } else {
               this.uploadLabel[i] = "Upload Image";
