@@ -425,7 +425,7 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                 });
               } else {
                 sql =
-                  "insert into customer_order(user_id,address_id,promo_id,iscod,variant_id,promo_id) values(" +
+                  "insert into customer_order(user_id,address_id,iscod,variant_id,promo_id) values(" +
                   req.userId +
                   "," +
                   req.body.address_id +
