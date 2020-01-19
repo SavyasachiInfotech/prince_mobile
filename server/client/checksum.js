@@ -429,7 +429,7 @@ router.post("/verify_checksum", verifyToken, (req, res) => {
                   req.userId +
                   "," +
                   req.body.address_id +
-                  ",0,0," +
+                  ",0," +
                   result[0].variant_id +
                   ","+
                   result[0].promo_id+
