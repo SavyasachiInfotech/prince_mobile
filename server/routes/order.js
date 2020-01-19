@@ -257,11 +257,18 @@ router.post("/get-order-detail", verifyToken, (req, res) => {
           if (err) {
             res.json({ status: 400, message: "Order details not found." });
           } else {
-            res.json({
-              status: 200,
-              message: "Getting order detail successfully.",
-              order: result,
-              order_detail: order_detail
+            sql="select p.* from promocode p, customer_order o where p.id=o.promo_id and o.order_id="+order_id;
+            con.query(sql,(err,promo)=>{
+              if(err){
+                console.log(err);
+              }
+              res.json({
+                status: 200,
+                message: "Getting order detail successfully.",
+                order: result,
+                order_detail: order_detail,
+                promocode:promo
+              });
             });
           }
         });

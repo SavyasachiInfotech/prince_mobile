@@ -4,7 +4,6 @@ const router = express.Router();
 const {
   check,
   validationResult,
-  sanitizeParam,
   param
 } = require("express-validator");
 const con = require("../database-connection");

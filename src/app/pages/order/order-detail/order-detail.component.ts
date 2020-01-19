@@ -26,7 +26,20 @@ export class OrderDetailComponent implements OnInit {
           //@ts-ignore
           if (res.status == 200) {
             let result: any = res;
+            console.log(result);
             this.order = result.order[0];
+
+            if (result.promocode && result.promocode.length > 0) {
+              this.order.promo_amount =
+                this.order.taxable_value - this.order.order_amount;
+              this.order.promocode = result.promocode[0].code;
+              this.order.promocode_desc = result.promocode[0].description;
+            } else {
+              this.order.promocode = "Promocode not applied.";
+              this.order.promocode_desc = "";
+              this.order.promo_amount = 0;
+            }
+
             this.order_details = result.order_detail;
             for (let i = 0; i < this.order_details.length; i++) {
               this.order_details[i].variant = JSON.parse(

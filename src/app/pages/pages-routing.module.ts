@@ -44,6 +44,13 @@ const routes: Routes = [
           import("./specifications/specifications.module").then(
             m => m.SpecificationsModule
           )
+      },
+      {
+        path: "announcement",
+        loadChildren: () =>
+          import("./announcement/announcement.module").then(
+            m => m.AnnouncementModule
+          )
       }
     ]
   }

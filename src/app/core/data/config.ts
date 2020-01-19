@@ -9,7 +9,8 @@ export class Config {
     "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/list-image/";
   public thumbnailUrl =
     "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/thumbnail/";
-  public categoryUrl="http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/category/";
+  public categoryUrl =
+    "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/category/";
 
   // public apiBaseUrl = "http://localhost:3000/api/";
   // public clientBaseUrl = "http://localhost:3000/";

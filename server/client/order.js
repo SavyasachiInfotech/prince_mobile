@@ -312,7 +312,7 @@ router.post(
                                 }
                                 orderdata.order_amount =
                                   orderdata.order_amount - discount;
-
+                                orderdata .collectable_amount=orderdata.collectable_amount-discount;
                                 sql =
                                   "update customer_order set collectable_amount=" +
                                   orderdata.collectable_amount +
@@ -524,6 +524,7 @@ router.post(
                       "Extra " +
                       cod[0].meta_value +
                       " Rs. charge added on whole order for Cash On Delivery";
+                      data.total=(parseInt(data.total)+cod[0].meta_value).toFixed(2);
                   } else {
                     data.cod_message = "";
                   }

@@ -1,0 +1,58 @@
+<div class="page-wrapper">
+  <div class="container-fluid">
+    <div class="row page-titles">
+      <div class="col-md-5 align-self-center">
+        <h4 class="text-themecolor">Add Announcement</h4>
+      </div>
+      <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item active">Add Announcement</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Add Announcement</h5>
+            <div class="row">
+              <div class="col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Title</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="announcement.title"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Description</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="announcement.description"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button class="btn btn-success" (click)="saveAnnouncement()">
+                  Save Announcement
+                </button>
+                <button class="btn btn-danger" (click)="cancelAnnouncement()">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
