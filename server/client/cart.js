@@ -383,7 +383,9 @@ router.post(
                     res.status(200).json({
                       status: "1",
                       message: "Promocode applied successfully.",
-                      price: finalAmount.toString()
+                      payable_price: finalAmount.toString(),
+                      discount: discount,
+                      promocode: promoData[0].code
                     });
                   } else {
                     res.status(200).json({
