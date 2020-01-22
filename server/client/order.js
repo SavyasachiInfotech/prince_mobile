@@ -524,7 +524,7 @@ router.post(
                       "Extra " +
                       cod[0].meta_value +
                       " Rs. charge added on whole order for Cash On Delivery";
-                      data.total=(parseInt(data.total)+cod[0].meta_value);
+                      data.total=(parseInt(data.total)+parseInt(cod[0].meta_value));
                   } else {
                     data.cod_message = "";
                   }
