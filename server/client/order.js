@@ -476,7 +476,7 @@ router.post(
             if (result.status_id < 3) {
               data.is_cancelable = 1;
             } else {
-              data.is_cancelable = 1;
+              data.is_cancelable = 0;
             }
             let product = JSON.parse(result.variant);
             let diff =
