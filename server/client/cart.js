@@ -283,7 +283,7 @@ router.post(
             }
             result[i].mrp =
               result[i].price + (result[i].price * result[i].discount) / 100;
-            net_total = net_total + result[i].price * result[i].min_qty;
+            net_total = net_total + result[i].price * result[i].quantity;
             // result[i].total_price=result[i].price*
           }
           let other_details = { is_code: "0" };
