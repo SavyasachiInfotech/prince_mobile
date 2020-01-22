@@ -19,7 +19,7 @@ var storage = multer.diskStorage({
   },
   filename: function(req, file, cb) {
     file.originalname = new Date().getTime() + file.originalname;
-    cb(null, filename);
+    cb(null, file.originalname);
   }
 });
 
@@ -117,7 +117,10 @@ router.get(
         errors: errors.array()
       });
     } else {
-      let sql = "select * from category where parent_id=0";
+      let sql =
+        "select * from category where parent_id=0 limit " +
+        req.params.up +
+        ",10";
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {
@@ -200,33 +203,45 @@ router.get(
 
 router.post(
   "/add-category",
-  [
-    check("name").isString(),
-    check("description").isString(),
-    check("image_required").isBoolean(),
-    check("mobile_required").isBoolean(),
-    check("is_display").isBoolean()
-  ],
   verifyToken,
-  upload.single("avatar"),
+  upload.array("avatar", 1),
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({ status: 400, errors: errors.array() });
     } else {
       let category = req.body;
-      let sql =
-        "insert into category(name,description,parent_id,image_required,mobile_required,is_display) values('" +
-        category.name.replace("'", "''") +
-        "','" +
-        category.description.replace("'", "''") +
-        "',0," +
-        category.image_required +
-        "," +
-        category.mobile_required +
-        "," +
-        category.is_display +
-        ")";
+      let sql;
+      if (req.files) {
+        sql =
+          "insert into category(name,description,parent_id,image_required,mobile_required,is_display,image) values('" +
+          category.name.replace("'", "''") +
+          "','" +
+          category.description.replace("'", "''") +
+          "',0," +
+          category.image_required +
+          "," +
+          category.mobile_required +
+          "," +
+          category.is_display +
+          ",'" +
+          req.files[0].filename +
+          "')";
+      } else {
+        sql =
+          "insert into category(name,description,parent_id,image_required,mobile_required,is_display) values('" +
+          category.name.replace("'", "''") +
+          "','" +
+          category.description.replace("'", "''") +
+          "',0," +
+          category.image_required +
+          "," +
+          category.mobile_required +
+          "," +
+          category.is_display +
+          ")";
+      }
+
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {
@@ -260,7 +275,6 @@ router.post(
     // check("mobile_required").isBoolean()
   ],
   verifyToken,
-  upload.single("avatar"),
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -305,72 +319,59 @@ router.post(
 
 /** Edit Category API */
 
-router.put(
+router.post(
   "/edit-category",
-  [
-    check("category_id").isNumeric(),
-    check("name").isString(),
-    check("description").isString(),
-    check("image_required").isBoolean(),
-    check("mobile_required").isBoolean(),
-    check("is_display").isBoolean()
-  ],
   verifyToken,
+  upload.array("avatar", 1),
   (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      res.status(200).json({ status: 400, errors: errors.array() });
+    let category = req.body;
+    if (req.files) {
+      sql =
+        "update category set name='" +
+        category.name +
+        "', description='" +
+        category.description +
+        "', image_required=" +
+        category.image_required +
+        ", mobile_required=" +
+        category.mobile_required +
+        ", is_display=" +
+        category.is_display +
+        ", image='" +
+        req.files[0].originalname +
+        "' where category_id=" +
+        category.category_id;
     } else {
-      let category = req.body;
-      if (req.file) {
-        sql =
-          "update category set name='" +
-          category.name +
-          "', description='" +
-          category.description +
-          "', image_required=" +
-          category.image_required +
-          ", mobile_required=" +
-          category.mobile_required +
-          ", is_display=" +
-          category.is_display +
-          ", image='" +
-          req.file.originalname +
-          "' where category_id=" +
-          category.category_id;
-      } else {
-        sql =
-          "update category set name='" +
-          category.name +
-          "', description='" +
-          category.description +
-          "', image_required=" +
-          category.image_required +
-          ", mobile_required=" +
-          category.mobile_required +
-          ", is_display=" +
-          category.is_display +
-          " where category_id=" +
-          category.category_id;
-      }
-
-      con.query(sql, (err, result) => {
-        if (err) {
-          if (process.env.DEVELOPMENT) {
-            console.log(err);
-          }
-          res.status(200).json({
-            status: process.env.ERROR,
-            message: "Category is not updated. Please try again later."
-          });
-        } else {
-          res.status(200).json({
-            status: process.env.SUCCESS,
-            message: "Category updated successfully."
-          });
-        }
-      });
+      sql =
+        "update category set name='" +
+        category.name +
+        "', description='" +
+        category.description +
+        "', image_required=" +
+        category.image_required +
+        ", mobile_required=" +
+        category.mobile_required +
+        ", is_display=" +
+        category.is_display +
+        " where category_id=" +
+        category.category_id;
     }
+    con.query(sql, (err, result) => {
+      if (err) {
+        if (process.env.DEVELOPMENT) {
+          console.log(err);
+        }
+        res.status(200).json({
+          status: process.env.ERROR,
+          message: "Category is not updated. Please try again later."
+        });
+      } else {
+        res.status(200).json({
+          status: process.env.SUCCESS,
+          message: "Category updated successfully."
+        });
+      }
+    });
   }
 );
 

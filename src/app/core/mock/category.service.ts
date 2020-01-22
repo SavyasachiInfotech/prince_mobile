@@ -45,7 +45,7 @@ export class CategoryService {
 
   editCategory(category) {
     let options = this._config.getHeader();
-    return this._http.put<any>(this.editCategoryUrl, category, options);
+    return this._http.post<any>(this.editCategoryUrl, category, options);
   }
 
   getCategory(up) {

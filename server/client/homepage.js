@@ -302,20 +302,20 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
             } else {
               products = products;
               sql =
-                "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.added_on DESC limit 0,5";
+                "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id in (select category_id from category where category_id="+req.body.category_id+" or parent_id="+req.body.category_id+") and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.added_on DESC limit 0,5";
               con.query(sql, (err, latest) => {
                 if (err) {
                   console.log(err);
                 }
                 let trend;
                 sql =
-                  "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.order_count DESC limit 0,5";
+                  "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id andp.category_id in (select category_id from category where category_id="+req.body.category_id+" or parent_id="+req.body.category_id+") and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.order_count DESC limit 0,5";
                 con.query(sql, (err, trending) => {
                   if (err) {
                     console.log(err);
                   } else {
                     sql =
-                      "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id="+req.body.category_id+" and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.modified_date DESC limit 0,5";
+                      "select v.variant_id,v.name,v.price,IFNULL((select sum(quantity) from variant_mobile where variant_id=v.variant_id),-1) as sum_quantity,(select count(mobile_id) from variant_mobile where variant_id=v.variant_id) as count,v.discount,v.quantity,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t where t.tax_id=v.tax_id and p.category_id in (select category_id from category where category_id="+req.body.category_id+" or parent_id="+req.body.category_id+") and p.product_id=v.product_id and p.is_display=1 and v.parent=1 order by v.modified_date DESC limit 0,5";
                     con.query(sql, (err, allProduct) => {
                       if (err) {
                         console.log(err);

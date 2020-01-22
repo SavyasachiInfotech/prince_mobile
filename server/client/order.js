@@ -473,6 +473,7 @@ router.post(
               estimate_date: "",
               added_date: result.added_date
             };
+            console.log(result.status_id);
             if (result.status_id < 3) {
               data.is_cancelable = 1;
             } else {
@@ -487,7 +488,7 @@ router.post(
             } else {
               data.is_replacable = 0;
             }
-            if (result.status_id == 4 && result.image_required != 1) {
+            if (result.status_id == 4 && result.image_required != 1 && diff<=2) {
               data.is_returnable = 1;
             } else {
               data.is_returnable = 0;

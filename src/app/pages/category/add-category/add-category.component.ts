@@ -11,6 +11,8 @@ export class AddCategoryComponent implements OnInit {
   category;
   editBit = false;
   categories;
+  filesToUpload;
+  imagechangeBit = false;
   public currentPage: number = 1;
   public lastPage: number = 0;
   public displayPages: number[] = new Array();
@@ -20,17 +22,18 @@ export class AddCategoryComponent implements OnInit {
     private _config: Config
   ) {
     this.cancelCategory();
-    this.setCategory();
   }
 
   ngOnInit() {
     this._categoryService.countCategory().subscribe(res => {
+      this.setCategory();
       //@ts-ignore
       if (res.status == 200) {
         this.lastPage = Math.ceil(
           //@ts-ignore
           res.data[0].count / this._config.displayLimit
         );
+        console.log(this.lastPage);
         this.setPagination();
       }
     });
@@ -50,8 +53,7 @@ export class AddCategoryComponent implements OnInit {
   setCategory() {
     this._categoryService
       .getCategory(
-        (this.currentPage * this._config.displayLimit) /
-          this._config.displayLimit
+        this.currentPage * this._config.displayLimit - this._config.displayLimit
       )
       .subscribe(
         res => {
@@ -104,10 +106,49 @@ export class AddCategoryComponent implements OnInit {
     }
   }
 
+  changeImage(files, event) {
+    if (files[0].size > 2000000) {
+      window.alert("Please upload image less than < 2 MB");
+      return;
+    }
+
+    var mimeType = files[0].type;
+    if (mimeType.match(/image\/*/) == null) {
+      window.alert("Please select images only");
+      return;
+    }
+
+    this.filesToUpload = <Array<File>>event.target.files;
+    this.imagechangeBit = true;
+  }
+
   saveCategory() {
     if (this.category.name != "") {
+      let formData = new FormData();
+      if (this.imagechangeBit) {
+        const file: Array<File> = this.filesToUpload;
+        formData.append("avatar", file[0], file[0]["name"]);
+      }
+      formData.append("name", this.category.name);
+      formData.append("description", this.category.description);
+      if (this.category.image_required) {
+        formData.append("image_required", "1");
+      } else {
+        formData.append("image_required", "0");
+      }
+      if (this.category.mobile_required) {
+        formData.append("mobile_required", "1");
+      } else {
+        formData.append("mobile_required", "0");
+      }
+      if (this.category.is_display) {
+        formData.append("is_display", "1");
+      } else {
+        formData.append("is_display", "0");
+      }
       if (this.editBit) {
-        this._categoryService.editCategory(this.category).subscribe(
+        formData.append("category_id", this.category.category_id.toString());
+        this._categoryService.editCategory(formData).subscribe(
           res => {
             console.log(res);
             //@ts-ignore
@@ -124,7 +165,7 @@ export class AddCategoryComponent implements OnInit {
           }
         );
       } else {
-        this._categoryService.addCategory(this.category).subscribe(
+        this._categoryService.addCategory(formData).subscribe(
           res => {
             //@ts-ignore
             if (res.status == 200) {

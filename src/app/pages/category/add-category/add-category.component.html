@@ -98,6 +98,13 @@
                   <span class="checkmark"></span>
                 </label>
               </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <input type="file" name="category-image" #catImage  (change)="changeImage(catImage.files,$event)">
+                  </div>
+                </div>
+              </div>
               <div class="form-actions m-t-40">
                 <button
                   type="submit"
@@ -126,8 +133,7 @@
                   <tr>
                     <th>Category Id</th>
                     <th>Category Name</th>
-                    <th>Parent Id</th>
-                    <th>Image Upload</th>
+                    <th>Description</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -136,11 +142,6 @@
                     <td>{{ category.category_id }}</td>
                     <td>{{ category.name }}</td>
                     <td>{{ category.description }}</td>
-                    <td>
-                      <a routerLink="../image-upload/{{ category.category_id }}"
-                        >+ Add Image</a
-                      >
-                    </td>
                     <td>
                       <i class="material-icons" (click)="editCategory(category)"
                         >edit</i
