@@ -251,16 +251,18 @@ router.post(
       let sql;
       if (data.mobile_required) {
         sql =
-          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,vm.quantity as max_qty,v.min_qty,v.thumbnail,vm.price,vm.discount,m.model_name,v.image_required from cart c, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,vm.quantity as max_qty,v.min_qty,v.thumbnail,vm.price,vm.discount,m.model_name,v.image_required,pc.name as category from cart c,category pc,product p, mobile_models m,variant_mobile vm,product_variant v where c.variant_id=v.variant_id and c.mobile_id=m.model_id and vm.variant_id=c.variant_id and vm.mobile_id=c.mobile_id and c.variant_id=" +
           data.variant_id +
           " and c.cart_id=" +
-          req.userId;
+          req.userId +
+          " and p.product_id=v.product_id and p.category_id=pc.category_id";
       } else {
         sql =
-          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,v.quantity as max_qty,v.min_qty,v.thumbnail,v.price,v.discount,v.image_required from cart c,variant v where c.variant_id=v.variant_id and c.cart_id=" +
+          "select c.item_id,c.variant_id,v.name,c.quantity,c.mobile_id,v.is_cod,v.quantity as max_qty,v.min_qty,v.thumbnail,v.price,v.discount,v.image_required,pc.name as category from cart c,category pc,product p,variant v where c.variant_id=v.variant_id and c.cart_id=" +
           req.userId +
           " and c.variant_id=" +
-          data.variant_id;
+          data.variant_id +
+          " and p.product_id=v.product_id and p.category_id=pc.category_id";
       }
       con.query(sql, (err, result) => {
         if (err) {

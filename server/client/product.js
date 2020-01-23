@@ -378,7 +378,10 @@ router.post(
                             min_qty: products[0].min_qty,
                             cart_quantity: products[0].cart_quantity
                           });
+                          products[0].mobile_required=0;
                           delete products[0].cart_quantity;
+                        } else {
+                          products[0].mobile_required=1;
                         }
                         for (let i = 0; i < mobiles.length; i++) {
                           net_total =
