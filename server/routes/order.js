@@ -176,11 +176,38 @@ function bookShipment(order) {
     } else {
       if (orderdata.length > 0) {
         orderdata = orderdata[0];
+        let orderDate = new Date(orderdata.order_date);
+        orderDate =
+          orderDate.getFullYear() +
+          "-" +
+          (orderDate.getMonth() + 1) +
+          "-" +
+          orderDate.getDate();
         let shipment = {
           // InvoiceNo: order.order_id.toString(),
           InvoiceNo: "Parth123456",
           PickupCode: "395010",
-          ShowDifferenceSender: "No",
+          ShowDiffrenceSender: "Yes",
+          SenderName: "Prince Mobile",
+          SenderMobile: "9737156066",
+          CustomerEmail: orderdata.email,
+          Breadth: "12",
+          Height: "4",
+          ShipPartnerCode: "Auto",
+          SellerGSTNo: "123456789123",
+          SupplySellerStatePlace: "Gujarat",
+          BuyerGSTNo: "",
+          EwayBillSrNumber: "",
+          HSNCode: "",
+          TaxableValue: "",
+          SGSTAmount: "0",
+          CGSTAmount: "0",
+          IGSTAmount: "0",
+          Discount: "0",
+          GSTTaxRateSGSTN: "0",
+          GSTTaxRateCGSTN: "0",
+          GSTTaxRateIGSTN: "0",
+          GSTTaxTotal: "0",
           CustomerFirstName: orderdata.first_name,
           CustomerLastName: orderdata.last_name,
           CustomerAddress1: orderdata.flatno,
@@ -191,21 +218,22 @@ function bookShipment(order) {
           CustomerState: orderdata.state,
           CustomerMobile: orderdata.mobile,
           Weight: orderdata.total_weight,
-          Length: "20",
+          Length: "18",
           ProductDetail: orderdata.name,
           InvoiceAmount: orderdata.order_amount,
           CollectableAmount: orderdata.collectable_amount,
           CheckoutMode: "Auto",
           IsSellerRegUnderGST: "No",
-          InvoiceDate: new Date(orderdata.order_date).toJSON().substr(0, 10)
+          InvoiceDate: orderDate
         };
+
         if (orderdata.iscod == 1) {
           shipment.PaymentType = "COD";
         } else {
           shipment.PaymentType = "Prepaid";
         }
-        // console.log(shipment);
-        let http = require("http");
+        console.log(shipment);
+        let http = require("https");
         let options = {
           host: process.env.ZIPPINGBASEURL,
           path: "/Api/BookShipment",
@@ -221,12 +249,20 @@ function bookShipment(order) {
           headers: {
             "content-type": "application/json",
             accept: "application/json"
-          },
-          json: true
+          }
+          // json: true
         };
-        http.request(options, shipdata => {
-          console.log(shipdata);
+        var req = http.request(options, shipdata => {
+          let data = "";
+          shipdata.on("data", d => {
+            data += d;
+            console.log(d);
+          });
+          shipdata.on("end", () => {
+            console.log(JSON.parse(data));
+          });
         });
+        req.end();
       } else {
         res
           .status(200)
@@ -257,9 +293,11 @@ router.post("/get-order-detail", verifyToken, (req, res) => {
           if (err) {
             res.json({ status: 400, message: "Order details not found." });
           } else {
-            sql="select p.* from promocode p, customer_order o where p.id=o.promo_id and o.order_id="+order_id;
-            con.query(sql,(err,promo)=>{
-              if(err){
+            sql =
+              "select p.* from promocode p, customer_order o where p.id=o.promo_id and o.order_id=" +
+              order_id;
+            con.query(sql, (err, promo) => {
+              if (err) {
                 console.log(err);
               }
               res.json({
@@ -267,7 +305,7 @@ router.post("/get-order-detail", verifyToken, (req, res) => {
                 message: "Getting order detail successfully.",
                 order: result,
                 order_detail: order_detail,
-                promocode:promo
+                promocode: promo
               });
             });
           }

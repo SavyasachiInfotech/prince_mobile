@@ -25,15 +25,49 @@ function verifyToken(req, res, next) {
 }
 
 router.get("/get-promocode", verifyToken, (req, res) => {
-  let sql="select * from  promocode";
-  con.query(sql,(err,result)=>{
-    if(err){
+  let sql = "select * from  promocode";
+  con.query(sql, (err, result) => {
+    if (err) {
       console.log(err);
-      res.status(200).json({status:400, message:"Promocodes not found"});
+      res.status(200).json({ status: 400, message: "Promocodes not found" });
     } else {
-      res.status(200).json({status:200, message:"Promocodes getting successfully.", promocodes:result});
+      res
+        .status(200)
+        .json({
+          status: 200,
+          message: "Promocodes getting successfully.",
+          promocodes: result
+        });
     }
   });
+});
+
+router.post("/add-promocode", verifyToken, (req, res) => {
+  let data = req.body;
+  let sql =
+    "insert into promocode(code,description,discount,min_limit,max_discount,discount_type,max_attempt) values('" +
+    data.code +
+    "','" +
+    data.description +
+    "'," +
+    data.discount +
+    "," +
+    data.min_limit +
+    "," +
+    data.max_discount +
+    "," +
+    data.discount_type +
+    "," +
+    data.max_attempt +
+    ")";
+    con.query(sql,(err,result)=>{
+      if(err){
+        console.log(err);
+        res.json({status:400, message:"Promocode not added."});
+      } else {
+        res.json({status:200, message:'Promocode added successfully.'});
+      }
+    });
 });
 
 module.exports = router;
