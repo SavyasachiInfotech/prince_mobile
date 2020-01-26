@@ -5,6 +5,7 @@ const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 const FCM=require("fcm-node");
+const notification=require("./send-notification");
 
 /** Verify the user token */
 
@@ -529,32 +530,7 @@ router.get("/send-notification",verifyToken,(req,res)=>{
       console.log(err);
       res.json({status:0, message:"Notification not send"});
     } else {
-      var fcm=new FCM(process.env.FCMSERVERKEY);
-      
-      for(let i=0;i<result.length;i++){
-        var message={
-          // to:result[i].meta_value,
-          to:"cIAJ3vvAK90:APA91bE_aXVDru4tvttGr2izugAymcR4I4lPmvq7uvNZ6OytindTrZK1lH3dIe6wxYx-we4tlT7srRLDWJ3O_FFlCil-x9QEmZrlM_QuFzcDwCPMuYJIHzjII_-8LnRZV2jywdhRYt0H",
-          collapse_key:'dsaf',
-          notification:{
-            title:"Test Title",
-            body:"Body of the notification"
-          },
-          data:{
-            "key":"value"
-          }
-        };
-        fcm.send(message,(err,response)=>{
-          if(err){
-            console.log("error");
-            console.log(err);
-          } else {
-            console.log(response);
-          }
-        });
-      }
-      
-      
+      notification.sendNotification(result,"Notification  Description","Testing title");
       res.json({status:1, message:"Notification sent successfully."});
     }
   });

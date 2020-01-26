@@ -1,0 +1,109 @@
+<div class="page-wrapper">
+  <div class="container-fluid">
+    <div class="row page-titles">
+      <div class="col-md-5 align-self-center">
+        <h4 class="text-themecolor">Add Promocode</h4>
+      </div>
+      <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item active">Add Promocode</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Add Promocode</h5>
+            <div class="row">
+              <div class="col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Code</label>
+                  <input class="form-control" [(ngModel)]="promocode.code" />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Description</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="promocode.description"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Discount</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="promocode.discount"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Minimum Order Limit</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="promocode.min_limit"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Maximum Discount</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="promocode.max_discount"
+                  />
+                </div>
+              </div>
+              <div class="col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Discount Type</label>
+                  <select
+                    [(ngModel)]="promocode.discount_type"
+                    class="form-control"
+                  >
+                    <option [value]="1">Rs.</option>
+                    <option [value]="2">Percentage</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-xs-12">
+                <div class="form-group">
+                  <label class="label">Maximum Attempt</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="promocode.max_attempt"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <button class="btn btn-success" (click)="savePromocode()">
+                  Save Promocode
+                </button>
+                <button class="btn btn-danger" (click)="cancelPromocode()">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

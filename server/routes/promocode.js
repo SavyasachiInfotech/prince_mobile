@@ -31,13 +31,11 @@ router.get("/get-promocode", verifyToken, (req, res) => {
       console.log(err);
       res.status(200).json({ status: 400, message: "Promocodes not found" });
     } else {
-      res
-        .status(200)
-        .json({
-          status: 200,
-          message: "Promocodes getting successfully.",
-          promocodes: result
-        });
+      res.status(200).json({
+        status: 200,
+        message: "Promocodes getting successfully.",
+        promocodes: result
+      });
     }
   });
 });
@@ -60,14 +58,55 @@ router.post("/add-promocode", verifyToken, (req, res) => {
     "," +
     data.max_attempt +
     ")";
-    con.query(sql,(err,result)=>{
-      if(err){
-        console.log(err);
-        res.json({status:400, message:"Promocode not added."});
-      } else {
-        res.json({status:200, message:'Promocode added successfully.'});
-      }
-    });
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 400, message: "Promocode not added." });
+    } else {
+      res.json({ status: 200, message: "Promocode added successfully." });
+    }
+  });
+});
+
+router.post("/update-promocode", verifyToken, (req, res) => {
+  let data = req.body;
+  let sql = `update promocode set code='${data.code}', description='${data.description}', discount=${data.discount}, min_limit=${data.min_limit}, max_discount=${data.max_discount}, discount_type=${data.discount_type}, max_attempt=${data.max_attempt} where id=${data.id}`;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 400, message: "Promocode not updated." });
+    } else {
+      res.json({ status: 200, message: "Promocode updated successfully." });
+    }
+  });
+});
+
+router.get("/get-promocode-by-id/:id", verifyToken, (req, res) => {
+  let sql = "select * from promocode where id=" + req.params.id;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 400, message: "Promocode not found." });
+    } else {
+      res.json({
+        status: 200,
+        message: "Promocode getting successfully.",
+        data: result
+      });
+    }
+  });
+});
+
+router.delete("/delete-promocode/:id", verifyToken, (req, res) => {
+  let sql = "delete from promocode where id=" + req.params.id;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 400, message: "Promocode not deleted." });
+    } else {
+      res.json({ status: 200, message: "Promocode deleted successfully." });
+    }
+  });
 });
 
 module.exports = router;

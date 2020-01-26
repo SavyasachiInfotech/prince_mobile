@@ -264,7 +264,7 @@ router.post(
                             status: "1",
                             message: "Getting Products successfully.",
                             products: result,
-                            currentPage: (data.pageno + 1).toString(),
+                            currentPage: (parseInt(data.pageno) + 1).toString(),
                             totalPages: totalPages.toString(),
                             totalProduct: count[0].total.toString(),
                             category_image: images

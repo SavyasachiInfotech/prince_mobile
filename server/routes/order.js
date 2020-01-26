@@ -9,6 +9,7 @@ const {
 } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
+const notification = require("../client/send-notification");
 
 /** Verify the user token */
 
@@ -62,7 +63,7 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
 });
 
 router.post("/change-status", verifyToken, (req, res) => {
-  order = req.body;
+  let order = req.body;
 
   bookShipment(order);
   // let sql =
@@ -134,9 +135,9 @@ router.post("/change-status", verifyToken, (req, res) => {
 
   let sql =
     "update customer_order set status_id=" +
-    req.body.status +
+    order.status +
     " where order_id=" +
-    req.body.order_id;
+    order.order_id;
   con.query(sql, (err, result) => {
     if (err) {
       res
@@ -145,14 +146,15 @@ router.post("/change-status", verifyToken, (req, res) => {
     } else {
       sql =
         "insert into track_detail(item_id,status_id) values(" +
-        req.body.order_id +
+        order.order_id +
         "," +
-        req.body.status +
+        order.status +
         ")";
       con.query(sql, (err, result) => {
         if (err) {
           res.status(200).json({ status: 400, message: "Status not changed" });
         } else {
+          notification.sendOrderStatusNotification(order.status,order.user_id,order.order_id);
           res
             .status(200)
             .json({ status: 200, message: "Status changed successfully." });

@@ -21,6 +21,7 @@ const tax = require("./routes/tax");
 const categoryImage = require("./routes/category-image-upload");
 const order = require("./routes/order");
 const announcement = require("./routes/announcement");
+const promocode = require("./routes/promocode");
 
 app.use("/client", client);
 app.use("/authentication", authentication);
@@ -36,6 +37,7 @@ app.use("/order", order);
 app.use("/announcement", announcement);
 // app.use('/attributeValue',attributeValue);
 app.use("/category", category);
+app.use("/promocode", promocode);
 // app.use('/order',order);
 
 module.exports = app;
