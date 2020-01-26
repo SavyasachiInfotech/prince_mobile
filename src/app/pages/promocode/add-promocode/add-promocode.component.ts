@@ -58,6 +58,7 @@ export class AddPromocodeComponent implements OnInit {
   savePromocode() {
     if (this.promocode.discount_type == 1) {
       this.promocode.max_discount = this.promocode.discount;
+      this.promocode.min_limit=this.promocode.discount;
     }
     if (this.promocode.id > 0) {
       this._promocodeService.updatePromocode(this.promocode).subscribe(res => {

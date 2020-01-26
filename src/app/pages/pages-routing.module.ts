@@ -56,6 +56,11 @@ const routes: Routes = [
         path: "promocode",
         loadChildren: () =>
           import("./promocode/promocode.module").then(m => m.PromocodeModule)
+      },
+      {
+        path: "banner",
+        loadChildren: () =>
+          import("./banner/banner.module").then(m => m.BannerModule)
       }
     ]
   }

@@ -65,7 +65,7 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
 router.post("/change-status", verifyToken, (req, res) => {
   let order = req.body;
 
-  bookShipment(order);
+ // bookShipment(order);
   // let sql =
   //   "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
   //   order.order_id +

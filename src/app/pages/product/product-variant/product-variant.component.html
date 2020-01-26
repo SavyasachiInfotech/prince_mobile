@@ -209,7 +209,7 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <label>Mobiles</label>
-                                    <select class="form-control" name="mobiles" [(ngModel)]="selectedMobile">
+                                    <select class="form-control" name="mobiles" [(ngModel)]="selectedMobile" multiple>
                                         <option [value]="mobile.model_id" *ngFor="let mobile of mobiles">{{mobile.model_name}}</option>
                                     </select>    
                                 </div>
@@ -222,9 +222,9 @@
                                 </div>
                             </div>
 
-                            <div class="table-responsive" *ngIf="allMobiles.length>0">
+                            <div class="table-responsive"  *ngIf="allMobiles.length>0">
                                 <table class="table product-overview">
-                                    <thead>
+                                    <thead class="mobile-header">
                                         <tr>
                                             <th>ID</th>
                                             <th>Mobile</th>
@@ -232,13 +232,19 @@
                                             <th>Action</th>
                                         </tr>
                                     </thead>
+                                </table>
+                            </div>
+                            <div class="table-responsive mobile-table" *ngIf="allMobiles.length>0">
+                                <table class="table product-overview">
                                     <tbody>
                                         <tr *ngFor="let mob of allMobiles;let i=index">
                                             <td>{{mob.model_id}}</td>
                                             <td>{{mob.model_name}}</td>
-                                            <td>{{mob.quantity}}</td>
                                             <td>
-                                                <i class="material-icons" (click)="editMobile(i)">edit</i>
+                                                <input type="number" name="quantity" [(ngModel)]="mob.quantity">
+                                            </td>
+                                            <td>
+                                                <!-- <i class="material-icons" (click)="editMobile(i)">edit</i> -->
                                                 <i class="material-icons delete" (click)="deleteMobile(i)">delete</i>
                                             </td>
                                         </tr>

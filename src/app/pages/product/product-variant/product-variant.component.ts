@@ -55,7 +55,7 @@ export class ProductVariantComponent implements OnInit {
           this.variants = res.data;
           //@ts-ignore
           this.mobiles = res.mobiles;
-          this.selectedMobile = this.mobiles[0].model_id;
+          // this.selectedMobile = this.mobiles[0].model_id;
         }
       });
       this._taxService.getAllTaxes().subscribe(res => {
@@ -92,13 +92,17 @@ export class ProductVariantComponent implements OnInit {
   }
 
   addMobile() {
-    let data = this.mobiles.find(item => item.model_id == this.selectedMobile);
-    data.quantity = this.selectQuantity;
-    this.allMobiles.push(data);
+    for (let i = 0; i < this.mobiles.length; i++) {
+      let data = this.mobiles.find(
+        item => item.model_id == this.selectedMobile[i]
+      );
+      data.quantity = this.selectQuantity;
+      this.allMobiles.push(data);
+    }
   }
 
   editMobile(i) {
-    this.selectedMobile = this.allMobiles[i].model_id;
+    this.selectedMobile[i] = this.allMobiles[i].model_id;
     this.selectQuantity = this.allMobiles[i].quantity;
     this.allMobiles.splice(i, 1);
   }

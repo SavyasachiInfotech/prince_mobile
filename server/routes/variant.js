@@ -68,7 +68,7 @@ router.get(
             message: "Product variants not found."
           });
         } else {
-          sql = "select * from mobile_models";
+          sql = "select * from mobile_models order by model_name";
           con.query(sql, (err, mobile) => {
             if (err) {
               res
@@ -185,7 +185,7 @@ router.post(
                 sql += ", ";
               }
             }
-            con.query();
+            con.query(sql);
           }
 
           if (variant.mobiles) {

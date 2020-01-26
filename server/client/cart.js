@@ -382,6 +382,9 @@ router.post(
                     let finalAmount = req.body.price;
 
                     finalAmount = finalAmount - discount;
+                    if(finalAmount<0){
+                      finalAmount=0;
+                    }
                     res.status(200).json({
                       status: "1",
                       message: "Promocode applied successfully.",

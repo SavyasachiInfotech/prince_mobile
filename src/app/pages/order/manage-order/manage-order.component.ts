@@ -48,7 +48,11 @@ export class ManageOrderComponent implements OnInit {
 
   changeStatus(status, order, i) {
     this._orderService
-      .changeStatus({ status: status, order_id: order.order_id })
+      .changeStatus({
+        status: status,
+        order_id: order.order_id,
+        user_id: order.user_id
+      })
       .subscribe(res => {
         //@ts-ignore
         this._config.showMessage(res.message);

@@ -18,3 +18,10 @@ i {
 .delete {
   color: #ea4335 !important;
 }
+.mobile-table {
+  height: 300px;
+  overflow-y: scroll;
+}
+.mobile-header {
+  position: sticky;
+}

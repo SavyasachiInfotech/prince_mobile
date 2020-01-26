@@ -42,6 +42,12 @@ router.get("/get-promocode", verifyToken, (req, res) => {
 
 router.post("/add-promocode", verifyToken, (req, res) => {
   let data = req.body;
+  if(data.discount_type==1){
+    if(data.max_discount<data.discount){
+      data.max_discount=data.discount;
+      data.min_limit=data.discount;
+    }
+  }
   let sql =
     "insert into promocode(code,description,discount,min_limit,max_discount,discount_type,max_attempt) values('" +
     data.code +

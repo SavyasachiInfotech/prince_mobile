@@ -22,6 +22,7 @@ const categoryImage = require("./routes/category-image-upload");
 const order = require("./routes/order");
 const announcement = require("./routes/announcement");
 const promocode = require("./routes/promocode");
+const banner = require("./routes/banner");
 
 app.use("/client", client);
 app.use("/authentication", authentication);
@@ -39,5 +40,6 @@ app.use("/announcement", announcement);
 app.use("/category", category);
 app.use("/promocode", promocode);
 // app.use('/order',order);
+app.use("/banner", banner);
 
 module.exports = app;
