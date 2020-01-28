@@ -474,7 +474,7 @@ router.post(
               added_date: result.added_date
             };
             console.log(result.status_id);
-            if (result.status_id < 3) {
+            if (result.status_id < 1) {
               data.is_cancelable = 1;
             } else {
               data.is_cancelable = 0;

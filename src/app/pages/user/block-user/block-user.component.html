@@ -1,0 +1,113 @@
+<div class="page-wrapper">
+  <div class="container-fluid">
+    <div class="row page-titles">
+      <div class="col-md-5 align-self-center">
+        <h4 class="text-themecolor">Manage User</h4>
+      </div>
+      <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item active">Manage User</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Column -->
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="form-body">
+              <h5 class="card-title">Manage User</h5>
+            </div>
+            <div class="table-responsive">
+              <table class="table product-overview" id="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>User Name</th>
+                    <th>Email</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Activate</th>
+                    <th>Deactivate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let user of users">
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.city }}</td>
+                    <td>{{ user.state }}</td>
+                    <td>
+                      <button
+                        class="btn btn-outline-success"
+                        (click)="blockUnblockUser(0, user)"
+                        *ngIf="user.block_bit == 1"
+                      >
+                        Activate
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-outline-danger"
+                        (click)="blockUnblockUser(1, user)"
+                        *ngIf="user.block_bit == 0"
+                      >
+                        Deactivate
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer">
+            <nav aria-label="Page">
+              <ul class="pagination justify-content-center">
+                <li
+                  class="page-item"
+                  *ngIf="currentPage != 1"
+                  (click)="changePageno(1)"
+                >
+                  <a class="page-link">First</a>
+                </li>
+                <li
+                  class="page-item"
+                  *ngIf="currentPage != 1"
+                  (click)="changePageno(currentPage - 1)"
+                >
+                  <a class="page-link"><i class="ion-md-skip-backward"></i></a>
+                </li>
+                <li
+                  class="page-item"
+                  [class.active]="pageno == currentPage"
+                  (click)="changePageno(pageno)"
+                  *ngFor="let pageno of displayPages"
+                >
+                  <a class="page-link">{{ pageno }}</a>
+                </li>
+                <li
+                  class="page-item"
+                  *ngIf="currentPage != lastPage"
+                  (click)="changePageno(currentPage + 1)"
+                >
+                  <a class="page-link"><i class="ion-md-skip-forward"></i></a>
+                </li>
+                <li
+                  class="page-item"
+                  *ngIf="currentPage != lastPage"
+                  (click)="changePageno(lastPage)"
+                >
+                  <a class="page-link">Last</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

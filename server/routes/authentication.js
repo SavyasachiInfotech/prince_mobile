@@ -114,7 +114,7 @@ router.get("/get-users-by-page/:up", verifyToken, (req, res) => {
       .json({ status: 400, message: "Provide valid Page number." });
   } else {
     let sql =
-      "select id,username,email,mobile1 from customer limit " +
+      "select id,username,email,mobile1,city,state,block_bit from customer limit " +
       parseInt(process.env.RECORD_LIMIT) * (parseInt(req.params.up) - 1) +
       "," +
       process.env.RECORD_LIMIT;
@@ -144,7 +144,7 @@ router.get("/get-users-by-page/:up", verifyToken, (req, res) => {
 
 router.post(
   "/block-user",
-  [check("user_id").isNumeric()],
+  [check("user_id").isNumeric(), check("block_bit").isNumeric()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -155,19 +155,21 @@ router.post(
         errors: errors.array()
       });
     } else {
-      let sql = "update customer set block_bit=1 where id=" + req.body.user_id;
+      let sql =
+        "update customer set block_bit=" +
+        req.body.block_bit +
+        " where id=" +
+        req.body.user_id;
       con.query(sql, (err, result) => {
         if (err) {
           res
             .status(200)
             .json({ status: 400, message: "Customer is not blocked." });
         } else {
-          res
-            .status(200)
-            .json({
-              status: 200,
-              message: "Customer is blocked successfully."
-            });
+          res.status(200).json({
+            status: 200,
+            message: "Customer is blocked successfully."
+          });
         }
       });
     }

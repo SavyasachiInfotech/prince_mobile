@@ -61,6 +61,10 @@ const routes: Routes = [
         path: "banner",
         loadChildren: () =>
           import("./banner/banner.module").then(m => m.BannerModule)
+      },
+      {
+        path: "user",
+        loadChildren: () => import("./user/user.module").then(m => m.UserModule)
       }
     ]
   }
