@@ -10,6 +10,7 @@ const sharp = require("sharp");
 const fs = require("fs");
 const path = require("path");
 var app = express();
+const auth = require("../auth");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -45,30 +46,6 @@ var transporter = nodemailer.createTransport({
   }
 });
 
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Header Not Found" });
-  }
-  let token = req.headers.authorization.split(" ")[1];
-  if (token === "null") {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Token Not Found" });
-  }
-  let payload = jwt.verify(token, "MysupersecreteKey");
-
-  if (!payload) {
-    return res.status(200).json({
-      status: "0",
-      message: "Unauthorized Request! Token is not Correct"
-    });
-  }
-  req.userId = payload.subject;
-  next();
-}
-
 function registerUser(req, res, next) {
   let user = req.body;
   let sql =
@@ -101,7 +78,7 @@ function registerUser(req, res, next) {
   });
 }
 
-router.get("/user-data", verifyToken, (req, res) => {
+router.get("/user-data",auth.verifyToken, (req, res) => {
   let id = req.userId;
   let sql =
     "select c.username,c.email,c.mobile1,c.profile_image,a.flatno,a.colony,a.landmark,a.pincode from customer c, customer_address a where c.id=" +
@@ -159,7 +136,7 @@ router.post(
       .isString()
       .isLength({ max: 100 })
   ],
-  verifyToken,
+ auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -190,7 +167,7 @@ router.post(
 
 router.post(
   "/update-profile-image",
-  verifyToken,
+ auth.verifyToken,
   upload.single("avatar"),
   (req, res) => {
     let sql = "select profile_image from customer where id=" + req.userId;
@@ -234,7 +211,7 @@ router.post(
 
 router.post(
   "/add-profile-image",
-  verifyToken,
+ auth.verifyToken,
   upload.single("avatar"),
   (req, res) => {
     let sql = "select profile_image from customer where id=" + req.userId;
@@ -504,7 +481,7 @@ router.post(
 
 router.post(
   "/resend-otp",
-  [check("mobile").isNumeric()] /* verifyToken*/,
+  [check("mobile").isNumeric()] /*auth.verifyToken*/,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -803,7 +780,7 @@ router.post(
 router.post(
   "/logout-user",
   [check("fcmToken").isString()],
-  verifyToken,
+ auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

@@ -6,6 +6,7 @@ const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 const path = require("path");
+const auth = require("../auth");
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -21,30 +22,6 @@ var upload = multer({
   storage: storage
 });
 
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Header Not Found" });
-  }
-  let token = req.headers.authorization.split(" ")[1];
-  if (token === "null") {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Token Not Found" });
-  }
-  let payload = jwt.verify(token, "MysupersecreteKey");
-
-  if (!payload) {
-    return res.status(200).json({
-      status: "0",
-      message: "Unauthorized Request! Token is not Correct"
-    });
-  }
-  req.userId = payload.subject;
-  next();
-}
-
 router.post(
   "/place-order",
   [
@@ -53,7 +30,7 @@ router.post(
     check("promo_id").isNumeric(),
     check("iscod").isBoolean()
   ],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -312,7 +289,8 @@ router.post(
                                 }
                                 orderdata.order_amount =
                                   orderdata.order_amount - discount;
-                                orderdata .collectable_amount=orderdata.collectable_amount-discount;
+                                orderdata.collectable_amount =
+                                  orderdata.collectable_amount - discount;
                                 sql =
                                   "update customer_order set collectable_amount=" +
                                   orderdata.collectable_amount +
@@ -429,7 +407,7 @@ router.post(
 router.post(
   "/order-detail",
   [check("item_id").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -488,7 +466,11 @@ router.post(
             } else {
               data.is_replacable = 0;
             }
-            if (result.status_id == 4 && result.image_required != 1 && diff<=2) {
+            if (
+              result.status_id == 4 &&
+              result.image_required != 1 &&
+              diff <= 2
+            ) {
               data.is_returnable = 1;
             } else {
               data.is_returnable = 0;
@@ -502,13 +484,13 @@ router.post(
             let mrp =
               product.price * product.cart_quantity -
               (product.price * product.cart_quantity * product.tax) /
-                (100 + product.tax); 
+                (100 + product.tax);
             data.items = mrp.toFixed(2);
             data.taxable_amount = mrp.toFixed(2);
 
             data.tax = ((mrp * product.tax) / 100).toFixed(2);
             data.total = result.order_amount.toFixed(2);
-            data.promo_amount=(mrp-parseInt(data.total)).toFixed(2);
+            data.promo_amount = (mrp - parseInt(data.total)).toFixed(2);
             let json = JSON.stringify(data);
             data = JSON.parse(json, (key, val) =>
               typeof val !== "object" && val !== null ? String(val) : val
@@ -525,7 +507,8 @@ router.post(
                       "Extra " +
                       cod[0].meta_value +
                       " Rs. charge added on whole order for Cash On Delivery";
-                      data.total=(parseInt(data.total)+parseInt(cod[0].meta_value));
+                    data.total =
+                      parseInt(data.total) + parseInt(cod[0].meta_value);
                   } else {
                     data.cod_message = "";
                   }
@@ -566,7 +549,7 @@ router.post(
 router.post(
   "/get-all-order",
   [check("status").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -655,7 +638,7 @@ router.post(
 router.post(
   "/track-order",
   [check("item_id").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -740,7 +723,7 @@ router.post(
 
 router.post(
   "/cancel-order",
-  verifyToken,
+  auth.verifyToken,
   upload.single("avatar"),
   [
     check("order_id").isString(),

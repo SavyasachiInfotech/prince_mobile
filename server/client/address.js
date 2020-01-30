@@ -4,31 +4,9 @@ const router = express.Router();
 const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Header Not Found" });
-  }
-  let token = req.headers.authorization.split(" ")[1];
-  if (token === "null") {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Token Not Found" });
-  }
-  let payload = jwt.verify(token, "MysupersecreteKey");
+const auth = require("../auth");
 
-  if (!payload) {
-    return res.status(200).json({
-      status: "0",
-      message: "Unauthorized Request! Token is not Correct"
-    });
-  }
-  req.userId = payload.subject;
-  next();
-}
-
-router.get("/get-address", verifyToken, (req, res) => {
+router.get("/get-address", auth.verifyToken, (req, res) => {
   let sql = "select * from customer_address where customer_id=" + req.userId;
   con.query(sql, (err, result) => {
     if (err) {
@@ -51,7 +29,7 @@ router.get("/get-address", verifyToken, (req, res) => {
   });
 });
 
-router.get("/get-shipping-address", verifyToken, (req, res) => {
+router.get("/get-shipping-address", auth.verifyToken, (req, res) => {
   let sql =
     "select * from customer_address where default_address=1 and customer_id=" +
     req.userId;
@@ -88,7 +66,7 @@ router.get("/get-shipping-address", verifyToken, (req, res) => {
 router.post(
   "/make-default-address",
   [check("address_id").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -131,7 +109,7 @@ router.post(
 router.post(
   "/delete-address",
   [check("address_id").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -191,7 +169,7 @@ router.post(
     check("mobile").isNumeric({ min: 10, max: 10 }),
     check("default_address").isNumeric()
   ],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -344,7 +322,7 @@ router.put(
     check("pincode").isNumeric({ min: 6, max: 6 }),
     check("mobile").isNumeric({ min: 10, max: 10 })
   ],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

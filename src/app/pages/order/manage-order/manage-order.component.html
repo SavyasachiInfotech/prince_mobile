@@ -52,7 +52,7 @@
               <li
                 class="nav-item"
                 [class.active]="currentStatus == 4"
-                (click)="getOrderByStatus(5)"
+                (click)="getOrderByStatus(7)"
               >
                 <a class="nav-link" routerLink=".">Cancelled Order</a>
               </li>
@@ -102,7 +102,7 @@
                       </button>
                       <button
                         class="btn btn-outline-danger"
-                        *ngIf="currentStatus == 1 || currentStatus == 0"
+                        *ngIf="currentStatus == 0"
                         (click)="changeStatus(7, order, i)"
                       >
                         Cancel Order

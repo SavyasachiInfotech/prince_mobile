@@ -41,7 +41,8 @@ router.post(
             if (
               result[0].password.toLowerCase() === user.password.toLowerCase()
             ) {
-              let payload = { subject: result[0].id };
+              let payload = { subject: result[0].admin_id };
+              console.log(payload);
               let token = jwt.sign(payload, "MysupersecreteKey");
               res.status(200).json({
                 status: 200,

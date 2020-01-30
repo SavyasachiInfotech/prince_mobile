@@ -1,11 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
-const {
-  check,
-  validationResult,
-  param
-} = require("express-validator");
+const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 
@@ -305,20 +301,29 @@ router.put(
   }
 );
 
-router.get("/get-attributes-variant",verifyToken,(req,res)=>{
-  let sql="select * from attribute";
-  con.query(sql,(err,result)=>{
-    if(err){
+router.get("/get-attributes-variant", verifyToken, (req, res) => {
+  let sql = "select * from attribute";
+  con.query(sql, (err, result) => {
+    if (err) {
       console.log(err);
-      res.status(200).json({status:400, message:"Attributes not found"});
+      res.status(200).json({ status: 400, message: "Attributes not found" });
     } else {
-      sql="select * from attribute_value";
-      con.query(sql,(err,data)=>{
-        if(err){
+      sql = "select * from attribute_value";
+      con.query(sql, (err, data) => {
+        if (err) {
           console.log(err);
-          res.status(200).json({status:400, message:"Attributes not found"});
+          res
+            .status(200)
+            .json({ status: 400, message: "Attributes not found" });
         } else {
-          res.status(200).json({status:200, message:"Attribute getting successfully.", attributes:result, values:data});
+          res
+            .status(200)
+            .json({
+              status: 200,
+              message: "Attribute getting successfully.",
+              attributes: result,
+              values: data
+            });
         }
       });
     }

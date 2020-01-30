@@ -4,6 +4,7 @@ const router = express.Router();
 const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
+const auth = require("../auth");
 
 router.get("/get-announcement", (req, res) => {
   let sql = "select * from announcement order by added_on desc";

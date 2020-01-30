@@ -4,23 +4,7 @@ const router = express.Router();
 const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
-
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res.status(401).send("Unauthorized Request! Header Not Found");
-  }
-  let token = req.headers.authorization.split(" ")[1];
-  if (token === "null") {
-    return res.status(401).send("Unauthorized Request! Token Not Found");
-  }
-  let payload = jwt.verify(token, "MysupersecreteKey");
-
-  if (!payload) {
-    return res.status(401).send("Unauthorized Request! Token is not Correct");
-  }
-  req.userId = payload.subject;
-  next();
-}
+const auth = require("../auth");
 
 router.get("/get-notifications", (req, res) => {
   let sql = "select * from notifications order by added_on desc";
@@ -45,7 +29,7 @@ router.get("/get-notifications", (req, res) => {
   });
 });
 
-router.post("/delete-notification", verifyToken, (req, res) => {
+router.post("/delete-notification", auth.verifyToken, (req, res) => {
   if (isNaN(req.body.id)) {
     res.json({ status: "0", message: "Please select valid notification" });
   } else {

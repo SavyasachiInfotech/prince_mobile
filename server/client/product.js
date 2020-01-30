@@ -5,30 +5,7 @@ const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 var app = express();
-
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Header Not Found" });
-  }
-  let token = req.headers.authorization.split(" ")[1];
-  if (token === "null") {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Token Not Found" });
-  }
-  let payload = jwt.verify(token, "MysupersecreteKey");
-
-  if (!payload) {
-    return res.status(200).json({
-      status: "0",
-      message: "Unauthorized Request! Token is not Correct"
-    });
-  }
-  req.userId = payload.subject;
-  next();
-}
+const auth = require("../auth");
 
 router.post(
   "/search-products",
@@ -311,7 +288,7 @@ router.post(
 router.post(
   "/get-product-detail",
   [check("id").isNumeric()],
-  verifyToken,
+ auth.verifyToken,
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

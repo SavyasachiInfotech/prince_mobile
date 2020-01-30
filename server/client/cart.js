@@ -4,31 +4,9 @@ const router = express.Router();
 const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Header Not Found" });
-  }
-  let token = req.headers.authorization.split(" ")[1];
-  if (token === "null") {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized Request! Token Not Found" });
-  }
-  let payload = jwt.verify(token, "MysupersecreteKey");
+const auth = require("../auth");
 
-  if (!payload) {
-    return res.status(200).json({
-      status: "0",
-      message: "Unauthorized Request! Token is not Correct"
-    });
-  }
-  req.userId = payload.subject;
-  next();
-}
-
-router.post("/add-cart", verifyToken, (req, res) => {
+router.post("/add-cart", auth.verifyToken, (req, res) => {
   let cart = req.body.cart;
   //  let sql=""
   sql =
@@ -87,7 +65,7 @@ router.post("/add-cart", verifyToken, (req, res) => {
 router.put(
   "/update-quantity",
   [check("item_id").isNumeric(), check("quantity").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -125,7 +103,7 @@ router.put(
 router.post(
   "/remove-cart-item",
   [check("item_id").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -155,7 +133,7 @@ router.post(
   }
 );
 
-router.post("/update-cart", verifyToken, (req, res) => {
+router.post("/update-cart", auth.verifyToken, (req, res) => {
   let data = req.body.cart;
   for (let i = 0; i < data.length; i++) {
     let sql =
@@ -171,7 +149,7 @@ router.post("/update-cart", verifyToken, (req, res) => {
 router.post(
   "/remove-whole-cart",
   [check("variant_id").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -201,7 +179,7 @@ router.post(
   }
 );
 
-router.get("/get-cart-detail", verifyToken, (req, res) => {
+router.get("/get-cart-detail", auth.verifyToken, (req, res) => {
   let sql =
     "select c.item_id,c.variant_id,v.name,SUM(c.quantity) as total_quantity,v.list_image,v.price,v.discount from cart c, product_variant v where c.cart_id=" +
     req.userId +
@@ -237,7 +215,7 @@ router.get("/get-cart-detail", verifyToken, (req, res) => {
 router.post(
   "/get-cart-item-detail",
   [check("variant_id").isNumeric(), check("mobile_required").isBoolean()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -339,7 +317,7 @@ router.post(
 router.post(
   "/apply-promocode",
   [check("promo_id").isNumeric(), check("price").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -382,8 +360,8 @@ router.post(
                     let finalAmount = req.body.price;
 
                     finalAmount = finalAmount - discount;
-                    if(finalAmount<0){
-                      finalAmount=0;
+                    if (finalAmount < 0) {
+                      finalAmount = 0;
                     }
                     res.status(200).json({
                       status: "1",
@@ -426,7 +404,7 @@ router.post(
 router.post(
   "/get-delivery-charge",
   [check("pincode").isNumeric()],
-  verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

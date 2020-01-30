@@ -6,25 +6,7 @@ const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 const FCM=require("fcm-node");
 const notification=require("./send-notification");
-
-/** Verify the user token */
-
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res.status(401).send("Unauthorized Request! Header Not Found");
-  }
-  let token = req.headers.authorization.split(" ")[1];
-  if (token === "null") {
-    return res.status(401).send("Unauthorized Request! Token Not Found");
-  }
-  let payload = jwt.verify(token, "MysupersecreteKey");
-
-  if (!payload) {
-    return res.status(401).send("Unauthorized Request! Token is not Correct");
-  }
-  req.userId = payload.subject;
-  next();
-}
+const auth=require('../auth');
 
 /** Getting home page data */
 
@@ -523,7 +505,7 @@ router.post("/get-product-by-category",[check("category_id").isNumeric()],(req,r
     }
 });
 
-router.get("/send-notification",verifyToken,(req,res)=>{
+router.get("/send-notification",auth.verifyToken,(req,res)=>{
   let sql="select * from meta where user_id="+req.userId+" and meta_key='noti_token'";
   con.query(sql,(err,result)=>{
     if(err){

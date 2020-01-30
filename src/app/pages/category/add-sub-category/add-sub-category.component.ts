@@ -34,12 +34,13 @@ export class AddSubCategoryComponent implements OnInit {
   }
 
   setSubCategory() {
-    this._categoryService.getCategory(0).subscribe(
+    this._categoryService.getAllCategories().subscribe(
       res => {
         //@ts-ignore
         if (res.status == 200) {
           //@ts-ignore
           this.categories = res.categories;
+          this.categories = this.categories.filter(item => item.parent_id == 0);
         }
       },
       err => {

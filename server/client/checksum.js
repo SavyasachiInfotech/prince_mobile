@@ -7,35 +7,12 @@ const con = require("../database-connection");
 var paytm_config = require("./paytm/paytm_config").paytm_config;
 var paytm_checksum = require("./paytm/checksum");
 var querystring = require("querystring");
-
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized req! Header Not Found" });
-  }
-  let token = req.headers.authorization.split(" ")[1];
-  if (token === "null") {
-    return res
-      .status(200)
-      .json({ status: "0", message: "Unauthorized req! Token Not Found" });
-  }
-  let payload = jwt.verify(token, "MysupersecreteKey");
-
-  if (!payload) {
-    return res.status(200).json({
-      status: "0",
-      message: "Unauthorized req! Token is not Correct"
-    });
-  }
-  req.userId = payload.subject;
-  next();
-}
+const auth = require("../auth");
 
 router.post(
   "/generate_checksum",
   [check("variant_id").isNumeric(), check("mobile_required").isNumeric(),check("promo_id").isNumeric()],
-  verifyToken,
+ auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -305,7 +282,7 @@ router.post(
   }
 );
 
-router.post("/verify_checksum", verifyToken, (req, res) => {
+router.post("/verify_checksum",auth.verifyToken, (req, res) => {
   var decodedBody = req.body.paytm_token;
 
   // get received checksum
