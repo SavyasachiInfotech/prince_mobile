@@ -212,7 +212,7 @@ router.post(
     } else {
       let category = req.body;
       let sql;
-      if (req.files) {
+      if (req.files && req.files.length > 0) {
         sql =
           "insert into category(name,description,parent_id,image_required,mobile_required,is_display,image) values('" +
           category.name.replace("'", "''") +
@@ -325,7 +325,7 @@ router.post(
   upload.array("avatar", 1),
   (req, res) => {
     let category = req.body;
-    if (req.files) {
+    if (req.files && req.files.length > 0) {
       sql =
         "update category set name='" +
         category.name +
