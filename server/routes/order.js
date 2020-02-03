@@ -129,7 +129,7 @@ function bookShipment(order, res) {
           CustomerCity: orderdata.city,
           CustomerState: orderdata.state,
           CustomerMobile: orderdata.mobile,
-          Weight: orderDate.total_weight,
+          Weight: orderData.total_weight,
           Length: "18",
           ProductDetail: orderdata.name,
           InvoiceAmount: orderdata.order_amount,
