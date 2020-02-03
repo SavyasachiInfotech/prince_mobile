@@ -92,6 +92,9 @@ function bookShipment(order, res) {
           (orderDate.getMonth() + 1) +
           "-" +
           orderDate.getDate();
+        if (!orderdata.total_weight || orderDate.total_weight <= 0) {
+          orderdata.total_weight = 0.05;
+        }
         let shipment = {
           InvoiceNo: order.order_id.toString(),
           PickupCode: "1",
@@ -125,7 +128,7 @@ function bookShipment(order, res) {
           CustomerCity: orderdata.city,
           CustomerState: orderdata.state,
           CustomerMobile: orderdata.mobile,
-          Weight: 0.05,
+          Weight: orderDate.total_weight,
           Length: "18",
           ProductDetail: orderdata.name,
           InvoiceAmount: orderdata.order_amount,

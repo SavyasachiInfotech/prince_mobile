@@ -7,9 +7,7 @@ module.exports = {
 
     for (let i = 0; i < tokens.length; i++) {
       var message = {
-        // to:tokens[i].meta_value,
-        to:
-          "cIAJ3vvAK90:APA91bE_aXVDru4tvttGr2izugAymcR4I4lPmvq7uvNZ6OytindTrZK1lH3dIe6wxYx-we4tlT7srRLDWJ3O_FFlCil-x9QEmZrlM_QuFzcDwCPMuYJIHzjII_-8LnRZV2jywdhRYt0H",
+        to: tokens[i].meta_value,
         collapse_key: "dsaf",
         notification: {
           title: title,
