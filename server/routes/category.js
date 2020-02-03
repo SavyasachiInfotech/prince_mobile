@@ -282,7 +282,7 @@ router.post(
     } else {
       let category = req.body;
       let sql =
-        "insert into category(name,description,parent_id,is_display,image) values('" +
+        "insert into category(name,description,parent_id,is_display) values('" +
         category.name.replace("'", "''") +
         "','" +
         category.description.replace("'", "''") +
@@ -290,9 +290,7 @@ router.post(
         category.parent_id +
         "," +
         category.is_display +
-        ",'" +
-        req.file.originalname +
-        "')";
+        ")";
       // "," +
       // category.image_required +
       // "," +
