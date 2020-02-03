@@ -76,6 +76,7 @@ function bookShipment(order, res) {
     "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
     order.order_id +
     " and o.variant_id=v.variant_id and a.address_id=o.address_id";
+    console.log(sql);
   con.query(sql, (err, orderdata) => {
     if (err) {
       console.log(err);
@@ -168,6 +169,7 @@ function bookShipment(order, res) {
           "https://sandbox.zipping.in/Api/BookShipment",
           options,
           (err, response, body) => {
+            console.log(body);
             let resData = JSON.parse(body.trim());
             if (resData.Msg == "Success") {
               sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}' where order_id=${order.order_id}`;
