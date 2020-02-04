@@ -1,0 +1,116 @@
+<div class="page-wrapper">
+  <div class="container-fluid">
+    <div class="row page-titles">
+      <div class="col-md-5 align-self-center">
+        <h4 class="text-themecolor">Manage Return Order Request</h4>
+      </div>
+      <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item">Home</li>
+            <li class="breadcrumb-item active">Manage Return Order Request</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Column -->
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Return Orders :-</h5>
+            <div class="table-responsive" *ngIf="orders.length > 0">
+              <table class="table product-overview">
+                <tr>
+                  <th>Order ID</th>
+                  <th>Name</th>
+                  <th>User ID</th>
+                  <th>Amount</th>
+                  <th>Date Time</th>
+                  <th>Image</th>
+                  <th>Action</th>
+                </tr>
+                <tr *ngFor="let order of orders; let i = index">
+                  <td>{{ order.order_id }}</td>
+                  <td>{{ order.name }}</td>
+                  <td>{{ order.user_id }}</td>
+                  <td>{{ order.collectable_amount }}</td>
+                  <td>{{ order.request_date }}</td>
+                  <td>
+                    <a [href]="order.thumbnail" target="_blank">
+                      <img
+                        src="{{ imageBaseUrl }}{{ order.image }}"
+                        width="50"
+                        height="50"
+                      />
+                    </a>
+                  </td>
+                  <td>
+                    <div>
+                      <a routerLink="../order-detail/{{ order.order_id }}">
+                        <button class="btn btn-outline-primary">
+                          <i class="material-icons">visibility</i>
+                        </button>
+                      </a>
+                      <button
+                        class="btn btn-outline-success"
+                        (click)="acceptRequest(order, i)"
+                      >
+                        Accept Request
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div class="error" *ngIf="orders.length < 1">
+              No Orders Found.
+            </div>
+          </div>
+          <div class="card-footer" *ngIf="orders.length > 0">
+            <nav aria-label="Page">
+              <ul class="pagination justify-content-center">
+                <li
+                  class="page-item"
+                  *ngIf="currentPage != 1"
+                  (click)="changePage(1)"
+                >
+                  <a class="page-link">First</a>
+                </li>
+                <li
+                  class="page-item"
+                  *ngIf="currentPage != 1"
+                  (click)="changePage(currentPage - 1)"
+                >
+                  <a class="page-link"><i class="ion-md-skip-backward"></i></a>
+                </li>
+                <li
+                  class="page-item"
+                  [class.active]="pageno == currentPage"
+                  (click)="changePage(pageno)"
+                  *ngFor="let pageno of displayPages"
+                >
+                  <a class="page-link">{{ pageno }}</a>
+                </li>
+                <li
+                  class="page-item"
+                  *ngIf="currentPage != lastPage"
+                  (click)="changePage(currentPage + 1)"
+                >
+                  <a class="page-link"><i class="ion-md-skip-forward"></i></a>
+                </li>
+                <li
+                  class="page-item"
+                  *ngIf="currentPage != lastPage"
+                  (click)="changePage(lastPage)"
+                >
+                  <a class="page-link">Last</a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

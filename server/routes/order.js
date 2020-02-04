@@ -62,6 +62,35 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
   });
 });
 
+router.post("/get-return-orders", verifyToken, (req, res) => {
+  let sql =
+    "select o.*,v.name,v.thumbnail,rr.reason,r.image,r.item_id,r.added_date as request_date from customer_order o, product_variant v, return_request r, return_reason rr where o.order_id=r.order_id and o.variant_id=v.variant_id and r.reason=rr.id order by r.added_date limit " +
+    req.body.pageno * limit +
+    "," +
+    limit;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 200, message: "No return request found." });
+    } else {
+      let sql = "select count(*) as total from  return_request";
+      con.query(sql, (err, count) => {
+        if (err) {
+          console.log(err);
+          res.json({ status: 400, message: "No return request found." });
+        } else {
+          res.json({
+            status: 200,
+            message: "Getting return request successfully.",
+            data: result,
+            count: count[0].total
+          });
+        }
+      });
+    }
+  });
+});
+
 router.post("/change-status", verifyToken, (req, res) => {
   let order = req.body;
   if (order.status == 2) {
@@ -76,7 +105,7 @@ function bookShipment(order, res) {
     "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
     order.order_id +
     " and o.variant_id=v.variant_id and a.address_id=o.address_id";
-    console.log(sql);
+  console.log(sql);
   con.query(sql, (err, orderdata) => {
     if (err) {
       console.log(err);

@@ -266,14 +266,7 @@ router.post(
 
 router.post(
   "/add-subcategory",
-  [
-    check("name").isString(),
-    check("description").isString(),
-    check("parent_id").isNumeric(),
-    check("is_display").isBoolean()
-    // check("image_required").isBoolean(),
-    // check("mobile_required").isBoolean()
-  ],
+  upload.array("avatar", 1),
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -281,16 +274,34 @@ router.post(
       res.status(200).json({ status: 400, errors: errors.array() });
     } else {
       let category = req.body;
-      let sql =
-        "insert into category(name,description,parent_id,is_display) values('" +
-        category.name.replace("'", "''") +
-        "','" +
-        category.description.replace("'", "''") +
-        "'," +
-        category.parent_id +
-        "," +
-        category.is_display +
-        ")";
+      let sql = "";
+
+      if (req.files && req.files.length > 0) {
+        sql =
+          "insert into category(name,description,parent_id,is_display,image) values('" +
+          category.name.replace("'", "''") +
+          "','" +
+          category.description.replace("'", "''") +
+          "'," +
+          category.parent_id +
+          "," +
+          category.is_display +
+          ",'" +
+          req.files[0].filename +
+          "')";
+      } else {
+        sql =
+          "insert into category(name,description,parent_id,is_display) values('" +
+          category.name.replace("'", "''") +
+          "','" +
+          category.description.replace("'", "''") +
+          "'," +
+          category.parent_id +
+          "," +
+          category.is_display +
+          ")";
+      }
+
       // "," +
       // category.image_required +
       // "," +
@@ -323,6 +334,7 @@ router.post(
   upload.array("avatar", 1),
   (req, res) => {
     let category = req.body;
+    let sql = "";
     if (req.files && req.files.length > 0) {
       sql =
         "update category set name='" +
@@ -377,15 +389,7 @@ router.post(
 
 router.put(
   "/edit-subcategory",
-  [
-    check("category_id").isNumeric(),
-    check("name").isString(),
-    check("description").isString(),
-    check("parent_id").isNumeric(),
-    check("image_required").isBoolean(),
-    check("mobile_required").isBoolean(),
-    check("is_display").isBoolean()
-  ],
+  upload.array("avatar", 1),
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -393,21 +397,36 @@ router.put(
       res.status(200).json({ status: 400, errors: errors.array() });
     } else {
       let category = req.body;
-      let sql =
-        "update category set name='" +
-        category.name +
-        "', description='" +
-        category.description +
-        "',parent_id=" +
-        category.parent_id +
-        ",image_required=" +
-        category.image_required +
-        ", mobile_required=" +
-        category.mobile_required +
-        ", is_display=" +
-        category.is_display +
-        " where category_id=" +
-        category.category_id;
+      let sql = "";
+
+      if (req.files && req.files.length > 0) {
+        sql =
+          "update category set name='" +
+          category.name +
+          "', description='" +
+          category.description +
+          "',parent_id=" +
+          category.parent_id +
+          ", is_display=" +
+          category.is_display +
+          ", image='" +
+          req.files[0].originalname +
+          "' where category_id=" +
+          category.category_id;
+      } else {
+        sql =
+          "update category set name='" +
+          category.name +
+          "', description='" +
+          category.description +
+          "',parent_id=" +
+          category.parent_id +
+          ", is_display=" +
+          category.is_display +
+          " where category_id=" +
+          category.category_id;
+      }
+
       con.query(sql, (err, result) => {
         if (err) {
           if (process.env.DEVELOPMENT) {

@@ -44,6 +44,10 @@ app.use(
   "/profile",
   express.static(path.join(__dirname, "server/assets/profile"))
 );
+app.use(
+  "/return",
+  express.static(path.join(__dirname, "server/assets/return"))
+);
 app.use("/info", express.static(path.join(__dirname, "server/assets")));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());

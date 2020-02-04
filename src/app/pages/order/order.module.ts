@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { OrderRoutingModule } from './order-routing.module';
 import { ManageOrderComponent } from './manage-order/manage-order.component';
 import { OrderDetailComponent } from './order-detail/order-detail.component';
+import { ManageReturnOrderComponent } from './manage-return-order/manage-return-order.component';
 
 
 @NgModule({
-  declarations: [ManageOrderComponent, OrderDetailComponent],
+  declarations: [ManageOrderComponent, OrderDetailComponent, ManageReturnOrderComponent],
   imports: [
     CommonModule,
     OrderRoutingModule
