@@ -113,7 +113,7 @@ router.get("/get-homepage-data", (req, res) => {
                               allProduct[i].Is_Out_Of_Stock=1;
                             }
                           } else {
-                            if(allProducts[i].quantity>0){
+                            if(allProduct[i].quantity>0){
                               allProduct[i].Is_Out_Of_Stock=0;
                             } else {
                               allProduct[i].Is_Out_Of_Stock=1;
