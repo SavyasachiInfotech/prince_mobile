@@ -52,7 +52,17 @@
                                                 <input type="text" id="firstName" class="form-control" name="mobile_name" [(ngModel)]="mobile.name" placeholder="Mobile Name"></div>
                                         </div>
                                     </div>
-    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Type</label>
+                                                <select name="type" class="form-control" [(ngModel)]="mobile.type">
+                                                    <option [value]="0">Mobile</option>
+                                                    <option [value]="1">Others</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
     
                                     <hr> </div>
                                 <div class="form-actions m-t-40">

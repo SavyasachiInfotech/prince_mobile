@@ -24,8 +24,8 @@
             <thead>
               <tr>
                 <th>Product Id</th>
+                <th>Category</th>
                 <th>Description</th>
-                <th>Sub Category</th>
                 <th>HSN Code</th>
                 <th>Is Display</th>
                 <th>Action</th>
@@ -35,8 +35,8 @@
             <tbody>
               <tr *ngFor="let product of products">
                 <td>{{ product.product_id }}</td>
-                <td>{{ product.description }}</td>
                 <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
                 <td>{{ product.hsncode }}</td>
                 <td>
                   <input

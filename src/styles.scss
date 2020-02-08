@@ -14,6 +14,10 @@ body {
   font-family: "Poppins", sans-serif !important;
   font-weight: 200 !important;
 }
+.active,
+.page-item {
+  cursor: pointer;
+}
 .check-container {
   display: block;
   position: relative;

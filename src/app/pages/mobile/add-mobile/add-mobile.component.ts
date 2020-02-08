@@ -48,20 +48,21 @@ export class AddMobileComponent implements OnInit {
   }
 
   cancelMobile() {
-    this.mobile = { name: "" };
+    this.mobile = { name: "", type: 0 };
     this.editBit = false;
   }
 
   editMobile(mobile) {
-    this.mobile.id = mobile.mobile_id;
+    this.mobile.id = mobile.model_id;
     this.mobile.name = mobile.model_name;
     this.mobile.brand_id = this.selectedBrand;
+    this.mobile.type = mobile.type;
     this.editBit = true;
   }
 
   addMobile() {
     this.mobile.brand_id = this.selectedBrand;
-
+    console.log(this.mobile);
     if (this.mobile.name != "") {
       if (this.editBit) {
         this._mobileService.updateMobile(this.mobile).subscribe(

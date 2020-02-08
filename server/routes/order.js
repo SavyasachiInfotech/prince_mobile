@@ -91,6 +91,10 @@ router.post("/get-return-orders", verifyToken, (req, res) => {
   });
 });
 
+router.post("/accept-return-order", verifyToken, (req, res) => {
+  let data = req.body;
+});
+
 router.post("/change-status", verifyToken, (req, res) => {
   let order = req.body;
   if (order.status == 2) {
@@ -128,6 +132,126 @@ function bookShipment(order, res) {
         let shipment = {
           InvoiceNo: order.order_id.toString(),
           PickupCode: "1",
+          ShowDiffrenceSender: "Yes",
+          SenderName: "Prince Mobile",
+          SenderMobile: "9737156066",
+          CustomerEmail: orderdata.email,
+          Breadth: "12",
+          Height: "4",
+          ShipPartnerCode: "Auto",
+          SellerGSTNo: "123456789123",
+          SupplySellerStatePlace: "Gujarat",
+          BuyerGSTNo: "",
+          EwayBillSrNumber: "",
+          HSNCode: "",
+          TaxableValue: "",
+          SGSTAmount: "0",
+          CGSTAmount: "0",
+          IGSTAmount: "0",
+          Discount: "0",
+          GSTTaxRateSGSTN: "0",
+          GSTTaxRateCGSTN: "0",
+          GSTTaxRateIGSTN: "0",
+          GSTTaxTotal: "0",
+          CustomerFirstName: orderdata.first_name,
+          CustomerLastName: orderdata.last_name,
+          CustomerAddress1: orderdata.flatno,
+          CustomerAddress2: orderdata.colony,
+          CustomerAddress3: orderdata.landmark,
+          CustomerPincode: orderdata.pincode,
+          CustomerCity: orderdata.city,
+          CustomerState: orderdata.state,
+          CustomerMobile: orderdata.mobile,
+          Weight: orderdata.total_weight,
+          Length: "18",
+          ProductDetail: orderdata.name,
+          InvoiceAmount: orderdata.order_amount.toString(),
+          CollectableAmount: orderdata.collectable_amount.toString(),
+          CheckoutMode: "Auto",
+          IsSellerRegUnderGST: "No",
+          InvoiceDate: orderDate
+        };
+
+        if (orderdata.iscod == 1) {
+          shipment.PaymentType = "COD";
+        } else {
+          shipment.PaymentType = "Prepaid";
+        }
+        console.log(shipment);
+        let http = require("https");
+        let options = {
+          host: process.env.ZIPPINGBASEURL,
+          path: "/Api/BookShipment",
+          body: {
+            oauth: {
+              username: process.env.ZIPPINGUNAME,
+              key: process.env.ZIPPINGPASS,
+              version: "1"
+            },
+            ManifestDetails: shipment
+          },
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            accept: "application/json"
+          },
+          json: true
+        };
+        let Request = require("request");
+        Request(
+          "https://sandbox.zipping.in/Api/BookShipment",
+          options,
+          (err, response, body) => {
+            console.log(body);
+            let resData = JSON.parse(body.trim());
+            console.log(resData);
+            if (resData.Msg == "Success") {
+              sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}' where order_id=${order.order_id}`;
+              con.query(sql);
+              changeStatus(res, order);
+            } else {
+              res.json({
+                status: 400,
+                message: "Order not dispatched." + resData.Error[0]
+              });
+            }
+          }
+        );
+      } else {
+        res
+          .status(200)
+          .json({ status: 400, message: "Order status not changed" });
+      }
+    }
+  });
+}
+
+function returnBookShipment(order, res) {
+  let sql =
+    "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
+    order.order_id +
+    " and o.variant_id=v.variant_id and a.address_id=o.address_id";
+  console.log(sql);
+  con.query(sql, (err, orderdata) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 400, message: "Order not accepted." });
+    } else {
+      if (orderdata.length > 0) {
+        orderdata = orderdata[0];
+        let orderDate = new Date(orderdata.order_date);
+        orderDate =
+          orderDate.getFullYear() +
+          "-" +
+          (orderDate.getMonth() + 1) +
+          "-" +
+          orderDate.getDate();
+        if (!orderdata.total_weight || orderDate.total_weight <= 0) {
+          orderdata.total_weight = 0.05;
+        }
+        let shipment = {
+          InvoiceNo: order.order_id.toString(),
+          PickupCode: order.pickupCode.toString(),
           ShowDiffrenceSender: "Yes",
           SenderName: "Prince Mobile",
           SenderMobile: "9737156066",

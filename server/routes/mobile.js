@@ -42,20 +42,17 @@ router.get(
         errors: errors.array()
       });
     } else {
-      let sql =
-        "select * from mobile_models where brand_id="+req.params.id;
+      let sql = "select * from mobile_models where brand_id=" + req.params.id;
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
         } else {
           if (result.length > 0) {
-            res
-              .status(200)
-              .json({
-                status: 200,
-                message: "Mobiles getting successfully",
-                data: result
-              });
+            res.status(200).json({
+              status: 200,
+              message: "Mobiles getting successfully",
+              data: result
+            });
           } else {
             res
               .status(200)
@@ -69,7 +66,7 @@ router.get(
 
 router.post(
   "/add-mobile",
-  [check("name").isString(),check("brand_id").isNumeric()],
+  [check("name").isString(), check("brand_id").isNumeric()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -82,7 +79,13 @@ router.post(
     } else {
       mobile = req.body;
       sql =
-        'insert into mobile_models(model_name,brand_id) values("' + mobile.name + '",'+mobile.brand_id+')';
+        'insert into mobile_models(model_name,brand_id,type) values("' +
+        mobile.name +
+        '",' +
+        mobile.brand_id +
+        "," +
+        mobile.type +
+        ")";
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
@@ -98,7 +101,11 @@ router.post(
 
 router.put(
   "/update-mobile",
-  [check("name").isString(), check("id").isNumeric(),check("brand_id").isNumeric()],
+  [
+    check("name").isString(),
+    check("id").isNumeric(),
+    check("brand_id").isNumeric()
+  ],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -110,10 +117,14 @@ router.put(
       });
     } else {
       mobile = req.body;
-      sql =
+      let sql =
         'update mobile_models set model_name="' +
         mobile.name +
-        '", brand_id='+mobile.brand_id+' where model_id=' +
+        '", brand_id=' +
+        mobile.brand_id +
+        ", type=" +
+        mobile.type +
+        " where model_id=" +
         mobile.id;
       con.query(sql, (err, result) => {
         if (err) {
@@ -128,19 +139,27 @@ router.put(
   }
 );
 
-router.get("/mobile-brand",verifyToken,(req,res)=>{
-  let sql="select * from mobile_brand";
-  con.query(sql,(err,result)=>{
-    if(err){
+router.get("/mobile-brand", verifyToken, (req, res) => {
+  let sql = "select * from mobile_brand";
+  con.query(sql, (err, result) => {
+    if (err) {
       console.log(err);
     } else {
-      res.status(200).json({status:200, message:"Getting mobile brand successfully",data:result});
+      res.status(200).json({
+        status: 200,
+        message: "Getting mobile brand successfully",
+        data: result
+      });
     }
   });
 });
 
-router.post("/add-brand",[check("name").isString()],verifyToken,(req,res)=>{
-  const errors = validationResult(req);
+router.post(
+  "/add-brand",
+  [check("name").isString()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({
         status: process.env.ERROR,
@@ -148,46 +167,68 @@ router.post("/add-brand",[check("name").isString()],verifyToken,(req,res)=>{
         errors: errors.array()
       });
     } else {
-      let data=req.body;
-      let sql="insert into mobile_brand(name) values('"+data.name+"')";
-      con.query(sql,(err,result)=>{
-        if(err){
+      let data = req.body;
+      let sql = "insert into mobile_brand(name) values('" + data.name + "')";
+      con.query(sql, (err, result) => {
+        if (err) {
           console.log(err);
-          res.status(200).json({status:200,message:"Mobile brand not added. Please try again."});
+          res.status(200).json({
+            status: 200,
+            message: "Mobile brand not added. Please try again."
+          });
         } else {
-          sql="select * from mobile_brand";
-          con.query(sql,(err,data)=>{
-            res.status(200).json({status:200, message:"Mobile brand added successfully.",data:data});
+          sql = "select * from mobile_brand";
+          con.query(sql, (err, data) => {
+            res.status(200).json({
+              status: 200,
+              message: "Mobile brand added successfully.",
+              data: data
+            });
           });
         }
       });
     }
-  
-});
-
-router.put("/update-brand",[check("name").isString(),check("id").isNumeric()],verifyToken,(req,res)=>{
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    res.status(200).json({
-      status: process.env.ERROR,
-      message: "Invalid Input Found",
-      errors: errors.array()
-    });
-  } else {
-    let data=req.body;
-    let sql="update mobile_brand set name='"+data.name+"' where brand_id="+data.id;
-    con.query(sql,(err,result)=>{
-      if(err){
-        console.log(err);
-        res.status(200).json({status:200,message:"Mobile brand not updated."});
-      } else {
-        sql="select * from mobile_brand";
-        con.query(sql,(err,data)=>{
-          res.status(200).json({status:200, message:"Mobile brand updated successfully",data:data});
-        });
-      }
-    });
   }
-});
+);
+
+router.put(
+  "/update-brand",
+  [check("name").isString(), check("id").isNumeric()],
+  verifyToken,
+  (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(200).json({
+        status: process.env.ERROR,
+        message: "Invalid Input Found",
+        errors: errors.array()
+      });
+    } else {
+      let data = req.body;
+      let sql =
+        "update mobile_brand set name='" +
+        data.name +
+        "' where brand_id=" +
+        data.id;
+      con.query(sql, (err, result) => {
+        if (err) {
+          console.log(err);
+          res
+            .status(200)
+            .json({ status: 200, message: "Mobile brand not updated." });
+        } else {
+          sql = "select * from mobile_brand";
+          con.query(sql, (err, data) => {
+            res.status(200).json({
+              status: 200,
+              message: "Mobile brand updated successfully",
+              data: data
+            });
+          });
+        }
+      });
+    }
+  }
+);
 
 module.exports = router;

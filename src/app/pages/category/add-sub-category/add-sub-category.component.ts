@@ -36,8 +36,8 @@ export class AddSubCategoryComponent implements OnInit {
   }
 
   changeImage(files, event) {
-    if (files[0].size > 2000000) {
-      window.alert("Please upload image less than < 2 MB");
+    if (files[0].size > 5000000) {
+      window.alert("Please upload image less than < 5 MB");
       return;
     }
 
@@ -145,6 +145,22 @@ export class AddSubCategoryComponent implements OnInit {
       }
     } else {
       alert("Enter the data properly.");
+    }
+  }
+
+  deleteCategory(category) {
+    if (confirm("Do you want to delete category ?")) {
+      this._categoryService
+        .deleteCategory({ category_id: category.category_id })
+        .subscribe(res => {
+          //@ts-ignore
+          if (res.status == 400) {
+            //@ts-ignore
+            alert(res.message);
+          } else {
+            this.changeCategory();
+          }
+        });
     }
   }
 }

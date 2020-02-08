@@ -27,6 +27,7 @@ export class CategoryService {
   private _getAllCategoryUrl = this._config.apiBaseUrl + this.service;
   private _getCategoryByIdUrl =
     this._config.apiBaseUrl + this.service + "get-category/";
+  private _deleteCategoryUrl=this._config.apiBaseUrl+this.service+"delete-category";
 
   getAllCategories() {
     let options = this._config.getHeader();
@@ -61,6 +62,11 @@ export class CategoryService {
   editSubCategory(category) {
     let options = this._config.getHeader();
     return this._http.put<any>(this.editSubCategoryUrl, category, options);
+  }
+
+  deleteCategory(category){
+    let options=this._config.getHeader();
+    return this._http.post(this._deleteCategoryUrl,category,options);
   }
 
   getSubCategory(parent, up) {

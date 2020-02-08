@@ -447,4 +447,20 @@ router.put(
   }
 );
 
+router.post("/delete-category", verifyToken, (req, res) => {
+  let id = req.body.category_id;
+  let sql = "delete from category where category_id=" + id;
+  console.log(sql);
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(200).json({ status: 400, message: "Catgory not deleted." });
+    } else {
+      res
+        .status(200)
+        .json({ status: 200, message: "Category deleted successfully." });
+    }
+  });
+});
+
 module.exports = router;

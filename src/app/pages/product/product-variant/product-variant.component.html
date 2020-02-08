@@ -209,7 +209,7 @@
                             <div class="row">
                                 <div class="col-md-5">
                                     <label>Mobiles</label>
-                                    <select class="form-control" name="mobiles" [(ngModel)]="selectedMobile" multiple>
+                                    <select class="form-control mobile-select" name="mobiles" [(ngModel)]="selectedMobile" multiple>
                                         <option [value]="mobile.model_id" *ngFor="let mobile of mobiles">{{mobile.model_name}}</option>
                                     </select>    
                                 </div>
@@ -219,6 +219,24 @@
                                 </div>
                                 <div class="col-md-2">
                                     <button class="btn btn-success" (click)="addMobile()">Add</button>
+                                </div>
+                            </div>
+                            <hr>
+                                Others :-
+                            <hr>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <label>Others</label>
+                                    <select class="form-control mobile-select" name="mobiles" [(ngModel)]="selectedOther" multiple>
+                                        <option [value]="mobile.model_id" *ngFor="let mobile of others">{{mobile.model_name}}</option>
+                                    </select>    
+                                </div>
+                                <div class="col-md-5">
+                                    <label>Quantity</label>
+                                    <input class="form-control" [(ngModel)]="selectOtherQuantity" name="selectotherquantity">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-success" (click)="addOther()">Add</button>
                                 </div>
                             </div>
 
@@ -241,7 +259,7 @@
                                             <td>{{mob.model_id}}</td>
                                             <td>{{mob.model_name}}</td>
                                             <td>
-                                                <input type="number" name="quantity" [(ngModel)]="mob.quantity">
+                                                <input type="number" name="quantity{{i}}" [(ngModel)]="mob.quantity">
                                             </td>
                                             <td>
                                                 <!-- <i class="material-icons" (click)="editMobile(i)">edit</i> -->

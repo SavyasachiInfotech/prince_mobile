@@ -25,6 +25,10 @@ export class AddCategoryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.getCategories();
+  }
+
+  getCategories() {
     this._categoryService.countCategory().subscribe(res => {
       this.setCategory();
       //@ts-ignore
@@ -71,6 +75,22 @@ export class AddCategoryComponent implements OnInit {
       );
   }
 
+  deleteCategory(category) {
+    if (confirm("Do you want to delete Category ?")) {
+      this._categoryService
+        .deleteCategory({ category_id: category.category_id })
+        .subscribe(res => {
+          //@ts-ignore
+          if (res.status == 200) {
+            this.getCategories();
+          } else {
+            //@ts-ignore
+            alert(res.message);
+          }
+        });
+    }
+  }
+
   setPagination() {
     delete this.displayPages;
     this.displayPages = new Array();
@@ -107,8 +127,8 @@ export class AddCategoryComponent implements OnInit {
   }
 
   changeImage(files, event) {
-    if (files[0].size > 2000000) {
-      window.alert("Please upload image less than < 2 MB");
+    if (files[0].size > 5000000) {
+      window.alert("Please upload image less than < 5 MB");
       return;
     }
 
@@ -153,7 +173,7 @@ export class AddCategoryComponent implements OnInit {
             console.log(res);
             //@ts-ignore
             if (res.status == 200) {
-              alert("Category updted successfully.");
+              alert("Category updated successfully.");
               this.cancelCategory();
               this.setCategory();
             } else {

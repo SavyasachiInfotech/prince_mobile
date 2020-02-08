@@ -18,8 +18,11 @@ export class ProductVariantComponent implements OnInit {
   variant = new Variant();
   attributes = new Array();
   mobiles = new Array();
+  others = new Array();
+  allMobile = new Array();
   url = "";
   selectedMobile = 0;
+  selectedOther;
   specifications = new Array();
   allValues = new Array();
   allMobiles = new Array();
@@ -29,6 +32,7 @@ export class ProductVariantComponent implements OnInit {
   spec;
   selectedSpecifications = new Array();
   selectQuantity = 0;
+  selectOtherQuantity = 0;
   values = new Array();
   product_id;
   editBit = false;
@@ -55,6 +59,10 @@ export class ProductVariantComponent implements OnInit {
           this.variants = res.data;
           //@ts-ignore
           this.mobiles = res.mobiles;
+          //@ts-ignore
+          this.allMobile = res.mobiles;
+          this.others = this.mobiles.filter(item => item.type == 1);
+          this.mobiles = this.mobiles.filter(item => item.type == 0);
           // this.selectedMobile = this.mobiles[0].model_id;
         }
       });
@@ -96,8 +104,22 @@ export class ProductVariantComponent implements OnInit {
       let data = this.mobiles.find(
         item => item.model_id == this.selectedMobile[i]
       );
-      data.quantity = this.selectQuantity;
-      this.allMobiles.push(data);
+      if (data) {
+        data.quantity = this.selectQuantity;
+        this.allMobiles.push(data);
+      }
+    }
+  }
+
+  addOther() {
+    for (let i = 0; i < this.others.length; i++) {
+      let data = this.others.find(
+        item => item.model_id == this.selectedOther[i]
+      );
+      if (data) {
+        data.quantity = this.selectOtherQuantity;
+        this.allMobiles.push(data);
+      }
     }
   }
 
@@ -222,7 +244,6 @@ export class ProductVariantComponent implements OnInit {
     this.variant.specifications = specs;
     //@ts-ignore
     this.variant.attributes = atts;
-    console.log(this.variant);
     if (this.editBit) {
       this._variantService.updateVariants(this.variant).subscribe(
         res => {
@@ -271,10 +292,9 @@ export class ProductVariantComponent implements OnInit {
 
           //@ts-ignore
           this.allMobiles = res.mobiles;
-          console.log(this.allMobiles);
           for (let i = 0; i < this.allMobiles.length; i++) {
             this.allMobiles[i].model_id = this.allMobiles[i].mobile_id;
-            this.allMobiles[i].model_name = this.mobiles.find(
+            this.allMobiles[i].model_name = this.allMobile.find(
               item => item.model_id == this.allMobiles[i].mobile_id
             ).model_name;
           }

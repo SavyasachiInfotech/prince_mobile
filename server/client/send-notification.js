@@ -24,13 +24,12 @@ module.exports = {
         } else {
         }
       });
-      let sql = `insert into notifications(user_id,title,description) values (${tokens[i].user_id} , '${title}', '${description}')`;
-      con.query(sql);
     }
   },
 
   async sendOrderStatusNotification(status, user_id, order_id = "") {
-    let message = (title = "");
+    let message, title;
+    message = title = "";
     switch (status) {
       case 1:
         title = "Order Accepted";
@@ -65,6 +64,8 @@ module.exports = {
         console.log(err);
       } else {
         this.sendNotification(result, message, title);
+        sql = `insert into notifications(user_id,title,description) values (${user_id} , '${title}', '${message}')`;
+        con.query(sql);
       }
     });
   }

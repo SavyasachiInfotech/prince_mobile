@@ -36,8 +36,8 @@ export class AddBannerComponent implements OnInit {
 
   changeImage(files, index, event) {
     var reader = new FileReader();
-    if (files[0].size > 2000000) {
-      window.alert("Please upload image less than < 2 MB");
+    if (files[0].size > 5000000) {
+      window.alert("Please upload image less than < 5 MB");
       return;
     }
 
@@ -69,8 +69,8 @@ export class AddBannerComponent implements OnInit {
     let check = 0;
     if (this.uploadLabel[index] !== "Image Uploaded") {
       try {
-        if (files[0].size > 2000000) {
-          window.alert("Please upload image less than < 2 MB");
+        if (files[0].size > 5000000) {
+          window.alert("Please upload image less than < 5 MB");
           check = 1;
           return;
         } else {
