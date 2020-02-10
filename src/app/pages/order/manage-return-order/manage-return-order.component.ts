@@ -44,7 +44,35 @@ export class ManageReturnOrderComponent implements OnInit {
     );
   }
 
-  acceptRequest(order, i) {}
+  acceptRequest(order, i) {
+    if (confirm("Do you want to accept request?")) {
+      this._orderService
+        .acceptReturnOrder({ order_id: order.order_id })
+        .subscribe(res => {
+          //@ts-ignore
+          if (res.status == 200) {
+            this.orders[i].is_accepted = 1;
+          }
+          //@ts-ignore
+          alert(res.message);
+        });
+    }
+  }
+
+  paidOrder(order, i) {
+    if (confirm("Do you want to pay order?")) {
+      this._orderService
+        .paidReturnOrder({ order_id: order.order_id })
+        .subscribe(res => {
+          //@ts-ignore
+          if (res.status == 200) {
+            this.orders[i].is_paid = 1;
+          }
+          //@ts-ignore
+          alert(res.message);
+        });
+    }
+  }
 
   changePage(pageno) {}
 

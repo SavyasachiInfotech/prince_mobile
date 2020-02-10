@@ -64,7 +64,7 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
 
 router.post("/get-return-orders", verifyToken, (req, res) => {
   let sql =
-    "select o.*,v.name,v.thumbnail,rr.reason,r.image,r.item_id,r.added_date as request_date from customer_order o, product_variant v, return_request r, return_reason rr where o.order_id=r.order_id and o.variant_id=v.variant_id and r.reason=rr.id order by r.added_date limit " +
+    "select o.*,v.name,v.thumbnail,rr.reason,r.image,r.item_id,r.added_date as request_date,r.type,r.is_accepted,r.is_paid from customer_order o, product_variant v, return_request r, return_reason rr where o.order_id=r.order_id and o.variant_id=v.variant_id and r.reason=rr.id order by r.added_date limit " +
     req.body.pageno * limit +
     "," +
     limit;
@@ -93,6 +93,30 @@ router.post("/get-return-orders", verifyToken, (req, res) => {
 
 router.post("/accept-return-order", verifyToken, (req, res) => {
   let data = req.body;
+  let sql =
+    "update return_request set is_accepted=1 where order_id=" + data.order_id;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 400, message: "Order is not accepted." });
+    } else {
+      res.json({ status: 200, message: "Order accepted successfully." });
+    }
+  });
+});
+
+router.post("/paid-return-order", verifyToken, (req, res) => {
+  let data = req.body;
+  let sql =
+    "update return_request set is_paid=1 where order_id=" + data.order_id;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 400, message: "Order is not paid." });
+    } else {
+      res.json({ status: 200, message: "Order paid successfully." });
+    }
+  });
 });
 
 router.post("/change-status", verifyToken, (req, res) => {
@@ -386,7 +410,10 @@ router.post("/get-order-detail", verifyToken, (req, res) => {
   if (isNaN(order_id)) {
     res.json({ status: 400, message: "Enter valid order id" });
   } else {
-    let sql = "select o.* from customer_order o where o.order_id=" + order_id;
+    let sql =
+      "select o.*,a.* from customer_order o, customer_address a where o.order_id=" +
+      order_id +
+      " and a.address_id=o.address_id";
     con.query(sql, (err, result) => {
       if (err) {
         console.log(err);

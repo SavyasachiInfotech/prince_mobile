@@ -17,6 +17,20 @@ export class OrderService {
     this._config.apiBaseUrl + this.service + "get-order-detail";
   private _getReturnRequestsUrl =
     this._config.apiBaseUrl + this.service + "get-return-orders";
+  private _acceptReturnRequestUrl =
+    this._config.apiBaseUrl + this.service + "accept-return-order";
+  private _paidReturnOrderUrl =
+    this._config.apiBaseUrl + this.service + "paid-return-order";
+
+  acceptReturnOrder(data) {
+    let options = this._config.getHeader();
+    return this._http.post<any>(this._acceptReturnRequestUrl, data, options);
+  }
+
+  paidReturnOrder(data) {
+    let options = this._config.getHeader();
+    return this._http.post<any>(this._paidReturnOrderUrl, data, options);
+  }
 
   getReturnRequestedOrder(data) {
     let options = this._config.getHeader();

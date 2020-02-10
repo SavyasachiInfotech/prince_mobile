@@ -32,6 +32,11 @@
             <div class="detail"><div class="key">Promocode Description</div> : {{order.promocode_desc}}</div>
             <div class="detail"><div class="key">Order Amount</div> : {{ order.order_amount }}</div>
             <div class="detail"><div class="key">Order Date</div> : {{ order.added_date | date: "dd/MM/yyyy" }}</div>
+            <h5 class="card-title item-detail">Address :</h5>
+            <div class="detail"><div class="key">Name</div>: {{order.first_name}} {{order.last_name}}</div>
+            <div class="detail"><div class="key">Email</div>: {{order.email}}</div>
+            <div class="detail"><div class="key">Address</div>: {{order.flatno}}, {{order.colony}}, {{order.landmark}}, {{order.city}}, {{order.state}}, {{order.pincode}}</div>
+            <div class="detail"><div class="key">Mobile</div>: {{order.mobile}}</div>
             <h5 class="card-title item-detail">Items Detail :</h5>
             <div class="row" *ngFor="let detail of order_details">
               <div class="col-md-9">
