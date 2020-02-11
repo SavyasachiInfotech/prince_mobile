@@ -219,7 +219,9 @@ router.post(
                                   "update variant_mobile set quantity=quantity-" +
                                   cart[i].cart_quantity +
                                   " where  variant_id=" +
-                                  cart[i].variant_id;
+                                  cart[i].variant_id +
+                                  " and mobile_id=" +
+                                  cart[i].mobile_id;
                                 con.query(sql, (err, result) => {});
                                 sql =
                                   "update product_variant set order_count=order_count+" +

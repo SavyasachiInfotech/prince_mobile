@@ -11,8 +11,12 @@ const auth = require("../auth");
 
 router.post(
   "/generate_checksum",
-  [check("variant_id").isNumeric(), check("mobile_required").isNumeric(),check("promo_id").isNumeric()],
- auth.verifyToken,
+  [
+    check("variant_id").isNumeric(),
+    check("mobile_required").isNumeric(),
+    check("promo_id").isNumeric()
+  ],
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -57,213 +61,217 @@ router.post(
               }
             }
             if (qty == 1) {
-              if(req.body.promo_id==0){
+              if (req.body.promo_id == 0) {
                 sql =
-                "insert into paytm_details(variant_id,user_id,price,mobile_required,promo_id) values(" +
-                req.body.variant_id +
-                "," +
-                req.userId +
-                "," +
-                price +
-                "," +
-                req.body.mobile_required +
-                ",0)";
-              con.query(sql, (err, result) => {
-                if (err) {
-                  console.log(err);
-                  res
-                    .status(200)
-                    .json({ status: "0", message: "Order not placed" });
-                } else {
-                  sql = "select * from customer where id=" + req.userId;
-                  con.query(sql, (err, user) => {
-                    if (err) {
-                      console.log(err);
-                      res
-                        .status(200)
-                        .json({ status: "0", message: "Order not placed" });
-                    } else {
-                      if (user.length > 0) {
-                        var paramarray = {};
-                        paramarray["MID"] = process.env.MID; //Provided by Paytm
-                        paramarray["ORDER_ID"] = result.insertId.toString(); //unique OrderId for every req
-                        paramarray["CUST_ID"] = req.userId.toString(); // unique customer identifier
-                        paramarray["INDUSTRY_TYPE_ID"] = process.env.INDUTYPEID; //Provided by Paytm
-                        paramarray["CHANNEL_ID"] = process.env.CHANNELID; //Provided by Paytm
-                        paramarray["TXN_AMOUNT"] = price.toString(); // transaction amount
-                        paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
-                        paramarray["CALLBACK_URL"] =
-                          "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                          result.insertId; //Provided by Paytm
-                        // paramarray["EMAIL"] = user[0].email; // customer email id
-                        paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
-                        paramarray["MOBILE_NO"] = "9737156062"; // customer 10 digit mobile no.
-                        paytm_checksum.genchecksum(
-                          paramarray,
-                          paytm_config.MERCHANT_KEY,
-                          function(err, checksum) {
-                            console.log(checksum);
-                            console.log(
-                              "Checksum: ",
-                              JSON.stringify(checksum),
-                              "\n"
-                            );
-                            res.status(200).json({
-                              status: "1",
-                              message: "Checksum generated successfully.",
-                              checksum: checksum,
-                              order_id: result.insertId.toString(),
-                              mid: process.env.MID,
-                              cust_id: req.userId.toString(),
-                              industry_type_id: process.env.INDUTYPEID,
-                              channel_id: process.env.CHANNELID,
-                              txn_amount: price.toString(),
-                              website: process.env.WEBSITE,
-                              callback_url:
-                                "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                                result.insertId,
-                              email: "pmdhankecha.18@gmail.com",
-                              mobile_no: "9737156062"
-                            });
-                          }
-                        );
-                      } else {
+                  "insert into paytm_details(variant_id,user_id,price,mobile_required,promo_id) values(" +
+                  req.body.variant_id +
+                  "," +
+                  req.userId +
+                  "," +
+                  price +
+                  "," +
+                  req.body.mobile_required +
+                  ",0)";
+                con.query(sql, (err, result) => {
+                  if (err) {
+                    console.log(err);
+                    res
+                      .status(200)
+                      .json({ status: "0", message: "Order not placed" });
+                  } else {
+                    sql = "select * from customer where id=" + req.userId;
+                    con.query(sql, (err, user) => {
+                      if (err) {
+                        console.log(err);
                         res
                           .status(200)
-                          .json({ status: "0", message: "Order not placed." });
-                      }
-                    }
-                  });
-                }
-              });
-              } else {
-                sql ="select * from promocode where id=" + req.body.promo_id;
-                        con.query(sql, (err, promo) => {
-                          if (err) {
-                            console.log(err);
-                            deleteOrder(order_id);
-                            res.status(200).json({
-                              status: "0",
-                              message:
-                                "Order not placed. Please apply valid promocode."
-                            });
-                          } else {
-                            if (promo.length > 0) {
-                              if (
-                                promo[0].min_limit <= price
-                              ) {
-                                let discount;
-                                if (promo[0].discount_type == 1) {
-                                  discount = promo[0].max_discount;
-                                } else {
-                                  discount =
-                                    (price *
-                                      promo[0].discount) /
-                                    100;
-                                  if (discount > promo[0].max_discount) {
-                                    discount = promo[0].max_discount;
-                                  }
-                                }
-                                price =
-                                  price - discount;
-                                  sql =
-                                  "insert into paytm_details(variant_id,user_id,price,mobile_required,promo_id) values(" +
-                                  req.body.variant_id +
-                                  "," +
-                                  req.userId +
-                                  "," +
-                                  price +
-                                  "," +
-                                  req.body.mobile_required +","+req.body.promo_id+
-                                  ")";
-                                con.query(sql, (err, result) => {
-                                  if (err) {
-                                    console.log(err);
-                                    res
-                                      .status(200)
-                                      .json({ status: "0", message: "Order not placed" });
-                                  } else {
-                                    sql = "select * from customer where id=" + req.userId;
-                                    con.query(sql, (err, user) => {
-                                      if (err) {
-                                        console.log(err);
-                                        res
-                                          .status(200)
-                                          .json({ status: "0", message: "Order not placed" });
-                                      } else {
-                                        if (user.length > 0) {
-                                          var paramarray = {};
-                                          paramarray["MID"] = process.env.MID; //Provided by Paytm
-                                          paramarray["ORDER_ID"] = result.insertId.toString(); //unique OrderId for every req
-                                          paramarray["CUST_ID"] = req.userId.toString(); // unique customer identifier
-                                          paramarray["INDUSTRY_TYPE_ID"] = process.env.INDUTYPEID; //Provided by Paytm
-                                          paramarray["CHANNEL_ID"] = process.env.CHANNELID; //Provided by Paytm
-                                          paramarray["TXN_AMOUNT"] = price.toString(); // transaction amount
-                                          paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
-                                          paramarray["CALLBACK_URL"] =
-                                            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                                            result.insertId; //Provided by Paytm
-                                          paramarray["EMAIL"] = user[0].email; // customer email id
-                                          // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
-                                          paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
-                                          paytm_checksum.genchecksum(
-                                            paramarray,
-                                            paytm_config.MERCHANT_KEY,
-                                            function(err, checksum) {
-                                              console.log(checksum);
-                                              console.log(
-                                                "Checksum: ",
-                                                JSON.stringify(checksum),
-                                                "\n"
-                                              );
-                                              res.status(200).json({
-                                                status: "1",
-                                                message: "Checksum generated successfully.",
-                                                checksum: checksum,
-                                                order_id: result.insertId.toString(),
-                                                mid: process.env.MID,
-                                                cust_id: req.userId.toString(),
-                                                industry_type_id: process.env.INDUTYPEID,
-                                                channel_id: process.env.CHANNELID,
-                                                txn_amount: price.toString(),
-                                                website: process.env.WEBSITE,
-                                                callback_url:
-                                                  "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                                                  result.insertId,
-                                                email: user[0].email,
-                                                mobile_no: user[0].mobile1
-                                              });
-                                            }
-                                          );
-                                        } else {
-                                          res
-                                            .status(200)
-                                            .json({ status: "0", message: "Order not placed." });
-                                        }
-                                      }
-                                    });
-                                  }
-                                });
-                               
-                                
-                              } else {
-                                deleteOrder(order_id);
-                                res.status(200).json({
-                                  status: "0",
-                                  message:
-                                    "Order not placed. Your order amount is not eligible for promocode"
-                                });
-                              }
-                            } else {
+                          .json({ status: "0", message: "Order not placed" });
+                      } else {
+                        if (user.length > 0) {
+                          var paramarray = {};
+                          paramarray["MID"] = process.env.MID; //Provided by Paytm
+                          paramarray["ORDER_ID"] = result.insertId.toString(); //unique OrderId for every req
+                          paramarray["CUST_ID"] = req.userId.toString(); // unique customer identifier
+                          paramarray["INDUSTRY_TYPE_ID"] =
+                            process.env.INDUTYPEID; //Provided by Paytm
+                          paramarray["CHANNEL_ID"] = process.env.CHANNELID; //Provided by Paytm
+                          paramarray["TXN_AMOUNT"] = price.toString(); // transaction amount
+                          paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
+                          paramarray["CALLBACK_URL"] =
+                            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                            result.insertId; //Provided by Paytm
+                          // paramarray["EMAIL"] = user[0].email; // customer email id
+                          paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
+                          paramarray["MOBILE_NO"] = "9737156062"; // customer 10 digit mobile no.
+                          paytm_checksum.genchecksum(
+                            paramarray,
+                            paytm_config.MERCHANT_KEY,
+                            function(err, checksum) {
+                              console.log(checksum);
+                              console.log(
+                                "Checksum: ",
+                                JSON.stringify(checksum),
+                                "\n"
+                              );
                               res.status(200).json({
-                                status: "0",
-                                message: "Please apply valid promocode."
+                                status: "1",
+                                message: "Checksum generated successfully.",
+                                checksum: checksum,
+                                order_id: result.insertId.toString(),
+                                mid: process.env.MID,
+                                cust_id: req.userId.toString(),
+                                industry_type_id: process.env.INDUTYPEID,
+                                channel_id: process.env.CHANNELID,
+                                txn_amount: price.toString(),
+                                website: process.env.WEBSITE,
+                                callback_url:
+                                  "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                  result.insertId,
+                                email: "pmdhankecha.18@gmail.com",
+                                mobile_no: "9737156062"
                               });
                             }
+                          );
+                        } else {
+                          res.status(200).json({
+                            status: "0",
+                            message: "Order not placed."
+                          });
+                        }
+                      }
+                    });
+                  }
+                });
+              } else {
+                sql = "select * from promocode where id=" + req.body.promo_id;
+                con.query(sql, (err, promo) => {
+                  if (err) {
+                    console.log(err);
+                    deleteOrder(order_id);
+                    res.status(200).json({
+                      status: "0",
+                      message: "Order not placed. Please apply valid promocode."
+                    });
+                  } else {
+                    if (promo.length > 0) {
+                      if (promo[0].min_limit <= price) {
+                        let discount;
+                        if (promo[0].discount_type == 1) {
+                          discount = promo[0].max_discount;
+                        } else {
+                          discount = (price * promo[0].discount) / 100;
+                          if (discount > promo[0].max_discount) {
+                            discount = promo[0].max_discount;
+                          }
+                        }
+                        price = price - discount;
+                        sql =
+                          "insert into paytm_details(variant_id,user_id,price,mobile_required,promo_id) values(" +
+                          req.body.variant_id +
+                          "," +
+                          req.userId +
+                          "," +
+                          price +
+                          "," +
+                          req.body.mobile_required +
+                          "," +
+                          req.body.promo_id +
+                          ")";
+                        con.query(sql, (err, result) => {
+                          if (err) {
+                            console.log(err);
+                            res.status(200).json({
+                              status: "0",
+                              message: "Order not placed"
+                            });
+                          } else {
+                            sql =
+                              "select * from customer where id=" + req.userId;
+                            con.query(sql, (err, user) => {
+                              if (err) {
+                                console.log(err);
+                                res.status(200).json({
+                                  status: "0",
+                                  message: "Order not placed"
+                                });
+                              } else {
+                                if (user.length > 0) {
+                                  var paramarray = {};
+                                  paramarray["MID"] = process.env.MID; //Provided by Paytm
+                                  paramarray[
+                                    "ORDER_ID"
+                                  ] = result.insertId.toString(); //unique OrderId for every req
+                                  paramarray["CUST_ID"] = req.userId.toString(); // unique customer identifier
+                                  paramarray["INDUSTRY_TYPE_ID"] =
+                                    process.env.INDUTYPEID; //Provided by Paytm
+                                  paramarray["CHANNEL_ID"] =
+                                    process.env.CHANNELID; //Provided by Paytm
+                                  paramarray["TXN_AMOUNT"] = price.toString(); // transaction amount
+                                  paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
+                                  paramarray["CALLBACK_URL"] =
+                                    "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                    result.insertId; //Provided by Paytm
+                                  paramarray["EMAIL"] = user[0].email; // customer email id
+                                  // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
+                                  paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
+                                  paytm_checksum.genchecksum(
+                                    paramarray,
+                                    paytm_config.MERCHANT_KEY,
+                                    function(err, checksum) {
+                                      console.log(checksum);
+                                      console.log(
+                                        "Checksum: ",
+                                        JSON.stringify(checksum),
+                                        "\n"
+                                      );
+                                      res.status(200).json({
+                                        status: "1",
+                                        message:
+                                          "Checksum generated successfully.",
+                                        checksum: checksum,
+                                        order_id: result.insertId.toString(),
+                                        mid: process.env.MID,
+                                        cust_id: req.userId.toString(),
+                                        industry_type_id:
+                                          process.env.INDUTYPEID,
+                                        channel_id: process.env.CHANNELID,
+                                        txn_amount: price.toString(),
+                                        website: process.env.WEBSITE,
+                                        callback_url:
+                                          "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                          result.insertId,
+                                        email: user[0].email,
+                                        mobile_no: user[0].mobile1
+                                      });
+                                    }
+                                  );
+                                } else {
+                                  res.status(200).json({
+                                    status: "0",
+                                    message: "Order not placed."
+                                  });
+                                }
+                              }
+                            });
                           }
                         });
+                      } else {
+                        deleteOrder(order_id);
+                        res.status(200).json({
+                          status: "0",
+                          message:
+                            "Order not placed. Your order amount is not eligible for promocode"
+                        });
+                      }
+                    } else {
+                      res.status(200).json({
+                        status: "0",
+                        message: "Please apply valid promocode."
+                      });
+                    }
+                  }
+                });
               }
-              
             } else {
               res.status(200).json({
                 status: "0",
@@ -282,7 +290,7 @@ router.post(
   }
 );
 
-router.post("/verify_checksum",auth.verifyToken, (req, res) => {
+router.post("/verify_checksum", auth.verifyToken, (req, res) => {
   var decodedBody = req.body.paytm_token;
 
   // get received checksum
@@ -407,8 +415,8 @@ router.post("/verify_checksum",auth.verifyToken, (req, res) => {
                   req.body.address_id +
                   ",0," +
                   result[0].variant_id +
-                  ","+
-                  result[0].promo_id+
+                  "," +
+                  result[0].promo_id +
                   ")";
                 con.query(sql, (err, order) => {
                   if (err) {
@@ -623,7 +631,9 @@ router.post("/verify_checksum",auth.verifyToken, (req, res) => {
                                     "update variant_mobile set quantity=quantity-" +
                                     cart[i].cart_quantity +
                                     " where  variant_id=" +
-                                    cart[i].variant_id;
+                                    cart[i].variant_id +
+                                    " and mobile_id=" +
+                                    cart[i].mobile_id;
                                   con.query(sql, (err, result) => {});
                                   sql =
                                     "update product_variant set order_count=order_count+" +
