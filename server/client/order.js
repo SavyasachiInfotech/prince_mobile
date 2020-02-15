@@ -421,7 +421,7 @@ router.post(
     } else {
       let item = req.body.item_id;
       let sql =
-        "select co.*,od.*,ca.*,s.status,v.image_required from customer_order co,order_detail od,product_variant v,customer_address ca,status s where od.item_id=" +
+        "select co.*,od.*,ca.*,s.status,v.image_required,m.model_name from customer_order co,order_detail od,product_variant v,customer_address ca,status s,mobile_models m where m.model_id=od.mobile_id and od.item_id=" +
         item +
         " and od.variant_id=v.variant_id and co.order_id=od.order_id and co.address_id=ca.address_id and s.id=co.status_id";
       con.query(sql, (err, result) => {
@@ -453,7 +453,6 @@ router.post(
               estimate_date: "",
               added_date: result.added_date
             };
-            console.log(result.status_id);
             if (result.status_id < 1) {
               data.is_cancelable = 1;
             } else {
@@ -478,7 +477,7 @@ router.post(
               data.is_returnable = 0;
             }
             data.quantity = product.cart_quantity;
-            data.name = product.name;
+            data.name = product.name + " For " + result.model_name;
             data.price = product.price;
             data.sold_by = "MS WORLD";
             data.image = product.thumbnail;
