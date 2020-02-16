@@ -36,6 +36,11 @@ router.get("/get-finished-quantity", verifyToken, (req, res) => {
         message: "No Products found of finished quantity"
       });
     } else {
+      let variants = [];
+      for (let variant of data) {
+        variants.push(variant.variant_id);
+      }
+      data = variants;
       if (data.length > 0) {
         sql =
           "select * from product_variant where (quantity<min_qty and variant_id in (select variant_id from variant_mobile where variant_id not in(" +
