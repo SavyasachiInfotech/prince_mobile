@@ -27,8 +27,8 @@ function verifyToken(req, res, next) {
 
 router.get("/get-finished-quantity", verifyToken, (req, res) => {
   let sql =
-    "select * from product_variant where quantity<min_qty order by quantity";
-  con.query(sql, (err, result) => {
+    "select distinct(vm.variant_id) from variant_mobile vm, product_variant v where vm.quantity<v.min_qty and vm.variant_id=v.variant_id";
+  con.query(sql, (err, data) => {
     if (err) {
       console.log(err);
       res.status(200).json({
@@ -36,11 +36,36 @@ router.get("/get-finished-quantity", verifyToken, (req, res) => {
         message: "No Products found of finished quantity"
       });
     } else {
-      res.status(200).json({
-        status: 200,
-        message: "Getting product of finished quantity",
-        data: result
-      });
+      if (data.length > 0) {
+        sql =
+          "select * from product_variant where (quantity<min_qty and variant_id in (select variant_id from variant_mobile where variant_id not in(" +
+          data.join(",") +
+          "))) or variant_id in (" +
+          data.join(",") +
+          ") order by quantity";
+        console.log(sql);
+        con.query(sql, (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(200).json({
+              status: 400,
+              message: "No Products found of finished quantity"
+            });
+          } else {
+            res.status(200).json({
+              status: 200,
+              message: "Getting product of finished quantity",
+              data: result,
+              mobile_variant: data
+            });
+          }
+        });
+      } else {
+        res.status(200).json({
+          status: 400,
+          message: "No Products found of finished quantity"
+        });
+      }
     }
   });
 });
@@ -139,12 +164,10 @@ router.post(
           res.status(200).json({ status: 400, message: "Variant not added." });
         } else {
           if (variantsdata.length > 0) {
-            res
-              .status(200)
-              .json({
-                status: 400,
-                message: "Variant name is duplicated. Please add another name"
-              });
+            res.status(200).json({
+              status: 400,
+              message: "Variant name is duplicated. Please add another name"
+            });
           }
           sql =
             "insert into product_variant(product_id,name,price,discount,quantity,parent,accept_promocode,min_qty,tax_id,image_required,thumbnail,list_image,view_image,main_image) values(" +

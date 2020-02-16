@@ -22,10 +22,17 @@ export class QuantityFinishComponent implements OnInit {
       if (res.status == 200) {
         //@ts-ignore
         this.variants = res.data;
+        //@ts-ignore
+        let data = res.mobile_variant;
         for (let i = 0; i < this.variants.length; i++) {
           this.variants[i].thumbnail = JSON.parse(
             this.variants[i].thumbnail
           )[0];
+          for (let variant of data) {
+            if (this.variants[i].variant_id == variant) {
+              this.variants[i].quantity = -1;
+            }
+          }
         }
       } else {
         //@ts-ignore

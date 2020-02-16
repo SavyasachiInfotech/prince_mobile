@@ -516,11 +516,12 @@ router.post(
                   if (result.status_id == 7) {
                     data.is_cancelable = 2;
                   }
-                  res.status(200).json({
-                    status: "1",
-                    message: "Getting order detail successfully.",
-                    order_detail: data
-                  });
+                  if (result.status_id > 0 && result.image_required == 1)
+                    res.status(200).json({
+                      status: "1",
+                      message: "Getting order detail successfully.",
+                      order_detail: data
+                    });
                 }
               });
             } else {

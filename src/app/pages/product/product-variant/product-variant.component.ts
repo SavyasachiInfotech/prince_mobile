@@ -238,6 +238,20 @@ export class ProductVariantComponent implements OnInit {
     for (let i = 0; i < this.selectedAttributes.length; i++) {
       atts.push(this.selectedAttributes[i].value_id);
     }
+    for (let mobile of this.allMobiles) {
+      if (mobile.quantity < 0) {
+        this._config.showMessage("Please enter mobile quantity more than 0");
+        return;
+      }
+    }
+    if (this.variant.quantity < 0) {
+      this._config.showMessage("Please enter quantity more than 0");
+    }
+    if (this.variant.min_qty < 1) {
+      this._config.showMessage(
+        "Please enter quantity minimum quantity more than 0"
+      );
+    }
     //@ts-ignore
     this.variant.mobiles = this.allMobiles;
     //@ts-ignore

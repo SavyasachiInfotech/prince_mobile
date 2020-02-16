@@ -32,6 +32,7 @@
                   <th>Product Id</th>
                   <th>Name</th>
                   <th>Image</th>
+                  <th>Quantity</th>
                   <th>Increase Quantity</th>
                 </tr>
               </thead>
@@ -45,6 +46,11 @@
                       width="50"
                       height="50"
                     />
+                  </td>
+                  <td>
+                    <span *ngIf="variant.quantity != -1">{{
+                      variant.quantity
+                    }}</span>
                   </td>
                   <td>
                     <a routerLink="../add-variant/{{ variant.product_id }}"
