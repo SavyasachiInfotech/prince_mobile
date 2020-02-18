@@ -236,7 +236,7 @@ router.post(
                             image: process.env.CATEGORY + images[i]
                           };
                         }
-                        if(result.length>0) {
+                        if (result.length > 0) {
                           res.status(200).json({
                             status: "1",
                             message: "Getting Products successfully.",
@@ -249,15 +249,14 @@ router.post(
                         } else {
                           res.status(200).json({
                             status: "0",
-                            message: "No Products available.",
+                            message: "No Products available."
                           });
                         }
-                        
                       });
                     }
                   } else {
                     let totalPages = Math.ceil(count[0].total / limit);
-                    if(result.length>0){
+                    if (result.length > 0) {
                       res.status(200).json({
                         status: "1",
                         message: "Getting Products successfully.",
@@ -270,10 +269,9 @@ router.post(
                     } else {
                       res.status(200).json({
                         status: "0",
-                        message: "No Products available.",
+                        message: "No Products available."
                       });
                     }
-                    
                   }
                 }
               });
@@ -288,7 +286,7 @@ router.post(
 router.post(
   "/get-product-detail",
   [check("id").isNumeric()],
- auth.verifyToken,
+  auth.verifyToken,
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -313,7 +311,7 @@ router.post(
         } else {
           if (products.length > 0) {
             sql =
-              "select a.attribute_id,a.name,av.value,v.variant_id from attribute a,attribute_value av,variant_attribute v where a.attribute_id=av.attribute_id and av.attribute_value_id=v.attribute_value_id and v.variant_id =" +
+              "select a.attribute_id,a.name,av.value,av.attribute_value_id,v.variant_id from attribute a,attribute_value av,variant_attribute v where a.attribute_id=av.attribute_id and av.attribute_value_id=v.attribute_value_id and v.variant_id =" +
               id;
             con.query(sql, (err, attributes) => {
               if (err) {
@@ -322,6 +320,13 @@ router.post(
                   .status(200)
                   .json({ status: "0", message: "Enter valid Product." });
               } else {
+                let colorAttributes = attributes.filter(
+                  att => att.attribute_id == 2
+                );
+                let sizeAttributes = attributes.filter(
+                  att => att.attribute_id == 1
+                );
+
                 sql =
                   "select s.specification_key,s.specification_value,p.variant_id from product_specification p,specification s where s.specification_id=p.specification_id and p.variant_id=" +
                   id;
@@ -355,10 +360,10 @@ router.post(
                             min_qty: products[0].min_qty,
                             cart_quantity: products[0].cart_quantity
                           });
-                          products[0].mobile_required=0;
+                          products[0].mobile_required = 0;
                           delete products[0].cart_quantity;
                         } else {
-                          products[0].mobile_required=1;
+                          products[0].mobile_required = 1;
                         }
                         for (let i = 0; i < mobiles.length; i++) {
                           net_total =
@@ -449,6 +454,8 @@ router.post(
                                     item =>
                                       item.variant_id == products[i].variant_id
                                   );
+                                  products[i].colorAttributes = colorAttributes;
+                                  products[i].sizeAttributes = sizeAttributes;
                                   products[
                                     i
                                   ].specifications = specifications.filter(
