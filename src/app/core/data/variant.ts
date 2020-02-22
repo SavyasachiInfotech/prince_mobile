@@ -9,11 +9,13 @@ export class Variant {
   image_required: boolean;
   tax_id: number;
   accept_promocode: boolean;
+  warranty: number;
 
   constructor() {
     this.parent = true;
     this.min_qty = 0;
     this.quantity = 0;
-    this.tax_id=4;
+    this.tax_id = 4;
+    this.warranty = 0;
   }
 }

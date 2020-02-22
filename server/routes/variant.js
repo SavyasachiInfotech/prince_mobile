@@ -175,7 +175,7 @@ router.post(
             });
           }
           sql =
-            "insert into product_variant(product_id,name,price,discount,quantity,parent,accept_promocode,min_qty,tax_id,image_required,thumbnail,list_image,view_image,main_image) values(" +
+            "insert into product_variant(product_id,name,price,discount,quantity,parent,accept_promocode,min_qty,tax_id,image_required,thumbnail,list_image,view_image,main_image,warranty) values(" +
             variant.product_id +
             ',"' +
             variant.name +
@@ -195,7 +195,9 @@ router.post(
             variant.tax_id +
             "," +
             variant.image_required +
-            ",'[]','[]','[]','[]')";
+            ",'[]','[]','[]','[]'," +
+            variant.warranty +
+            ")";
           con.query(sql, (err, result) => {
             if (err) {
               console.log(err);
@@ -382,6 +384,8 @@ router.put(
         variant.tax_id +
         ",image_required=" +
         variant.image_required +
+        ",warranty=" +
+        variant.warranty +
         " where product_id=" +
         variant.product_id +
         " and variant_id=" +

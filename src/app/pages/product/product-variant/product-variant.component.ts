@@ -170,7 +170,7 @@ export class ProductVariantComponent implements OnInit {
     this.variant.image_required = false;
     this.variant.accept_promocode = true;
     this.variant.parent = true;
-
+    this.variant.warranty = 0;
     this.variant.quantity = 0;
     this.variant.min_qty = 0;
     this.selectedAttributes = new Array();
