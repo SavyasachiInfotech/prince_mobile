@@ -21,6 +21,8 @@ router.post("/add-cart", auth.verifyToken, (req, res) => {
       if (cart[i].size_id) {
         size = cart[i].size_id;
       }
+      console.log("size ", size);
+      console.log("color ", color);
       if (i == cart.length - 1) {
         sql +=
           "(" +
