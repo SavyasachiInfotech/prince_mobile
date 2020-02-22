@@ -10,7 +10,7 @@ router.post("/add-cart", auth.verifyToken, (req, res) => {
   let cart = req.body.cart;
   //  let sql=""
   sql =
-    "replace into cart(cart_id,variant_id,quantity,mobile_required,mobile_id) values";
+    "replace into cart(cart_id,variant_id,quantity,mobile_required,mobile_id,color_id,size_id) values";
   for (let i = 0; i < cart.length; i++) {
     if (cart[i].quantity > 0) {
       if (i == cart.length - 1) {
@@ -25,6 +25,10 @@ router.post("/add-cart", auth.verifyToken, (req, res) => {
           cart[i].mobile_required +
           "," +
           cart[i].mobile_id +
+          "," +
+          cart[i].color_id +
+          "," +
+          cart[i].size_id +
           ");";
       } else {
         sql +=
@@ -38,6 +42,10 @@ router.post("/add-cart", auth.verifyToken, (req, res) => {
           cart[i].mobile_required +
           "," +
           cart[i].mobile_id +
+          "," +
+          cart[i].color_id +
+          "," +
+          cart[i].size_id +
           "),";
       }
     } else {

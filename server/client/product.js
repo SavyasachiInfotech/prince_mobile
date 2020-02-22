@@ -450,10 +450,10 @@ router.post(
                                         products[i].main_image[j]
                                     };
                                   }
-                                  products[i].attributes = attributes.filter(
-                                    item =>
-                                      item.variant_id == products[i].variant_id
-                                  );
+                                  // products[i].attributes = attributes.filter(
+                                  //   item =>
+                                  //     item.variant_id == products[i].variant_id
+                                  // );
                                   products[i].colorAttributes = colorAttributes;
                                   products[i].sizeAttributes = sizeAttributes;
                                   products[
