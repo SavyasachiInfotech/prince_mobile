@@ -4,7 +4,7 @@ import { OrderInvoiceComponent } from "./order-invoice/order-invoice.component";
 
 const routes: Routes = [
   {
-    path: "/:id",
+    path: ":id",
     component: OrderInvoiceComponent
   }
 ];

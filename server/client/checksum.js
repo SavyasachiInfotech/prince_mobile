@@ -374,7 +374,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
             });
           } else {
             sql =
-              "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.*,t.tax,p.total_weight,p.dimention_length,p.dimention_breadth,p.dimention_height,p.hsncode,m.quantity as mquantity,m.price as mprice, m.discount as mdiscount from cart c, product_variant v, tax t,product p,variant_mobile m where v.variant_id=m.variant_id and m.mobile_id=c.mobile_id and  p.product_id=v.product_id and v.tax_id=t.tax_id and c.variant_id=v.variant_id and c.cart_id=" +
+              "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.*,t.tax,p.total_weight,p.dimention_length,p.dimention_breadth,p.dimention_height,p.hsncode,m.quantity as mquantity,m.price as mprice, m.discount as mdiscount,(select value from attribute_value where attribute_value_id=c.size_id) as size,(select value from attribute_value where attribute_value_id=c.color_id) as color from cart c, product_variant v, tax t,product p,variant_mobile m where v.variant_id=m.variant_id and m.mobile_id=c.mobile_id and  p.product_id=v.product_id and v.tax_id=t.tax_id and c.variant_id=v.variant_id and c.cart_id=" +
               req.userId +
               " and c.variant_id=" +
               result[0].variant_id;
@@ -465,6 +465,12 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                     sql =
                       "insert into order_detail(order_id,variant_id,user_id,variant,quantity,mobile_required,mobile_id) values";
                     for (let i = 0; i < cart.length; i++) {
+                      if (cart[i].size) {
+                        cart[i] += "Size : " + cart[i].size;
+                      }
+                      if (cart[i].color) {
+                        cart[i] += "Color : " + cart[i].color;
+                      }
                       if (
                         (cart[i].mobile_required == 0 &&
                           cart[i].cart_quantity > cart[i].quantity) ||

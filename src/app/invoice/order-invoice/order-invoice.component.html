@@ -1,1 +1,112 @@
-<p>order-invoice works!</p>
+<header>
+  <h1>Invoice</h1>
+  <address>
+    <p class="billname">{{ order.first_name }} {{ order.last_name }}</p>
+    <p>
+      {{ order.flatno }}, {{ order.colony }},<br />{{ order.landmark }},
+      {{ order.city }} <br />{{ order.state }}, {{ order.pincode }}
+    </p>
+    <p>{{ order.mobile }}</p>
+  </address>
+  <span
+    ><img
+      alt=""
+      src="assets/MS_Square_white_512_512.png"
+      height="25%"
+      width="15%"
+  /></span>
+</header>
+<article>
+  <h1>Recipient</h1>
+  <address>
+    <!-- <p>Some Company<br />c/o Some Guy</p> -->
+  </address>
+  <table class="meta">
+    <tr>
+      <th><span>Invoice No</span></th>
+      <td>
+        <span>{{ order.order_id }}</span>
+      </td>
+    </tr>
+    <tr>
+      <th><span>Date</span></th>
+      <td>
+        <span>{{ order.added_date | date: "dd/MM/yyyy" }}</span>
+      </td>
+    </tr>
+    <tr>
+      <th><span>Amount Due</span></th>
+      <td>
+        <span id="prefix">&#8377;</span
+        ><span>{{ order.collectable_amount }}</span>
+      </td>
+    </tr>
+  </table>
+
+  <table class="inventory">
+    <thead>
+      <tr>
+        <th><span>Item</span></th>
+        <th><span>Description</span></th>
+        <th><span>Rate</span></th>
+        <th><span>Quantity</span></th>
+        <th><span>Price</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let orderData of orderDetails">
+        <td>
+          <a class="cut">-</a><span>{{ orderData.name }}</span>
+        </td>
+        <td>
+          <span>{{ orderData.model_name }} {{ orderData.attributes }}</span>
+        </td>
+        <td>
+          <span data-prefix>&#8377;</span><span>{{ orderData.price }}</span>
+        </td>
+        <td>
+          <span>{{ orderData.quantity }}</span>
+        </td>
+        <td>
+          <span data-prefix>&#8377;</span><span>{{ orderData.total }}</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table class="balance">
+    <tr>
+      <th><span>Total</span></th>
+      <td>
+        <span data-prefix>&#8377;</span><span>{{ order.order_amount }} </span>
+      </td>
+    </tr>
+    <tr>
+      <th><span>Amount Paid</span></th>
+      <td>
+        <span data-prefix>&#8377;</span
+        ><span *ngIf="order.iscod == 1">0.00</span
+        ><span *ngIf="order.iscod == 0">{{ order.order_amount }}</span>
+      </td>
+    </tr>
+    <tr>
+      <th><span>Delivery Charge</span></th>
+      <td>
+        <span data-prefix>&#8377;</span
+        ><span *ngIf="order.iscod == 1">50.00</span
+        ><span *ngIf="order.iscod == 0">0.00</span>
+      </td>
+    </tr>
+    <tr>
+      <th><span>Balance Due</span></th>
+      <td>
+        <span data-prefix>&#8377;</span
+        ><span>{{ order.collectable_amount }}</span>
+      </td>
+    </tr>
+  </table>
+</article>
+<aside>
+  <!--aa tag remove karis to icon ni formate vikhai jase. so carefully remove this ta-->
+  <div contenteditable></div>
+</aside>

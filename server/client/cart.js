@@ -13,6 +13,14 @@ router.post("/add-cart", auth.verifyToken, (req, res) => {
     "replace into cart(cart_id,variant_id,quantity,mobile_required,mobile_id,color_id,size_id) values";
   for (let i = 0; i < cart.length; i++) {
     if (cart[i].quantity > 0) {
+      let color = 0;
+      if (cart[i].color_id) {
+        color = cart[i].color_id;
+      }
+      let size = 0;
+      if (cart[i].size_id) {
+        size = cart[i].size_id;
+      }
       if (i == cart.length - 1) {
         sql +=
           "(" +
@@ -26,9 +34,9 @@ router.post("/add-cart", auth.verifyToken, (req, res) => {
           "," +
           cart[i].mobile_id +
           "," +
-          cart[i].color_id +
+          color +
           "," +
-          cart[i].size_id +
+          size +
           ");";
       } else {
         sql +=
@@ -43,9 +51,9 @@ router.post("/add-cart", auth.verifyToken, (req, res) => {
           "," +
           cart[i].mobile_id +
           "," +
-          cart[i].color_id +
+          color +
           "," +
-          cart[i].size_id +
+          size +
           "),";
       }
     } else {

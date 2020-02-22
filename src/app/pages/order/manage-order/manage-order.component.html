@@ -86,6 +86,14 @@
                           <i class="material-icons">visibility</i>
                         </button>
                       </a>
+                      <a
+                        routerLink="../../../invoice/{{ order.order_id }}"
+                        target="_blank"
+                      >
+                        <button class="btn btn-outline-primary">
+                          <i class="material-icons">print</i>
+                        </button>
+                      </a>
                       <button
                         class="btn btn-outline-success"
                         (click)="changeStatus(1, order, i)"
