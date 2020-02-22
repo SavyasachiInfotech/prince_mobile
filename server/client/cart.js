@@ -18,7 +18,7 @@ router.post("/add-cart", auth.verifyToken, (req, res) => {
         color = cart[i].color_id;
       }
       let size = 0;
-      if (cart[i].size_id) {
+      if (cart[i].size_id && cart[i].size_id != null) {
         size = cart[i].size_id;
       }
       console.log("size ", size);
