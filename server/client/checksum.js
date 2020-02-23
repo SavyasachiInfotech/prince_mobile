@@ -465,11 +465,12 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                     sql =
                       "insert into order_detail(order_id,variant_id,user_id,variant,quantity,mobile_required,mobile_id) values";
                     for (let i = 0; i < cart.length; i++) {
+                      cart[i].attributes = "";
                       if (cart[i].size) {
-                        cart[i] += "Size : " + cart[i].size;
+                        cart[i].attributes += "Size : " + cart[i].size;
                       }
                       if (cart[i].color) {
-                        cart[i] += "Color : " + cart[i].color;
+                        cart[i].attributes += "Color : " + cart[i].color;
                       }
                       if (
                         (cart[i].mobile_required == 0 &&
