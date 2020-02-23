@@ -437,7 +437,7 @@ router.post(
             .status(200)
             .json({ status: "0", message: "Order detail not found." });
         } else {
-          console.log(result);
+          // console.log(result);
           if (result.length > 0) {
             result = result[0];
             let data = {
@@ -527,13 +527,13 @@ router.post(
                   if (result.status_id == 7) {
                     data.is_cancelable = 2;
                   }
-                  if (result.status_id > 0 && result.image_required == 1)
+                 // if (result.status_id > 0 && result.image_required == 1)
                     res.status(200).json({
                       status: "1",
                       message: "Getting order detail successfully.",
                       order_detail: data
                     });
-                }
+               // }
               });
             } else {
               data.cod_message = "";
