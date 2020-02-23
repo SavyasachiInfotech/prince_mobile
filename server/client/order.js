@@ -486,10 +486,10 @@ router.post(
             data.quantity = product.cart_quantity;
             data.name = product.name + " For " + result.model_name;
             data.price = product.price;
-            // try {
-            //   data.color = product.color;
-            //   data.size = product.size;
-            // } catch (error) {}
+            try {
+              data.color = product.color;
+              data.size = product.size;
+            } catch (error) {}
             data.sold_by = "MS WORLD";
             data.image = product.thumbnail;
             data.postage_packing = 0.0;
