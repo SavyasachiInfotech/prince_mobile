@@ -437,6 +437,7 @@ router.post(
             .status(200)
             .json({ status: "0", message: "Order detail not found." });
         } else {
+          console.log(result);
           if (result.length > 0) {
             result = result[0];
             let data = {
