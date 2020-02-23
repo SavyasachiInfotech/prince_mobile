@@ -243,6 +243,15 @@ export class ProductVariantComponent implements OnInit {
         this._config.showMessage("Please enter mobile quantity more than 0");
         return;
       }
+      let mobs = this.allMobiles.filter(
+        item => item.model_id == mobile.model_id
+      );
+      if (mobs && mobs.length > 1) {
+        this._config.showMessage(
+          "Please enter mobile " + mobile.model_name + " one time only."
+        );
+        return;
+      }
     }
     if (this.variant.quantity < 0) {
       this._config.showMessage("Please enter quantity more than 0");
