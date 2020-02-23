@@ -125,7 +125,7 @@ router.post(
                         orderdata.collectable_amount +
                         cart[i].price * cart[i].cart_quantity;
                     }
-                    console.log(cart[i].thumbnail);
+                    console.log(cart[i]);
                     cart[i].thumbnail = JSON.parse(cart[i].thumbnail);
                     if (cart[i].thumbnail.length > 0) {
                       cart[i].thumbnail =
