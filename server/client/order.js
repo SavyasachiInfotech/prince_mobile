@@ -228,6 +228,13 @@ router.post(
                                   cart[i].variant_id +
                                   " and mobile_id=" +
                                   cart[i].mobile_id;
+                                console.log(
+                                  "****************** Query1 ********************"
+                                );
+                                console.log(sql);
+                                console.log(
+                                  "**********************************************"
+                                );
                                 con.query(sql, (err, result) => {});
                                 sql =
                                   "update product_variant set order_count=order_count+" +
@@ -243,7 +250,15 @@ router.post(
                                   " where variant_id=" +
                                   cart[i].variant_id +
                                   ";";
+                                console.log(
+                                  "************************** Query2 ********************"
+                                );
+                                console.log(sql);
+                                console.log(
+                                  "******************************************************"
+                                );
                               }
+                              console.log("");
                               con.query(sql, (err, result) => {});
                             }
                             sql =
