@@ -234,6 +234,7 @@ function bookShipment(order, res) {
               con.query(sql);
               changeStatus(res, order);
             } else {
+              console.log(resData);
               res.json({
                 status: 400,
                 message: "Order not dispatched." + resData.Error[0]

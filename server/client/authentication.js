@@ -720,7 +720,6 @@ router.post(
       res.status(200).json({ status: "0", message: "Enter Valid Data" });
     } else {
       let data = req.body;
-      console.log(data);
       if (isNaN(data.email)) {
         mobile = -4;
       } else {
@@ -737,12 +736,7 @@ router.post(
           res.status(200).json({ status: "0", message: "Enter valid Data." });
         } else {
           if (result.length > 0) {
-            console.log("Database => ", result[0].password.toLowerCase());
-            console.log("Compare => ", md5(data.currentPassword.toLowerCase()));
-            if (
-              result[0].password.toLowerCase() ==
-              md5(data.currentPassword.toLowerCase())
-            ) {
+            if (result[0].password.toLowerCase() == md5(data.currentPassword)) {
               sql =
                 "update customer set password='" +
                 md5(data.newPassword) +
