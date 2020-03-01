@@ -346,12 +346,106 @@ router.post(
       });
     } else {
       let promo = req.body.promo_id;
-      console.log(req.body);
       if (!req.body.variant_id) {
-        res
-          .status(200)
-          .json({ status: "0", message: "Please provide variant id" });
-        return;
+        // res
+        //   .status(200)
+        //   .json({ status: "0", message: "Please provide variant id" });
+        // return;
+        let sql =
+          "select accept_promocode from product_variant where variant_id=" +
+          req.body.variant_id;
+        con.query(sql, (err, result) => {
+          if (err) {
+            res.json({
+              status: "0",
+              message: "Promocode not applied. Please try again later."
+            });
+          } else {
+            if (result && result.length < 1) {
+              res.json({ status: "0", message: "Please seletc valid product" });
+            } else {
+              if (result[0].accept_promocode) {
+                sql =
+                  "select count(promo_id) as count,(select max_attempt from promocode where id=" +
+                  promo +
+                  ") as max_attempt from customer_order where promo_id=" +
+                  promo +
+                  " and user_id=" +
+                  req.userId;
+                con.query(sql, (err, result) => {
+                  if (err) {
+                    console.log(err);
+                    res
+                      .status(200)
+                      .json({ status: "0", message: "Promocode not applied." });
+                  } else {
+                    if (result.length > 0) {
+                      if (result[0].count < result[0].max_attempt) {
+                        sql = "select * from promocode where id=" + promo;
+                        con.query(sql, (err, promoData) => {
+                          if (promoData.length > 0) {
+                            if (promoData[0].min_limit <= req.body.price) {
+                              let discount;
+                              if (promoData[0].discount_type == 1) {
+                                discount = promoData[0].max_discount;
+                              } else {
+                                discount =
+                                  (req.body.price * promoData[0].discount) /
+                                  100;
+                                if (discount > promoData[0].max_discount) {
+                                  discount = promoData[0].max_discount;
+                                }
+                              }
+                              let finalAmount = req.body.price;
+
+                              finalAmount = finalAmount - discount;
+                              if (finalAmount < 0) {
+                                finalAmount = 0;
+                              }
+                              res.status(200).json({
+                                status: "1",
+                                message: "Promocode applied successfully.",
+                                payable_price: finalAmount.toString(),
+                                discount: discount,
+                                promocode: promoData[0].code
+                              });
+                            } else {
+                              res.status(200).json({
+                                status: "0",
+                                message:
+                                  "Your cart amount is not sufficient for applying the promocode"
+                              });
+                            }
+                          } else {
+                            res.status(200).json({
+                              status: "0",
+                              message: "Please enter valid promocode."
+                            });
+                          }
+                        });
+                      } else {
+                        res.status(200).json({
+                          status: "0",
+                          message: "You already used this promocode"
+                        });
+                      }
+                    } else {
+                      res.status(200).json({
+                        status: "0",
+                        message: "Please enter valid promocode."
+                      });
+                    }
+                  }
+                });
+              } else {
+                res.json({
+                  status: "0",
+                  message: "Promocode is not applicable to selected product"
+                });
+              }
+            }
+          }
+        });
       }
       let sql =
         "select accept_promocode from product_variant where variant_id=" +
