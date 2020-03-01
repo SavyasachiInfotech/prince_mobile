@@ -57,6 +57,10 @@
               : {{ order.order_amount }}
             </div>
             <div class="detail">
+              <div class="key">PromoOrder Amount</div>
+              : {{ order.afterPromoAmount }}
+            </div>
+            <div class="detail">
               <div class="key">Order Date</div>
               : {{ order.added_date | date: "dd/MM/yyyy" }}
             </div>

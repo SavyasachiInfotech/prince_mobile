@@ -49,8 +49,29 @@ export class OrderInvoiceComponent implements OnInit {
               }
               this.order.gst = this.order.gst.toFixed(2);
               this.order.taxable_amount = this.order.taxable_amount.toFixed(2);
-              this.orderDetails[i].price = this.orderDetails[i].price.toFixed(2);
-              this.orderDetails[i].total = this.orderDetails[i].total.toFixed(2);
+              this.orderDetails[i].price = this.orderDetails[i].price.toFixed(
+                2
+              );
+              this.orderDetails[i].total = this.orderDetails[i].total.toFixed(
+                2
+              );
+            }
+            this.order.discount = 0.0;
+            //@ts-ignore
+            if (res.promocode && res.promocode.length > 0) {
+              //@ts-ignore
+              let promo = res.promocode;
+              if (promo[0].discount_type == 1) {
+                if (this.order.order_amount > promo[0].max_discount) {
+                  this.order.discount = promo[0].discount;
+                } else {
+                  this.order.discount = this.order.order_amount;
+                }
+              } else {
+                this.order.discount =
+                  this.order.order_amount * promo[0].discount;
+              }
+              this.order.discount = this.order.discount.toFixed(0);
             }
           }
         });

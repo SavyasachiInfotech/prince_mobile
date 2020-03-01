@@ -30,8 +30,21 @@ export class OrderDetailComponent implements OnInit {
             this.order = result.order[0];
 
             if (result.promocode && result.promocode.length > 0) {
-              this.order.promo_amount =
-                this.order.taxable_value - this.order.order_amount;
+              if (result.promocode[0].discount_type == 1) {
+                if (
+                  this.order.order_amount > result.promocode[0].max_discount
+                ) {
+                  this.order.promo_amount = result.promocode[0].discount;
+                } else {
+                  this.order.promo_amount = this.order.order_amount;
+                }
+              } else {
+                this.order.promo_amount =
+                  this.order.order_amount * result.promocode[0].discount;
+              }
+              this.order.promo_amount = this.order.promo_amount.toFixed(0);
+              this.order.afterPromoAmount =
+                this.order.order_amount - this.order.promo_amount;
               this.order.promocode = result.promocode[0].code;
               this.order.promocode_desc = result.promocode[0].description;
             } else {

@@ -85,15 +85,28 @@
 
     <table class="balance">
       <tr>
-        <th><span>GST</span></th>
+        <th><span>CGST</span></th>
         <td>
-          <span data-prefix>&#8377;</span><span>{{ order.gst }} </span>
+          <span data-prefix>&#8377;</span><span>{{ order.gst / 2 }} </span>
+        </td>
+      </tr>
+      <tr>
+        <th><span>SGST</span></th>
+        <td>
+          <span data-prefix>&#8377;</span><span>{{ order.gst / 2 }} </span>
+        </td>
+      </tr>
+      <tr>
+        <th><span>Discount</span></th>
+        <td>
+          <span data-prefix>&#8377;</span><span>{{ order.discount }} </span>
         </td>
       </tr>
       <tr>
         <th><span>Total</span></th>
         <td>
-          <span data-prefix>&#8377;</span><span>{{ order.order_amount }} </span>
+          <span data-prefix>&#8377;</span
+          ><span>{{ order.order_amount - order.discount }} </span>
         </td>
       </tr>
       <tr>
@@ -101,7 +114,9 @@
         <td>
           <span data-prefix>&#8377;</span
           ><span *ngIf="order.iscod == 1">0.00</span
-          ><span *ngIf="order.iscod == 0">{{ order.order_amount }}</span>
+          ><span *ngIf="order.iscod == 0">{{
+            order.order_amount - order.discount
+          }}</span>
         </td>
       </tr>
       <tr>

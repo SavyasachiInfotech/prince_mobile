@@ -78,7 +78,7 @@ function registerUser(req, res, next) {
   });
 }
 
-router.get("/user-data",auth.verifyToken, (req, res) => {
+router.get("/user-data", auth.verifyToken, (req, res) => {
   let id = req.userId;
   let sql =
     "select c.username,c.email,c.mobile1,c.profile_image,a.flatno,a.colony,a.landmark,a.pincode from customer c, customer_address a where c.id=" +
@@ -136,7 +136,7 @@ router.post(
       .isString()
       .isLength({ max: 100 })
   ],
- auth.verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -167,7 +167,7 @@ router.post(
 
 router.post(
   "/update-profile-image",
- auth.verifyToken,
+  auth.verifyToken,
   upload.single("avatar"),
   (req, res) => {
     let sql = "select profile_image from customer where id=" + req.userId;
@@ -211,7 +211,7 @@ router.post(
 
 router.post(
   "/add-profile-image",
- auth.verifyToken,
+  auth.verifyToken,
   upload.single("avatar"),
   (req, res) => {
     let sql = "select profile_image from customer where id=" + req.userId;
@@ -720,6 +720,7 @@ router.post(
       res.status(200).json({ status: "0", message: "Enter Valid Data" });
     } else {
       let data = req.body;
+      console.log(data);
       if (isNaN(data.email)) {
         mobile = -4;
       } else {
@@ -736,6 +737,8 @@ router.post(
           res.status(200).json({ status: "0", message: "Enter valid Data." });
         } else {
           if (result.length > 0) {
+            console.log("Database => ", result[0].password.toLowerCase());
+            console.log("Compare => ", md5(data.currentPassword.toLowerCase()));
             if (
               result[0].password.toLowerCase() ==
               md5(data.currentPassword.toLowerCase())
@@ -780,7 +783,7 @@ router.post(
 router.post(
   "/logout-user",
   [check("fcmToken").isString()],
- auth.verifyToken,
+  auth.verifyToken,
   (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
