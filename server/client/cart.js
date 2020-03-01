@@ -346,7 +346,8 @@ router.post(
       });
     } else {
       let promo = req.body.promo_id;
-      if (!promo.variant_id) {
+      console.log(req.body);
+      if (!req.body.variant_id) {
         res
           .status(200)
           .json({ status: "0", message: "Please provide variant id" });
@@ -354,7 +355,7 @@ router.post(
       }
       let sql =
         "select accept_promocode from product_variant where variant_id=" +
-        promo.variant_id;
+        req.body.variant_id;
       con.query(sql, (err, result) => {
         if (err) {
           res.json({
