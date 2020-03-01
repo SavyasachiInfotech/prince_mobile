@@ -841,6 +841,7 @@ router.post(
                   "')";
                 con.query(sql, (err, resultData) => {
                   if (err) {
+                    console.log(err);
                     res.status(200).json({
                       status: "0",
                       message: "Your order return request already placed."
@@ -858,6 +859,7 @@ router.post(
                       "')";
                     con.query(sql, (err, data) => {
                       if (err) {
+                        console.log(err);
                         res.status(200).json({
                           status: "0",
                           message: "Your order return request already placed."
