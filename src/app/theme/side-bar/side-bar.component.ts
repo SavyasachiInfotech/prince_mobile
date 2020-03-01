@@ -14,4 +14,9 @@ export class SideBarComponent implements OnInit {
   goToLink(link) {
     this._router.navigate(["dashboard/" + link]);
   }
+
+  logout() {
+    localStorage.clear();
+    this._router.navigate([""]);
+  }
 }

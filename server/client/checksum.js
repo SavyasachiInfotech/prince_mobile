@@ -568,7 +568,6 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                           });
                         } else {
                           orderdata.order_amount = orderdata.collectable_amount;
-                          orderdata.collectable_amount = 0;
                           orderdata.taxable_amount =
                             (orderdata.collectable_amount * cart[0].tax) /
                             (100 + cart[0].tax);
@@ -578,6 +577,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                           orderdata.taxable_amount =
                             orderdata.collectable_amount -
                             orderdata.taxable_amount;
+                          orderdata.collectable_amount = 0;
                           sql =
                             "update customer_order set collectable_amount=" +
                             orderdata.collectable_amount +

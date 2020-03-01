@@ -13,7 +13,9 @@
   text-decoration: none;
   vertical-align: top;
 }
-
+.detail {
+  padding: 30px;
+}
 /* content editable */
 
 /* heading */
@@ -110,6 +112,9 @@ header address {
 header address p {
   margin: 0 0 0.25em;
 }
+.owner-detail {
+  float: right;
+}
 header span,
 header img {
   display: block;
@@ -157,11 +162,13 @@ article h1 {
   clip: rect(0 0 0 0);
   position: absolute;
 }
-
+h4 {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
 article address {
   float: left;
-  font-size: 125%;
-  font-weight: bold;
+  font-size: 12px;
 }
 
 /* table meta & balance */

@@ -18,54 +18,104 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Order Id : {{ order.order_id }}</h5>
-            <div class="detail"><div class="key">Name </div> : {{ order.name }}</div>
-            <div class="detail"><div class="key">Shipment ID </div> : {{ order.shipment_id }}</div>
-            <div class="detail"><div class="key">AWB No.</div> : {{ order.awbno }}</div>
+            <div class="detail">
+              <div class="key">Name</div>
+              : {{ order.name }}
+            </div>
+            <div class="detail">
+              <div class="key">Shipment ID</div>
+              : {{ order.shipment_id }}
+            </div>
+            <div class="detail">
+              <div class="key">AWB No.</div>
+              : {{ order.awbno }}
+            </div>
             <!-- <div>Promo ID : {{order.promo_id}}</div> -->
             <div class="detail">
-              <div class="key">Payment</div> :&nbsp;<span *ngIf="order.iscod == 1"> Cash on Delivery</span
+              <div class="key">Payment</div>
+              :&nbsp;<span *ngIf="order.iscod == 1"> Cash on Delivery</span
               ><span *ngIf="order.iscod == 0"> Paytm Payment</span>
             </div>
-            <div class="detail"><div class="key">Collectable Amount</div> : {{ order.collectable_amount }}</div>
-            <div class="detail"><div class="key">Promocode Discount</div> : {{order.promo_amount}}</div>
-            <div class="detail"><div class="key">Promocode</div> : {{order.promocode}}</div>
-            <div class="detail"><div class="key">Promocode Description</div> : {{order.promocode_desc}}</div>
-            <div class="detail"><div class="key">Order Amount</div> : {{ order.order_amount }}</div>
-            <div class="detail"><div class="key">Order Date</div> : {{ order.added_date | date: "dd/MM/yyyy" }}</div>
+            <div class="detail">
+              <div class="key">Collectable Amount</div>
+              : {{ order.collectable_amount }}
+            </div>
+            <div class="detail">
+              <div class="key">Promocode Discount</div>
+              : {{ order.promo_amount }}
+            </div>
+            <div class="detail">
+              <div class="key">Promocode</div>
+              : {{ order.promocode }}
+            </div>
+            <div class="detail">
+              <div class="key">Promocode Description</div>
+              : {{ order.promocode_desc }}
+            </div>
+            <div class="detail">
+              <div class="key">Order Amount</div>
+              : {{ order.order_amount }}
+            </div>
+            <div class="detail">
+              <div class="key">Order Date</div>
+              : {{ order.added_date | date: "dd/MM/yyyy" }}
+            </div>
             <a
-                        routerLink="../../../../invoice/{{ order.order_id }}"
-                        target="_blank"
-                      >
-                        <button class="btn btn-outline-primary">
-                          <i class="material-icons">print</i> Print
-                        </button>
-                      </a>
+              routerLink="../../../../invoice/{{ order.order_id }}"
+              target="_blank"
+            >
+              <button class="btn btn-outline-primary">
+                <i class="material-icons">print</i> Print
+              </button>
+            </a>
             <h5 class="card-title item-detail">Address :</h5>
-            <div class="detail"><div class="key">Name</div>: {{order.first_name}} {{order.last_name}}</div>
-            <div class="detail"><div class="key">Email</div>: {{order.email}}</div>
-            <div class="detail"><div class="key">Address</div>: {{order.flatno}}, {{order.colony}}, {{order.landmark}}, {{order.city}}, {{order.state}}, {{order.pincode}}</div>
-            <div class="detail"><div class="key">Mobile</div>: {{order.mobile}}</div>
+            <div class="detail">
+              <div class="key">Name</div>
+              : {{ order.first_name }} {{ order.last_name }}
+            </div>
+            <div class="detail">
+              <div class="key">Email</div>
+              : {{ order.email }}
+            </div>
+            <div class="detail">
+              <div class="key">Address</div>
+              : {{ order.flatno }}, {{ order.colony }}, {{ order.landmark }},
+              {{ order.city }}, {{ order.state }}, {{ order.pincode }}
+            </div>
+            <div class="detail">
+              <div class="key">Mobile</div>
+              : {{ order.mobile }}
+            </div>
             <h5 class="card-title item-detail">Items Detail :</h5>
             <div class="row" *ngFor="let detail of order_details">
               <div class="col-md-9">
                 <div class="detail">
-                  <div class="key">Model Name </div>: {{detail.model_name}}
+                  <div class="key">Model Name</div>
+                  : {{ detail.model_name }}
                 </div>
                 <div class="detail">
-                  <div class="key">Variant ID </div>: {{detail.variant_id}}
+                  <div class="key">Variant ID</div>
+                  : {{ detail.variant_id }}
                 </div>
                 <div class="detail">
-                  <div class="key">Product Name </div>: {{detail.variant.name}}
+                  <div class="key">Product Name</div>
+                  : {{ detail.variant.name }}
                 </div>
                 <div class="detail">
-                  <div class="key">Quantity </div>: {{detail.quantity}}
+                  <div class="key">Quantity</div>
+                  : {{ detail.quantity }}
                 </div>
                 <div class="detail">
-                  <div class="key">Attributes </div>: {{detail.variant.attributes}}
+                  <div class="key">Color</div>
+                  : {{ detail.variant.color }}
+                </div>
+                <div class="detail">
+                  <div class="key">Size</div>
+                  : {{ detail.variant.size }}
                 </div>
               </div>
               <div class="col-md-3">
-                <img [src]="detail.variant.thumbnail" height="110px">
+                <img [src]="detail.variant.thumbnail" height="110px" />
               </div>
             </div>
           </div>
