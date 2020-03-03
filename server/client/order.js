@@ -471,7 +471,7 @@ router.post(
             let diff =
               (new Date() - new Date(result.added_date)) /
               (1000 * 60 * 60 * 24);
-            if (product.warranty <= diff && result.status_id == 4) {
+            if (product.warranty >= diff && result.status_id == 4) {
               data.is_replacable = 1;
             } else {
               data.is_replacable = 0;
@@ -509,6 +509,12 @@ router.post(
             data = JSON.parse(json, (key, val) =>
               typeof val !== "object" && val !== null ? String(val) : val
             );
+            if (result.status_id == 7) {
+              data.is_cancelable = 2;
+            }
+            if (result.status_id > 0 && result.image_required == 1) {
+              data.is_cancelable = 0;
+            }
             if (data.iscod == 1) {
               sql = "select * from meta where id=1";
               con.query(sql, (err, cod) => {
@@ -525,12 +531,6 @@ router.post(
                       parseInt(data.total) + parseInt(cod[0].meta_value);
                   } else {
                     data.cod_message = "";
-                  }
-                  if (result.status_id == 7) {
-                    data.is_cancelable = 2;
-                  }
-                  if (result.status_id > 0 && result.image_required == 1) {
-                    data.is_cancelable = 0;
                   }
                   res.status(200).json({
                     status: "1",
