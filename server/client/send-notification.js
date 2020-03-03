@@ -2,7 +2,7 @@ const FCM = require("fcm-node");
 const con = require("../database-connection");
 
 module.exports = {
-  async sendNotification(tokens, description, title) {
+  async sendNotification(tokens, description, title, order_id, item_id) {
     var fcm = new FCM(process.env.FCMSERVERKEY);
 
     for (let i = 0; i < tokens.length; i++) {
@@ -14,7 +14,9 @@ module.exports = {
           body: description
         },
         data: {
-          key: "value"
+          screenNo: "1",
+          orderId: order_id.toString(),
+          itemId: item_id.toString()
         }
       };
       fcm.send(message, (err, response) => {
@@ -27,7 +29,12 @@ module.exports = {
     }
   },
 
-  async sendOrderStatusNotification(status, user_id, order_id = "") {
+  async sendOrderStatusNotification(
+    status,
+    user_id,
+    order_id = "",
+    item_id = ""
+  ) {
     let message, title;
     message = title = "";
     switch (status) {
@@ -63,7 +70,7 @@ module.exports = {
       if (err) {
         console.log(err);
       } else {
-        this.sendNotification(result, message, title);
+        this.sendNotification(result, message, title, order_id, item_id);
         sql = `insert into notifications(user_id,title,description) values (${user_id} , '${title}', '${message}')`;
         con.query(sql);
       }

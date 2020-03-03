@@ -392,11 +392,18 @@ function changeStatus(res, order) {
         if (err) {
           res.status(200).json({ status: 400, message: "Status not changed" });
         } else {
-          notification.sendOrderStatusNotification(
-            order.status,
-            order.user_id,
-            order.order_id
-          );
+          sql = "select * from order_detail where order_id=" + order.order_id;
+          con.query(sql, (err, result) => {
+            if (result && result.length > 0) {
+              notification.sendOrderStatusNotification(
+                order.status,
+                order.user_id,
+                order.order_id,
+                result[0].item_id
+              );
+            }
+          });
+
           res
             .status(200)
             .json({ status: 200, message: "Status changed successfully." });
