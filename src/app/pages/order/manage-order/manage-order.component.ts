@@ -24,26 +24,8 @@ export class ManageOrderComponent implements OnInit {
 
   getOrderByStatus(status) {
     this.currentStatus = status;
-    this._orderService
-      .getOrdersByStatus({ status: status, pageno: this.currentPage - 1 })
-      .subscribe(res => {
-        //@ts-ignore
-        if (res.status == 200) {
-          //@ts-ignore
-          this.lastPage = Math.ceil(res.count / this.limit);
-          //@ts-ignore
-          this.orders = res.data;
-          for (let i = 0; i < this.orders.length; i++) {
-            let image = JSON.parse(this.orders[i].thumbnail);
-            if (image.length > 0) {
-              this.orders[i].thumbnail = this._config.thumbnailUrl + image[0];
-            } else {
-              this.orders[i].thumbnail = "";
-            }
-          }
-          this.setPagination();
-        }
-      });
+    this.currentPage = 1;
+    this.getOrders();
   }
 
   changeStatus(status, order, i) {
@@ -96,8 +78,34 @@ export class ManageOrderComponent implements OnInit {
     }
   }
 
+  getOrders() {
+    this._orderService
+      .getOrdersByStatus({
+        status: this.currentStatus,
+        pageno: this.currentPage - 1
+      })
+      .subscribe(res => {
+        //@ts-ignore
+        if (res.status == 200) {
+          //@ts-ignore
+          this.lastPage = Math.ceil(res.count / this.limit);
+          //@ts-ignore
+          this.orders = res.data;
+          for (let i = 0; i < this.orders.length; i++) {
+            let image = JSON.parse(this.orders[i].thumbnail);
+            if (image.length > 0) {
+              this.orders[i].thumbnail = this._config.thumbnailUrl + image[0];
+            } else {
+              this.orders[i].thumbnail = "";
+            }
+          }
+          this.setPagination();
+        }
+      });
+  }
+
   changePage(pageno) {
     this.currentPage = pageno;
-    this.getOrderByStatus(this.currentStatus);
+    this.getOrders();
   }
 }

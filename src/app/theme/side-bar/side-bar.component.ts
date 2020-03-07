@@ -13,23 +13,28 @@ export class SideBarComponent implements OnInit {
   constructor(private _router: Router, private _orderService: OrderService) {}
 
   ngOnInit() {
+    this.getFinishCount();
     setInterval(() => {
-      this._orderService.recievedOrderCount().subscribe(res => {
+      this.getFinishCount();
+    }, 600000);
+  }
+
+  getFinishCount() {
+    this._orderService.recievedOrderCount().subscribe(res => {
+      //@ts-ignore
+      if (res.status == 200) {
         //@ts-ignore
-        if (res.status == 200) {
+        if (res.data.length > 0) {
           //@ts-ignore
-          if (res.data.length > 0) {
-            //@ts-ignore
-            this.orderCount = res.data[0].count;
-          }
-          //@ts-ignore
-          if (res.quantity.length > 0) {
-            //@ts-ignore
-            this.quantityFinish = res.quantity[0].count;
-          }
+          this.orderCount = res.data[0].count;
         }
-      });
-    }, 900000);
+        //@ts-ignore
+        if (res.quantity.length > 0) {
+          //@ts-ignore
+          this.quantityFinish = res.quantity[0].count;
+        }
+      }
+    });
   }
 
   goToLink(link) {

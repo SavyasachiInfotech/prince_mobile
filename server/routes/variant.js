@@ -27,7 +27,7 @@ function verifyToken(req, res, next) {
 
 router.get("/get-finished-quantity", verifyToken, (req, res) => {
   let sql =
-    "select distinct(vm.variant_id),v.*,m.model_name from variant_mobile vm, product_variant v, mobile_models m where vm.variant_id=v.variant_id and  vm.quantity<v.min_qty and vm.mobile_id=m.model_id";
+    "select distinct(vm.variant_id),v.*,vm.quantity as mobile_qty,m.model_name from variant_mobile vm, product_variant v, mobile_models m where vm.variant_id=v.variant_id and  vm.quantity<v.min_qty and vm.mobile_id=m.model_id";
   con.query(sql, (err, data) => {
     if (err) {
       console.log(err);
