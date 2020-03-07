@@ -479,7 +479,7 @@ router.post(
             if (
               result.status_id == 4 &&
               result.image_required != 1 &&
-              diff <= 2
+              diff >= 2
             ) {
               data.is_returnable = 1;
             } else {
