@@ -469,7 +469,7 @@ router.post(
             let product = JSON.parse(result.variant);
             data.is_replacable = 0;
             let diff =
-              (new Date() - new Date(result.added_date)) /
+              (new Date() - new Date(result.added_date.toString())) /
               (1000 * 60 * 60 * 24);
             console.log("diff", diff);
             if (
