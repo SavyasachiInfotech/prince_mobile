@@ -62,7 +62,7 @@ var storage = multer.diskStorage({
               if (images[i] === req.params.image_name) {
                 images[i] = filename.toString();
                 let filepath =
-                path.join(__dirname, "../", "assets/main_image") + images[i];
+                  path.join(__dirname, "../", "assets/main_image") + images[i];
                 check = 1;
                 break;
               }
@@ -73,7 +73,7 @@ var storage = multer.diskStorage({
           console.log("update Image");
         }
         if (check == 0) {
-          images.push(filename.toString());
+          images[0] = filename.toString();
         }
 
         sql =
@@ -108,69 +108,73 @@ router.post(
       } else {
         variant = result[0];
         sharp(req.files[0].path)
-        .resize(100)
-        .toFile(
-          path.join(__dirname, "../", "assets/thumbnail/100-100") +
-            req.files[0].filename,
-          (err, info) => {
-            if (err) {
-              console.log(err);
-            } else {
-              let images = JSON.parse(variant.thumbnail);
-              images.push("100-100" + req.files[0].filename);
-              variant.thumbnail = JSON.stringify(images);
-              sharp(req.files[0].path)
-                .resize(300)
-                .toFile(
-                  path.join(__dirname, "../", "assets/list_image/300-300") + req.files[0].filename,
-                  (err, info) => {
-                    if (err) {
-                      console.log(err);
-                    } else {
-                      let images = JSON.parse(variant.list_image);
-                      images.push("300-300" + req.files[0].filename);
-                      variant.list_image = JSON.stringify(images);
-                      // console.log(variant)
-                      sharp(req.files[0].path)
-                        .resize(500)
-                        .toFile(
-                          path.join(__dirname, "../", "assets/view_image/500-500") + req.files[0].filename,
-                          (err, info) => {
-                            if (err) {
-                              console.log(err);
-                            } else {
-                              let images = JSON.parse(variant.view_image);
-                              images.push("500-500" + req.files[0].filename);
-                              variant.view_image = JSON.stringify(images);
-  
-                              sql =
-                                "update product_variant set thumbnail='" +
-                                variant.thumbnail +
-                                "', list_image='" +
-                                variant.list_image +
-                                "',view_image='" +
-                                variant.view_image +
-                                "' where variant_id=" +
-                                variant.variant_id;
-                              con.query(sql, (err, result) => {
-                                if (err) {
-                                  console.log(err);
-                                } else {
-                                  res.send(req.files);
-                                }
-                              });
+          .resize(100)
+          .toFile(
+            path.join(__dirname, "../", "assets/thumbnail/100-100") +
+              req.files[0].filename,
+            (err, info) => {
+              if (err) {
+                console.log(err);
+              } else {
+                let images = JSON.parse(variant.thumbnail);
+                images.push("100-100" + req.files[0].filename);
+                variant.thumbnail = JSON.stringify(images);
+                sharp(req.files[0].path)
+                  .resize(300)
+                  .toFile(
+                    path.join(__dirname, "../", "assets/list_image/300-300") +
+                      req.files[0].filename,
+                    (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        let images = JSON.parse(variant.list_image);
+                        images.push("300-300" + req.files[0].filename);
+                        variant.list_image = JSON.stringify(images);
+                        // console.log(variant)
+                        sharp(req.files[0].path)
+                          .resize(500)
+                          .toFile(
+                            path.join(
+                              __dirname,
+                              "../",
+                              "assets/view_image/500-500"
+                            ) + req.files[0].filename,
+                            (err, info) => {
+                              if (err) {
+                                console.log(err);
+                              } else {
+                                let images = JSON.parse(variant.view_image);
+                                images.push("500-500" + req.files[0].filename);
+                                variant.view_image = JSON.stringify(images);
+
+                                sql =
+                                  "update product_variant set thumbnail='" +
+                                  variant.thumbnail +
+                                  "', list_image='" +
+                                  variant.list_image +
+                                  "',view_image='" +
+                                  variant.view_image +
+                                  "' where variant_id=" +
+                                  variant.variant_id;
+                                con.query(sql, (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  } else {
+                                    res.send(req.files);
+                                  }
+                                });
+                              }
                             }
-                          }
-                        );
+                          );
+                      }
                     }
-                  }
-                );
+                  );
+              }
             }
-          }
-        );
+          );
       }
     });
-   
 
     // console.log(req.files[0].path)
   }
@@ -190,85 +194,89 @@ router.post(
       } else {
         variant = result[0];
         sharp(req.files[0].path)
-      .resize(100)
-      .toFile(
-        path.join(__dirname, "../", "assets/thumbnail/100-100") +
-          req.files[0].filename,
-        (err, info) => {
-          if (err) {
-            console.log(err);
-          } else {
-            let images = JSON.parse(variant.thumbnail);
-            for (let i = 0; i < images.length; i++) {
-              if (images[i] == "100-100" + req.params.image_name) {
-                images[i] = "100-100" + req.files[0].filename;
-              }
-            }
-            variant.thumbnail = JSON.stringify(images);
-            sharp(req.files[0].path)
-              .resize(300)
-              .toFile(
-                path.join(__dirname, "../", "assets/list_image/300-300") + req.files[0].filename,
-                (err, info) => {
-                  if (err) {
-                    console.log(err);
-                  } else {
-                    let images = JSON.parse(variant.list_image);
-                    for (let i = 0; i < images.length; i++) {
-                      if (images[i] == "300-300" + req.params.image_name) {
-                        images[i] = "300-300" + req.files[0].filename;
-                      }
-                    }
-                    variant.list_image = JSON.stringify(images);
-                    // console.log(variant)
-                    sharp(req.files[0].path)
-                      .resize(500)
-                      .toFile(
-                        path.join(__dirname, "../", "assets/view_image/500-500") + req.files[0].filename,
-                        (err, info) => {
-                          if (err) {
-                            console.log(err);
-                          } else {
-                            let images = JSON.parse(variant.view_image);
-                            for (let i = 0; i < images.length; i++) {
-                              if (
-                                images[i] ==
-                                "500-500" + req.params.image_name
-                              ) {
-                                images[i] = "500-500" + req.files[0].filename;
-                              }
-                            }
-                            variant.view_image = JSON.stringify(images);
-
-                            sql =
-                              "update product_variant set thumbnail='" +
-                              variant.thumbnail +
-                              "', list_image='" +
-                              variant.list_image +
-                              "',view_image='" +
-                              variant.view_image +
-                              "' where variant_id=" +
-                              variant.variant_id;
-                            con.query(sql, (err, result) => {
+          .resize(100)
+          .toFile(
+            path.join(__dirname, "../", "assets/thumbnail/100-100") +
+              req.files[0].filename,
+            (err, info) => {
+              if (err) {
+                console.log(err);
+              } else {
+                let images = JSON.parse(variant.thumbnail);
+                for (let i = 0; i < images.length; i++) {
+                  if (images[i] == "100-100" + req.params.image_name) {
+                    images[i] = "100-100" + req.files[0].filename;
+                  }
+                }
+                variant.thumbnail = JSON.stringify(images);
+                sharp(req.files[0].path)
+                  .resize(300)
+                  .toFile(
+                    path.join(__dirname, "../", "assets/list_image/300-300") +
+                      req.files[0].filename,
+                    (err, info) => {
+                      if (err) {
+                        console.log(err);
+                      } else {
+                        let images = JSON.parse(variant.list_image);
+                        for (let i = 0; i < images.length; i++) {
+                          if (images[i] == "300-300" + req.params.image_name) {
+                            images[i] = "300-300" + req.files[0].filename;
+                          }
+                        }
+                        variant.list_image = JSON.stringify(images);
+                        // console.log(variant)
+                        sharp(req.files[0].path)
+                          .resize(500)
+                          .toFile(
+                            path.join(
+                              __dirname,
+                              "../",
+                              "assets/view_image/500-500"
+                            ) + req.files[0].filename,
+                            (err, info) => {
                               if (err) {
                                 console.log(err);
                               } else {
-                                res.send(req.files);
+                                let images = JSON.parse(variant.view_image);
+                                for (let i = 0; i < images.length; i++) {
+                                  if (
+                                    images[i] ==
+                                    "500-500" + req.params.image_name
+                                  ) {
+                                    images[i] =
+                                      "500-500" + req.files[0].filename;
+                                  }
+                                }
+                                variant.view_image = JSON.stringify(images);
+
+                                sql =
+                                  "update product_variant set thumbnail='" +
+                                  variant.thumbnail +
+                                  "', list_image='" +
+                                  variant.list_image +
+                                  "',view_image='" +
+                                  variant.view_image +
+                                  "' where variant_id=" +
+                                  variant.variant_id;
+                                con.query(sql, (err, result) => {
+                                  if (err) {
+                                    console.log(err);
+                                  } else {
+                                    res.send(req.files);
+                                  }
+                                });
                               }
-                            });
-                          }
-                        }
-                      );
-                  }
-                }
-              );
-          }
-        }
-      );
+                            }
+                          );
+                      }
+                    }
+                  );
+              }
+            }
+          );
       }
     });
-
-    
   }
 );
 

@@ -1,329 +1,514 @@
 <div class="page-wrapper">
-    <div class="container-fluid">
-        <!-- ============================================================== -->
-        <!-- Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
-        <div class="row page-titles">
-            <div class="col-md-5 align-self-center">
-                <h4 class="text-themecolor">Add Product Variant</h4>
-            </div>
-            <div class="col-md-7 align-self-center text-right">
-                <div class="d-flex justify-content-end align-items-center">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a>Home</a></li>
-                        <li class="breadcrumb-item active">Add Product Variant</li>
-                    </ol>
-                </div>
-            </div>
+  <div class="container-fluid">
+    <!-- ============================================================== -->
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+      <div class="col-md-5 align-self-center">
+        <h4 class="text-themecolor">Add Product Variant</h4>
+      </div>
+      <div class="col-md-7 align-self-center text-right">
+        <div class="d-flex justify-content-end align-items-center">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a>Home</a></li>
+            <li class="breadcrumb-item active">Add Product Variant</li>
+          </ol>
         </div>
-        <!-- ============================================================== -->
-        <!-- End Bread crumb and right sidebar toggle -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Info box Content -->
-        <!-- ============================================================== -->
-        <div class="row">
-            <!-- Column -->
-            <div class="col-lg-12">
-                <div class="card">
-                    <div class="card-body">
-                        <form #form="ngForm">
-                            <div class="form-body">
-                                <h5 class="card-title">About Product Variant</h5>
-                                <hr>
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Product Id</label>
-                                            <input type="text" name="firstName" [(ngModel)]="variant.product_id" readonly class="form-control" placeholder="Product-Id">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--/row-->
-
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Product Name</label>
-                                            <input type="text" name="product_name" [(ngModel)]="variant.name" class="form-control" placeholder="Product-Name">
-                                        
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--/row-->
-
-                                <div class="row">
-                                        <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="control-label">Product Price</label>
-                                                    <input type="number" name="price" [(ngModel)]="variant.price" class="form-control" placeholder="Product-Price">                                                
-                                                </div>
-                                            </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Product Discount</label>
-                                            <input type="number" name="discount" [(ngModel)]="variant.discount" class="form-control" placeholder="Discount">                                                
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                                <!--/row-->
-
-                                <div class="row">
-                                        <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <label class="control-label">Product Quantity</label>
-                                                    <input type="number" name="quantity" [(ngModel)]="variant.quantity" class="form-control" placeholder="Quantity">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                              <div class="form-group">
-                                                <label class="control-label">Minimum Quantity</label>
-                                                <input type="number" name="quantity" [(ngModel)]="variant.min_qty" class="form-control" placeholder="Quantity">
-                                            </div>
-                                          </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Tax</label>
-                                            <select name="tax" class="form-control" [(ngModel)]="variant.tax_id">
-                                                <option *ngFor="let tax of taxes" [value]="tax.tax_id">{{tax.name}} - {{tax.tax}}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Product Warranty</label>
-                                            <input type="number" name="tax" class="form-control" [(ngModel)]="variant.warranty">   
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--/row-->
-                                <div class="row">
-                                   <div class="col-md-6">
-                                        <div class="form-group">
-                                            <input type="checkbox" class="check" name="parent" [(ngModel)]="variant.parent">
-                                            <label class="control-label">Parent</label>
-                                        </div>
-                                    </div>
-
-                                   
-                                </div>
-                                <div class="row">
-                                        <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <input  type="checkbox" class="check" name="image" [(ngModel)]="variant.image_required">  
-                                                    <label class="control-label">Image Required</label>
-                                                </div>
-                                            </div>
-                                </div>
-                                <div class="row">
-                                        <div class="col-md-6">
-                                                <div class="form-group">
-                                                    <input  type="checkbox" class="check" name="promo" [(ngModel)]="variant.accept_promocode">  
-                                                    <label class="control-label">Accept Promocode</label>
-                                                </div>
-                                            </div>
-                                </div>
-                                <hr>
-                                Attributes :- <span class="right"><a href="{{url}}dashboard/attribute" target="_blank">+ Add New Attribute</a></span>
-                                <hr>
-                                <div class="row">
-                                  <div class="col-md-5">
-                                    <div class="form-group">
-                                      <select  class="form-control" name="attributes" (change)="changeAttribute()" [(ngModel)]="attr">
-                                        <option *ngFor="let attribute of attributes" [value]="attribute.attribute_id">{{attribute.name}}</option>
-                                      </select>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-5">
-                                    <div class="form-group">
-                                      <select  class="form-control" name="att_value" [(ngModel)]="att_value" >
-                                        <option *ngFor="let value of values" [value]="value.attribute_value_id">{{value.value}}</option>
-                                      </select>
-                                    </div>
-                                  </div>
-                                  <div class="col-md-2">
-                                    <button class="btn btn-success" (click)="addAttributes()">Add</button>
-                                  </div>
-                                </div>
-                                <div class="table-responsive" *ngIf="selectedAttributes.length>0">
-                                    <table class="table product-overview">
-                                        <thead>
-                                            <tr>
-                                                <th>Attribute</th>
-                                                <th>Value</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr *ngFor="let att of selectedAttributes;let i=index">
-                                                <td>{{att.att_name}}</td>
-                                                <td>{{att.value}}</td>
-                                                <td>
-                                                        <i class="material-icons" (click)="editAttribute(i)">edit</i>
-                                                        <i class="material-icons delete" (click)="deleteAttribute(i)">delete</i>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <hr>
-                            Specifications :- <i class="material-icons" (click)="getSpecifications()">refresh</i>&nbsp;&nbsp;&nbsp;<span class="right"><a href="{{url}}dashboard/specifications/add-specification/0" target="_blank">+ Add New Specification</a></span> &nbsp;&nbsp;&nbsp;&nbsp;<a href="{{url}}dashboard/specifications/add-specification/{{spec}}" target="_blank">Change Selected Specification</a>
-                            <hr>
-                            <div class="row">
-                              <div class="col-md-10">
-                                <select class="form-control" name="specis" [(ngModel)]="spec">
-                                  <option [value]="specification.specification_id"  *ngFor="let specification of specifications">{{specification.specification_key}} &nbsp;&nbsp; => &nbsp;&nbsp; {{specification.specification_value}}</option>
-                                </select>
-                              </div>
-                              <div class="col-md-2">
-                                <button class="btn btn-success" (click)="addSpecification()">Add</button>
-                              </div>
-                            </div>
-                            
-                            <div class="table-responsive" *ngIf="selectedSpecifications.length>0">
-                                <table class="table product-overview">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Key</th>
-                                            <th>Value</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let specis of selectedSpecifications;let i=index">
-                                            <td>{{specis.specification_id}}</td>
-                                            <td>{{specis.specification_key}}</td>
-                                            <td>{{specis.specification_value}}</td>
-                                            <td>
-                                                <i class="material-icons" (click)="editSpecification(i)">edit</i>
-                                                <i class="material-icons delete" (click)="deleteSpecification(i)">delete</i>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <hr>
-                                Mobiles :-
-                            <hr>
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <label>Mobiles</label>
-                                    <select class="form-control mobile-select" name="mobiles" [(ngModel)]="selectedMobile" multiple>
-                                        <option [value]="mobile.model_id" *ngFor="let mobile of mobiles">{{mobile.model_name}}</option>
-                                    </select>    
-                                </div>
-                                <div class="col-md-5">
-                                    <label>Quantity</label>
-                                    <input class="form-control" [(ngModel)]="selectQuantity" name="selectquantity">
-                                </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-success" (click)="addMobile()">Add</button>
-                                </div>
-                            </div>
-                            <hr>
-                                Others :-
-                            <hr>
-                            <div class="row">
-                                <div class="col-md-5">
-                                    <label>Others</label>
-                                    <select class="form-control mobile-select" name="mobiles" [(ngModel)]="selectedOther" multiple>
-                                        <option [value]="mobile.model_id" *ngFor="let mobile of others">{{mobile.model_name}}</option>
-                                    </select>    
-                                </div>
-                                <div class="col-md-5">
-                                    <label>Quantity</label>
-                                    <input class="form-control" [(ngModel)]="selectOtherQuantity" name="selectotherquantity">
-                                </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-success" (click)="addOther()">Add</button>
-                                </div>
-                            </div>
-
-                            <div class="table-responsive"  *ngIf="allMobiles.length>0">
-                                <table class="table product-overview">
-                                    <thead class="mobile-header">
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Mobile</th>
-                                            <th>Quantity</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                            <div class="table-responsive mobile-table" *ngIf="allMobiles.length>0">
-                                <table class="table product-overview">
-                                    <tbody>
-                                        <tr *ngFor="let mob of allMobiles;let i=index">
-                                            <td>{{mob.model_id}}</td>
-                                            <td>{{mob.model_name}}</td>
-                                            <td>
-                                                <input type="number" name="quantity{{i}}" [(ngModel)]="mob.quantity">
-                                            </td>
-                                            <td>
-                                                <!-- <i class="material-icons" (click)="editMobile(i)">edit</i> -->
-                                                <i class="material-icons delete" (click)="deleteMobile(i)">delete</i>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div class="form-actions m-t-40">
-                              <button type="submit" class="btn btn-success save" (click)="saveVariant()"> Save</button>
-                                <button type="button" class="btn btn-dark cancel">Cancel</button>
-                            
-                            </div>
-                        </form>
-                        <hr>
-                        <hr>
-                            <div class="form-body">
-                                <h5 class="card-title">Product</h5>
-                                
-                            </div>
-                        <div class="table-responsive">
-                            <table class="table product-overview" id="myTable">
-                                <thead>
-                                    <tr>
-                                        <th>Variant Id</th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Discount</th>
-                                        <th>Quantity</th>
-                                        <th>Action</th>
-                                        <th>Add Image</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let variant of variants;let i=index">
-                                        <td>{{variant.variant_id}}</td>
-                                        <td>{{variant.name}}</td>
-                                        <td>{{variant.price}}</td>
-                                        <td>{{variant.discount}}</td>
-                                        <td>{{variant.quantity}}</td>
-                                        <td><i class="material-icons" (click)="editVariant(variant)">edit</i><i class="material-icons delete" (click)="deleteVariant(variant,i)">delete</i></td>
-                                        <td>
-                                            <a routerLink="../../add-image/{{variant.variant_id}}">+ Add Image</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Column -->
-        </div>
-        <!-- ============================================================== -->
-        <!-- End PAge Content -->
-        <!-- ============================================================== -->
-
+      </div>
     </div>
+    <!-- ============================================================== -->
+    <!-- End Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Info box Content -->
+    <!-- ============================================================== -->
+    <div class="row">
+      <!-- Column -->
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <form #form="ngForm">
+              <div class="form-body">
+                <h5 class="card-title">About Product Variant</h5>
+                <hr />
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Product Id</label>
+                      <input
+                        type="text"
+                        name="firstName"
+                        [(ngModel)]="variant.product_id"
+                        readonly
+                        class="form-control"
+                        placeholder="Product-Id"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!--/row-->
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Product Name</label>
+                      <input
+                        type="text"
+                        name="product_name"
+                        [(ngModel)]="variant.name"
+                        class="form-control"
+                        placeholder="Product-Name"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!--/row-->
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Product Price</label>
+                      <input
+                        type="number"
+                        name="price"
+                        [(ngModel)]="variant.price"
+                        class="form-control"
+                        placeholder="Product-Price"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Product Discount</label>
+                      <input
+                        type="number"
+                        name="discount"
+                        [(ngModel)]="variant.discount"
+                        class="form-control"
+                        placeholder="Discount"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!--/row-->
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Product Quantity</label>
+                      <input
+                        type="number"
+                        name="quantity"
+                        [(ngModel)]="variant.quantity"
+                        class="form-control"
+                        placeholder="Quantity"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Minimum Quantity</label>
+                      <input
+                        type="number"
+                        name="quantity"
+                        [(ngModel)]="variant.min_qty"
+                        class="form-control"
+                        placeholder="Quantity"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Tax</label>
+                      <select
+                        name="tax"
+                        class="form-control"
+                        [(ngModel)]="variant.tax_id"
+                      >
+                        <option *ngFor="let tax of taxes" [value]="tax.tax_id"
+                          >{{ tax.name }} - {{ tax.tax }}</option
+                        >
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="control-label">Product Warranty</label>
+                      <input
+                        type="number"
+                        name="tax"
+                        class="form-control"
+                        [(ngModel)]="variant.warranty"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <!--/row-->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <input
+                        type="checkbox"
+                        class="check"
+                        name="parent"
+                        [(ngModel)]="variant.parent"
+                      />
+                      <label class="control-label">Parent</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <input
+                        type="checkbox"
+                        class="check"
+                        name="image"
+                        [(ngModel)]="variant.image_required"
+                      />
+                      <label class="control-label">Image Required</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <input
+                        type="checkbox"
+                        class="check"
+                        name="promo"
+                        [(ngModel)]="variant.accept_promocode"
+                      />
+                      <label class="control-label">Accept Promocode</label>
+                    </div>
+                  </div>
+                </div>
+                <hr />
+                Attributes :-
+                <span class="right"
+                  ><a href="{{ url }}dashboard/attribute" target="_blank"
+                    >+ Add New Attribute</a
+                  ></span
+                >
+                <hr />
+                <div class="row">
+                  <div class="col-md-5">
+                    <div class="form-group">
+                      <select
+                        class="form-control"
+                        name="attributes"
+                        (change)="changeAttribute()"
+                        [(ngModel)]="attr"
+                      >
+                        <option
+                          *ngFor="let attribute of attributes"
+                          [value]="attribute.attribute_id"
+                          >{{ attribute.name }}</option
+                        >
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="form-group">
+                      <select
+                        class="form-control"
+                        name="att_value"
+                        [(ngModel)]="att_value"
+                      >
+                        <option
+                          *ngFor="let value of values"
+                          [value]="value.attribute_value_id"
+                          >{{ value.value }}</option
+                        >
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <button class="btn btn-success" (click)="addAttributes()">
+                      Add
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="table-responsive"
+                  *ngIf="selectedAttributes.length > 0"
+                >
+                  <table class="table product-overview">
+                    <thead>
+                      <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let att of selectedAttributes; let i = index">
+                        <td>{{ att.att_name }}</td>
+                        <td>{{ att.value }}</td>
+                        <td>
+                          <i class="material-icons" (click)="editAttribute(i)"
+                            >edit</i
+                          >
+                          <i
+                            class="material-icons delete"
+                            (click)="deleteAttribute(i)"
+                            >delete</i
+                          >
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <hr />
+              Specifications :-
+              <i class="material-icons" (click)="getSpecifications()">refresh</i
+              >&nbsp;&nbsp;&nbsp;<span class="right"
+                ><a
+                  href="{{ url }}dashboard/specifications/add-specification/0"
+                  target="_blank"
+                  >+ Add New Specification</a
+                ></span
+              >
+              &nbsp;&nbsp;&nbsp;&nbsp;<a
+                href="{{ url }}dashboard/specifications/add-specification/{{
+                  spec
+                }}"
+                target="_blank"
+                >Change Selected Specification</a
+              >
+              <hr />
+              <div class="row">
+                <div class="col-md-10">
+                  <select class="form-control" name="specis" [(ngModel)]="spec">
+                    <option
+                      [value]="specification.specification_id"
+                      *ngFor="let specification of specifications"
+                      >{{ specification.specification_key }} &nbsp;&nbsp; =>
+                      &nbsp;&nbsp;
+                      {{ specification.specification_value }}</option
+                    >
+                  </select>
+                </div>
+                <div class="col-md-2">
+                  <button class="btn btn-success" (click)="addSpecification()">
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <div
+                class="table-responsive"
+                *ngIf="selectedSpecifications.length > 0"
+              >
+                <table class="table product-overview">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Key</th>
+                      <th>Value</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="
+                        let specis of selectedSpecifications;
+                        let i = index
+                      "
+                    >
+                      <td>{{ specis.specification_id }}</td>
+                      <td>{{ specis.specification_key }}</td>
+                      <td>{{ specis.specification_value }}</td>
+                      <td>
+                        <i class="material-icons" (click)="editSpecification(i)"
+                          >edit</i
+                        >
+                        <i
+                          class="material-icons delete"
+                          (click)="deleteSpecification(i)"
+                          >delete</i
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <hr />
+              Mobiles :-
+              <hr />
+              <div class="row">
+                <div class="col-md-5">
+                  <label>Mobiles</label>
+                  <select
+                    class="form-control mobile-select"
+                    name="mobiles"
+                    [(ngModel)]="selectedMobile"
+                    multiple
+                  >
+                    <option
+                      [value]="mobile.model_id"
+                      *ngFor="let mobile of mobiles"
+                      >{{ mobile.model_name }}</option
+                    >
+                  </select>
+                </div>
+                <div class="col-md-5">
+                  <label>Quantity</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="selectQuantity"
+                    name="selectquantity"
+                  />
+                </div>
+                <div class="col-md-2">
+                  <button class="btn btn-success" (click)="addMobile()">
+                    Add
+                  </button>
+                </div>
+              </div>
+              <hr />
+              Others :-
+              <hr />
+              <div class="row">
+                <div class="col-md-5">
+                  <label>Others</label>
+                  <select
+                    class="form-control mobile-select"
+                    name="mobiles"
+                    [(ngModel)]="selectedOther"
+                    multiple
+                  >
+                    <option
+                      [value]="mobile.model_id"
+                      *ngFor="let mobile of others"
+                      >{{ mobile.model_name }}</option
+                    >
+                  </select>
+                </div>
+                <div class="col-md-5">
+                  <label>Quantity</label>
+                  <input
+                    class="form-control"
+                    [(ngModel)]="selectOtherQuantity"
+                    name="selectotherquantity"
+                  />
+                </div>
+                <div class="col-md-2">
+                  <button class="btn btn-success" (click)="addOther()">
+                    Add
+                  </button>
+                </div>
+              </div>
+
+              <div class="table-responsive" *ngIf="allMobiles.length > 0">
+                <table class="table product-overview">
+                  <thead class="mobile-header">
+                    <tr>
+                      <th>ID</th>
+                      <th>Mobile</th>
+                      <th>Quantity</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                </table>
+              </div>
+              <div
+                class="table-responsive mobile-table"
+                *ngIf="allMobiles.length > 0"
+              >
+                <table class="table product-overview">
+                  <tbody>
+                    <tr *ngFor="let mob of allMobiles; let i = index">
+                      <td>{{ mob.model_id }}</td>
+                      <td>{{ mob.model_name }}</td>
+                      <td>
+                        <input
+                          type="number"
+                          name="quantity{{ i }}"
+                          [(ngModel)]="mob.quantity"
+                        />
+                      </td>
+                      <td>
+                        <!-- <i class="material-icons" (click)="editMobile(i)">edit</i> -->
+                        <i
+                          class="material-icons delete"
+                          (click)="deleteMobile(i)"
+                          >delete</i
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="form-actions m-t-40">
+                <button
+                  type="submit"
+                  class="btn btn-success save"
+                  (click)="saveVariant()"
+                >
+                  Save
+                </button>
+                <button type="button" class="btn btn-dark cancel">
+                  Cancel
+                </button>
+              </div>
+            </form>
+            <hr />
+            <hr />
+            <div class="form-body">
+              <h5 class="card-title">Product</h5>
+            </div>
+            <div class="table-responsive">
+              <table class="table product-overview" id="myTable">
+                <thead>
+                  <tr>
+                    <th>Variant Id</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th>Discount</th>
+                    <!-- <th>Quantity</th> -->
+                    <th>Action</th>
+                    <th>Add Image</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let variant of variants; let i = index">
+                    <td>{{ variant.variant_id }}</td>
+                    <td>{{ variant.name }}</td>
+                    <td>{{ variant.price }}</td>
+                    <td>{{ variant.discount }}</td>
+                    <!-- <td>{{variant.quantity}}</td> -->
+                    <td>
+                      <i class="material-icons" (click)="editVariant(variant)"
+                        >edit</i
+                      ><i
+                        class="material-icons delete"
+                        (click)="deleteVariant(variant, i)"
+                        >delete</i
+                      >
+                    </td>
+                    <td>
+                      <a routerLink="../../add-image/{{ variant.variant_id }}"
+                        >+ Add Image</a
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Column -->
+  </div>
+  <!-- ============================================================== -->
+  <!-- End PAge Content -->
+  <!-- ============================================================== -->
+</div>

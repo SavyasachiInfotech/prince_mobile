@@ -783,6 +783,15 @@ router.post(
                       "update customer_order set status_id=7 where order_id=" +
                       order_id;
                     con.query(sql);
+                    sql = `select * from order_detail where order_id=${order_id}`;
+                    con.query(sql, (err, detail) => {
+                      if (detail) {
+                        for (let data of detail) {
+                          sql = `update variant_mobile set quantity=quantity+${data.quantity} where variant_id=${data.variant_id} and mobile_id=${data.mobile_id}`;
+                          con.quantity(sql);
+                        }
+                      }
+                    });
                     res.json({
                       status: "1",
                       message: "Order cancelled successfully."

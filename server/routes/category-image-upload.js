@@ -73,7 +73,7 @@ var storage = multer.diskStorage({
           console.log("update Image");
         }
         if (check == 0) {
-          images.push(filename.toString());
+          images[0] = filename.toString();
         }
 
         sql =
