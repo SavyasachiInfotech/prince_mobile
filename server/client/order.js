@@ -471,6 +471,7 @@ router.post(
             let diff =
               (new Date() - new Date(result.added_date)) /
               (1000 * 60 * 60 * 24);
+            console.log("diff", diff);
             if (
               product.warranty + 2 >= diff &&
               diff > 2 &&
