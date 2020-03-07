@@ -471,7 +471,11 @@ router.post(
             let diff =
               (new Date() - new Date(result.added_date)) /
               (1000 * 60 * 60 * 24);
-            if (product.warranty >= diff && diff > 2 && result.status_id == 4) {
+            if (
+              product.warranty + 2 >= diff &&
+              diff > 2 &&
+              result.status_id == 4
+            ) {
               data.is_replacable = 1;
             } else {
               data.is_replacable = 0;
@@ -479,7 +483,7 @@ router.post(
             if (
               result.status_id == 4 &&
               result.image_required != 1 &&
-              diff >= 2
+              diff <= 2
             ) {
               data.is_returnable = 1;
             } else {
