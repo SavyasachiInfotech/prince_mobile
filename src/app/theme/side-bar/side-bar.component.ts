@@ -22,6 +22,11 @@ export class SideBarComponent implements OnInit {
             //@ts-ignore
             this.orderCount = res.data[0].count;
           }
+          //@ts-ignore
+          if (res.quantity.length > 0) {
+            //@ts-ignore
+            this.quantityFinish = res.quantity[0].count;
+          }
         }
       });
     }, 900000);

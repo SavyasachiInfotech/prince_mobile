@@ -1,28 +1,28 @@
 import { HttpHeaders } from "@angular/common/http";
 
 export class Config {
-  // public apiBaseUrl =
-  //   "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/api/";
-  // public clientBaseUrl =
-  //   "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/";
-  // public imageUrl =
-  //   "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/list-image/";
-  // public thumbnailUrl =
-  //   "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/thumbnail/";
-  // public categoryUrl =
-  //   "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/category/";
-  // public bannerUrl =
-  //   "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/banners/";
-  // public returnBaseUrl =
-  //   "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/return/";
+  public apiBaseUrl =
+    "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/api/";
+  public clientBaseUrl =
+    "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/";
+  public imageUrl =
+    "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/list-image/";
+  public thumbnailUrl =
+    "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/thumbnail/";
+  public categoryUrl =
+    "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/category/";
+  public bannerUrl =
+    "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/banners/";
+  public returnBaseUrl =
+    "http://ec2-13-235-241-35.ap-south-1.compute.amazonaws.com:3000/return/";
 
-  public apiBaseUrl = "http://localhost:3000/api/";
-  public clientBaseUrl = "http://localhost:3000/";
-  public imageUrl = "http://localhost:3000/list-image/";
-  public thumbnailUrl = "http://localhost:3000/thumbnail/";
-  public categoryUrl = "http://localhost:3000/category/";
-  public bannerUrl = "http://localhost:3000/banners/";
-  public returnBaseUrl = "http://localhost:3000/return/";
+  // public apiBaseUrl = "http://localhost:3000/api/";
+  // public clientBaseUrl = "http://localhost:3000/";
+  // public imageUrl = "http://localhost:3000/list-image/";
+  // public thumbnailUrl = "http://localhost:3000/thumbnail/";
+  // public categoryUrl = "http://localhost:3000/category/";
+  // public bannerUrl = "http://localhost:3000/banners/";
+  // public returnBaseUrl = "http://localhost:3000/return/";
   public displayLimit = 10;
   public err = "No response found from server. Please try again later.";
 

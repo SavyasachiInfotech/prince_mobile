@@ -467,10 +467,20 @@ router.get("/get-order-count", verifyToken, (req, res) => {
       console.log(err);
       res.json({ status: 400, message: "Count not found." });
     } else {
-      res.json({
-        status: 200,
-        message: "Getting order count successfully",
-        data: result
+      sql =
+        "select count(vm.variant_id) as count from variant_mobile vm,product_variant v where vm.variant_id=v.variant_id and  vm.quantity<v.min_qty";
+      con.query(sql, (err, data) => {
+        if (err) {
+          console.log(err);
+          res.json({ status: 400, message: "Count not found." });
+        } else {
+          res.json({
+            status: 200,
+            message: "Getting order count successfully",
+            data: result,
+            quantity: data
+          });
+        }
       });
     }
   });
