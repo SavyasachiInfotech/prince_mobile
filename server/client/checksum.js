@@ -101,8 +101,8 @@ router.post(
                             "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
                             result.insertId; //Provided by Paytm
                           // paramarray["EMAIL"] = user[0].email; // customer email id
-                          paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
-                          paramarray["MOBILE_NO"] = "9737156062"; // customer 10 digit mobile no.
+                          paramarray["EMAIL"] = user[0].email; // customer email id
+                          paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
                           paytm_checksum.genchecksum(
                             paramarray,
                             paytm_config.MERCHANT_KEY,
@@ -127,8 +127,8 @@ router.post(
                                 callback_url:
                                   "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
                                   result.insertId,
-                                email: "pmdhankecha.18@gmail.com",
-                                mobile_no: "9737156062"
+                                email: user[0].email,
+                                mobile_no: user[0].mobile1
                               });
                             }
                           );

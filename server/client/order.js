@@ -186,6 +186,7 @@ router.post(
                         orderdata.collectable_amount =
                           orderdata.collectable_amount + 50;
                       }
+                      order.order_amount = order.collectable_amount;
                       if (data.promo_id == 0) {
                         sql =
                           "update customer_order set collectable_amount=" +

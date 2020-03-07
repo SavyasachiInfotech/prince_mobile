@@ -59,8 +59,11 @@ export class OrderDetailComponent implements OnInit {
               this.order.promocode = "Promocode not applied.";
               this.order.promocode_desc = "";
               this.order.promo_amount = 0;
+              this.order.afterPromoAmount = this.order.order_amount;
             }
-
+            if (this.order.iscod == 1) {
+              this.order.afterPromoAmount += 50;
+            }
             this.order_details = result.order_detail;
             for (let i = 0; i < this.order_details.length; i++) {
               this.order_details[i].variant = JSON.parse(
