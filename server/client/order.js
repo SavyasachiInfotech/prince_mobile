@@ -428,7 +428,7 @@ router.post(
     } else {
       let item = req.body.item_id;
       let sql =
-        "select co.*,od.*,ca.*,s.status,v.image_required,m.model_name from customer_order co,order_detail od,product_variant v,customer_address ca,status s,mobile_models m where m.model_id=od.mobile_id and od.item_id=" +
+        "select co.*,co.added_date as order_date,od.*,ca.*,s.status,v.image_required,m.model_name from customer_order co,order_detail od,product_variant v,customer_address ca,status s,mobile_models m where m.model_id=od.mobile_id and od.item_id=" +
         item +
         " and od.variant_id=v.variant_id and co.order_id=od.order_id and co.address_id=ca.address_id and s.id=co.status_id";
       con.query(sql, (err, result) => {
@@ -468,9 +468,9 @@ router.post(
             }
             let product = JSON.parse(result.variant);
             data.is_replacable = 0;
-            console.log("Added date", result.added_date);
+            console.log("Added date", result.order_date);
             let diff =
-              (new Date() - new Date(result.added_date)) /
+              (new Date() - new Date(result.order_date)) /
               (1000 * 60 * 60 * 24);
             console.log("diff", diff);
             if (
