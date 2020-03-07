@@ -459,4 +459,21 @@ router.post("/get-order-detail", verifyToken, (req, res) => {
   }
 });
 
+router.get("/get-order-count", verifyToken, (req, res) => {
+  let sql =
+    "select count(order_id) as count from customer_order where status_id=0";
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      res.json({ status: 400, message: "Count not found." });
+    } else {
+      res.json({
+        status: 200,
+        message: "Getting order count successfully",
+        data: result
+      });
+    }
+  });
+});
+
 module.exports = router;

@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
+import { OrderService } from "src/app/core/mock/order.service";
 
 @Component({
   selector: "app-side-bar",
@@ -7,9 +8,24 @@ import { Router } from "@angular/router";
   styleUrls: ["./side-bar.component.scss"]
 })
 export class SideBarComponent implements OnInit {
-  constructor(private _router: Router) {}
+  public orderCount = 0;
+  public quantityFinish = 0;
+  constructor(private _router: Router, private _orderService: OrderService) {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    setInterval(() => {
+      this._orderService.recievedOrderCount().subscribe(res => {
+        //@ts-ignore
+        if (res.status == 200) {
+          //@ts-ignore
+          if (res.data.length > 0) {
+            //@ts-ignore
+            this.orderCount = res.data[0].count;
+          }
+        }
+      });
+    }, 900000);
+  }
 
   goToLink(link) {
     this._router.navigate(["dashboard/" + link]);

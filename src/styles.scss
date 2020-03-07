@@ -121,6 +121,9 @@ body {
 .product-img .pro-img-overlay a:hover {
   background: #343a40 !important;
 }
+.clickable {
+  cursor: pointer;
+}
 .product-img:hover .pro-img-overlay {
   display: block;
 }

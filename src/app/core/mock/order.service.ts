@@ -21,6 +21,13 @@ export class OrderService {
     this._config.apiBaseUrl + this.service + "accept-return-order";
   private _paidReturnOrderUrl =
     this._config.apiBaseUrl + this.service + "paid-return-order";
+  private _orderCountUrl =
+    this._config.apiBaseUrl + this.service + "get-order-count";
+
+  recievedOrderCount() {
+    let options = this._config.getHeader();
+    return this._http.get(this._orderCountUrl, options);
+  }
 
   acceptReturnOrder(data) {
     let options = this._config.getHeader();

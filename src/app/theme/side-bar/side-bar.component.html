@@ -60,8 +60,14 @@
         <li (click)="goToLink('mobile/brand')">Mobile Brand</li>
         <li (click)="goToLink('mobile')">Mobiles</li>
         <li (click)="goToLink('product')">Products</li>
-        <li (click)="goToLink('product/quantity-finish')">Quantity Finish</li>
-        <li (click)="goToLink('order/manage-order')">Orders</li>
+        <li (click)="goToLink('product/quantity-finish')">
+          Quantity Finish &nbsp;
+          <span class="badge badge-danger">{{ quantityFinish }}</span>
+        </li>
+        <li (click)="goToLink('order/manage-order')">
+          Orders &nbsp;
+          <span class="badge badge-danger">{{ orderCount }}</span>
+        </li>
         <li (click)="goToLink('order/manage-return-order')">
           Manage Return Request
         </li>

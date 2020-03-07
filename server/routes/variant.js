@@ -27,7 +27,7 @@ function verifyToken(req, res, next) {
 
 router.get("/get-finished-quantity", verifyToken, (req, res) => {
   let sql =
-    "select distinct(vm.variant_id) from variant_mobile vm, product_variant v where vm.quantity<v.min_qty and vm.variant_id=v.variant_id";
+    "select distinct(vm.variant_id),v.*,m.model_name from variant_mobile vm, product_variant v, mobile_models m where vm.variant_id=v.variant_id and  vm.quantity<v.min_qty and vm.mobile_id=m.model_id";
   con.query(sql, (err, data) => {
     if (err) {
       console.log(err);
@@ -36,41 +36,11 @@ router.get("/get-finished-quantity", verifyToken, (req, res) => {
         message: "No Products found of finished quantity"
       });
     } else {
-      let variants = [];
-      for (let variant of data) {
-        variants.push(variant.variant_id);
-      }
-      data = variants;
-      if (data.length > 0) {
-        sql =
-          "select * from product_variant where (quantity<min_qty and variant_id in (select variant_id from variant_mobile where variant_id not in(" +
-          data.join(",") +
-          "))) or variant_id in (" +
-          data.join(",") +
-          ") order by quantity";
-        console.log(sql);
-        con.query(sql, (err, result) => {
-          if (err) {
-            console.log(err);
-            res.status(200).json({
-              status: 400,
-              message: "No Products found of finished quantity"
-            });
-          } else {
-            res.status(200).json({
-              status: 200,
-              message: "Getting product of finished quantity",
-              data: result,
-              mobile_variant: data
-            });
-          }
-        });
-      } else {
-        res.status(200).json({
-          status: 400,
-          message: "No Products found of finished quantity"
-        });
-      }
+      res.status(200).json({
+        status: 200,
+        message: "Getting product of finished quantity",
+        mobile_variant: data
+      });
     }
   });
 });
@@ -306,7 +276,8 @@ router.post(
         } else {
           sql =
             "select s.* from product_specification ps,specification s where s.specification_id=ps.specification_id and ps.variant_id=" +
-            req.body.id;
+            req.body.id +
+            " order by s.specification_value";
           con.query(sql, (err, data) => {
             if (err) {
               console.log(err);

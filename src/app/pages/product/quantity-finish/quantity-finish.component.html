@@ -31,6 +31,7 @@
                 <tr>
                   <th>Product Id</th>
                   <th>Name</th>
+                  <th>Mobile</th>
                   <th>Image</th>
                   <th>Quantity</th>
                   <th>Increase Quantity</th>
@@ -40,6 +41,7 @@
                 <tr *ngFor="let variant of variants">
                   <td>{{ variant.variant_id }}</td>
                   <td>{{ variant.name }}</td>
+                  <td>{{ variant.model_name }}</td>
                   <td>
                     <img
                       src="{{ imageBaseUrl }}{{ variant.thumbnail }}"
