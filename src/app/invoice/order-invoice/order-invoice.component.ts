@@ -46,9 +46,12 @@ export class OrderInvoiceComponent implements OnInit {
                   (this.order.order_amount * product.tax) / (100 + product.tax);
                 this.order.taxable_amount =
                   this.order.order_amount - this.order.gst;
+                this.order.gst = this.order.gst.toFixed(2);
+                this.order.taxable_amount = this.order.taxable_amount.toFixed(
+                  2
+                );
               }
-              this.order.gst = this.order.gst.toFixed(2);
-              this.order.taxable_amount = this.order.taxable_amount.toFixed(2);
+
               this.orderDetails[i].price = this.orderDetails[i].price.toFixed(
                 2
               );
@@ -62,7 +65,7 @@ export class OrderInvoiceComponent implements OnInit {
               //@ts-ignore
               let promo = res.promocode;
               if (promo[0].discount_type == 1) {
-                if (this.order.order_amount > promo[0].max_discount) {
+                if (this.order.taxable_value >= promo[0].max_discount) {
                   this.order.discount = promo[0].discount;
                 } else {
                   this.order.discount = this.order.order_amount;

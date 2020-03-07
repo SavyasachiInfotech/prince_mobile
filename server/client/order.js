@@ -295,8 +295,6 @@ router.post(
                                     discount = promo[0].max_discount;
                                   }
                                 }
-                                orderdata.order_amount =
-                                  orderdata.order_amount - discount;
                                 orderdata.collectable_amount =
                                   orderdata.collectable_amount - discount;
                                 sql =

@@ -28,11 +28,19 @@ export class OrderDetailComponent implements OnInit {
             let result: any = res;
             console.log(result);
             this.order = result.order[0];
-
+            if (this.order.cgst && this.order.cgst > 0) {
+              this.order.taxable_value += this.order.cgst;
+            }
+            if (this.order.cgst && this.order.cgst > 0) {
+              this.order.taxable_value += this.order.sgst;
+            }
+            this.order.taxable_value = parseFloat(
+              this.order.taxable_value.toFixed(2)
+            );
             if (result.promocode && result.promocode.length > 0) {
               if (result.promocode[0].discount_type == 1) {
                 if (
-                  this.order.order_amount > result.promocode[0].max_discount
+                  this.order.taxable_value >= result.promocode[0].max_discount
                 ) {
                   this.order.promo_amount = result.promocode[0].discount;
                 } else {
@@ -40,11 +48,11 @@ export class OrderDetailComponent implements OnInit {
                 }
               } else {
                 this.order.promo_amount =
-                  this.order.order_amount * result.promocode[0].discount;
+                  this.order.taxable_value * result.promocode[0].discount;
               }
               this.order.promo_amount = this.order.promo_amount.toFixed(0);
               this.order.afterPromoAmount =
-                this.order.order_amount - this.order.promo_amount;
+                this.order.taxable_value - this.order.promo_amount;
               this.order.promocode = result.promocode[0].code;
               this.order.promocode_desc = result.promocode[0].description;
             } else {
