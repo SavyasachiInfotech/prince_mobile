@@ -57,24 +57,39 @@ export class AddProductComponent implements OnInit {
 
   getCategories(productBit) {
     this._categoryService.getAllCategories().subscribe(res => {
-      //@ts-ignore
-      if (res.status == 200) {
+      try {
         //@ts-ignore
-        this.categories = res.categories.filter(item => item.parent_id == 0);
-        //@ts-ignore
-        this.allSubCategories = res.categories.filter(
-          item => item.parent_id != 0
-        );
-        this.subcategories = this.allSubCategories.filter(
-          item => item.parent_id == this.product.category_id
-        );
-        //@ts-ignore
-        if (this.product.parent_id > 0 && productBit == 1) {
-          this.product.subcategory_id = this.product.category_id;
+        if (res.status == 200) {
           //@ts-ignore
-          this.product.category_id = this.product.parent_id;
+          this.categories = res.categories.filter(item => item.parent_id == 0);
+          //@ts-ignore
+          this.allSubCategories = res.categories.filter(
+            item => item.parent_id != 0
+          );
+          this.subcategories = this.allSubCategories.filter(
+            item => item.parent_id == this.product.category_id
+          );
+          if (
+            this.allSubCategories.find(
+              item => item.category_id == this.product.category_id
+            )
+          ) {
+            this.subcategories = this.allSubCategories.filter(
+              item =>
+                item.parent_id ==
+                this.allSubCategories.find(
+                  item => item.category_id == this.product.category_id
+                ).parent_id
+            );
+          }
+          //@ts-ignore
+          if (this.product.parent_id > 0 && productBit == 1) {
+            this.product.subcategory_id = this.product.category_id;
+            //@ts-ignore
+            this.product.category_id = this.product.parent_id;
+          }
         }
-      }
+      } catch (error) {}
     });
   }
 

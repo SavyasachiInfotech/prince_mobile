@@ -467,10 +467,11 @@ router.post(
               data.is_cancelable = 0;
             }
             let product = JSON.parse(result.variant);
+            data.is_replacable = 0;
             let diff =
               (new Date() - new Date(result.added_date)) /
               (1000 * 60 * 60 * 24);
-            if (product.warranty >= diff && result.status_id == 4) {
+            if (product.warranty >= diff && diff > 2 && result.status_id == 4) {
               data.is_replacable = 1;
             } else {
               data.is_replacable = 0;
