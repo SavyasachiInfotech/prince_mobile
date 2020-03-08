@@ -16,7 +16,6 @@ router.post(
       res.status(200).json({ status: "0", message: "Give the valid data" });
     } else {
       let search = req.body.search;
-      search = alphanum(search);
       let pageno = req.body.pageno;
       pageno = pageno - 1;
       let sql =
