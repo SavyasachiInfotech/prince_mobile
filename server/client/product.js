@@ -16,10 +16,11 @@ router.post(
       res.status(200).json({ status: "0", message: "Give the valid data" });
     } else {
       let search = req.body.search;
+      search = alphanum(search);
       let pageno = req.body.pageno;
       pageno = pageno - 1;
       let sql =
-        "select v.variant_id,v.name,v.price,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 and p.category_id=c.category_id  and (c.name like '" +
+        "select v.variant_id,v.name,v.price,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 and p.category_id=c.category_id  and (alphanum(c.name) like '%" +
         search +
         "%' or p.description like '%" +
         search +
