@@ -328,7 +328,7 @@ router.post(
                 );
 
                 sql =
-                  "select s.specification_key,s.specification_value,p.variant_id from product_specification p,specification s where s.specification_id=p.specification_id and p.variant_id=" +
+                  "select specification_key,specification_value,variant_id from product_specification where variant_id=" +
                   id;
                 con.query(sql, (err, specifications) => {
                   if (err) {

@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { Variant } from "src/app/core/data/variant";
 import { VariantService } from "src/app/core/mock/variant.service";
 import { ActivatedRoute } from "@angular/router";
-import { AttributeService } from "src/app/core/mock/attribute.service";
 import { AttributeValueService } from "src/app/core/mock/attribute-value.service";
 import { Config } from "src/app/core/data/config";
 import { SpecificationService } from "src/app/core/mock/specification.service";
@@ -31,6 +30,7 @@ export class ProductVariantComponent implements OnInit {
   att_value;
   spec;
   selectedSpecifications = new Array();
+  specification_value = "";
   selectQuantity = 0;
   selectOtherQuantity = 0;
   values = new Array();
@@ -159,7 +159,7 @@ export class ProductVariantComponent implements OnInit {
       if (res.status == 200) {
         //@ts-ignore
         this.specifications = res.data;
-        this.spec = this.specifications[0].specification_id;
+        this.spec = this.specifications[0].specification_key;
       }
     });
   }
@@ -193,9 +193,19 @@ export class ProductVariantComponent implements OnInit {
   }
 
   addSpecification() {
-    this.selectedSpecifications.push(
-      this.specifications.find(item => item.specification_id == this.spec)
-    );
+    if (
+      this.selectedSpecifications.find(
+        item => item.specification_key == this.spec
+      )
+    ) {
+      this._config.showMessage("Selected key already added.");
+      return;
+    }
+    let specification = {
+      specification_key: this.spec,
+      specification_value: this.specification_value
+    };
+    this.selectedSpecifications.push(specification);
   }
 
   addAttributes() {
@@ -221,7 +231,10 @@ export class ProductVariantComponent implements OnInit {
   }
 
   editSpecification(i) {
-    this.spec = this.selectedSpecifications[i].specification_id;
+    this.spec = this.selectedSpecifications[i].specification_key;
+    this.specification_value = this.selectedSpecifications[
+      i
+    ].specification_value;
     this.selectedSpecifications.splice(i, 1);
   }
 
@@ -230,10 +243,6 @@ export class ProductVariantComponent implements OnInit {
   }
 
   saveVariant() {
-    let specs = new Array();
-    for (let i = 0; i < this.selectedSpecifications.length; i++) {
-      specs.push(this.selectedSpecifications[i].specification_id);
-    }
     let atts = new Array();
     for (let i = 0; i < this.selectedAttributes.length; i++) {
       atts.push(this.selectedAttributes[i].value_id);
@@ -264,7 +273,7 @@ export class ProductVariantComponent implements OnInit {
     //@ts-ignore
     this.variant.mobiles = this.allMobiles;
     //@ts-ignore
-    this.variant.specifications = specs;
+    this.variant.specifications = this.selectedSpecifications;
     //@ts-ignore
     this.variant.attributes = atts;
     if (this.editBit) {

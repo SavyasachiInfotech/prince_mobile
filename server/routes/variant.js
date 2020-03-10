@@ -179,7 +179,14 @@ router.post(
               if (spec.length > 0) {
                 sql = "insert into product_specification values";
                 for (let i = 0; i < spec.length; i++) {
-                  sql += "(" + result.insertId + "," + spec[i] + ")";
+                  sql +=
+                    "(" +
+                    result.insertId +
+                    ",'" +
+                    spec[i].specification_key +
+                    "','" +
+                    spec[i].specification_value +
+                    "')";
                   if (i == spec.length - 1) {
                     sql + ";";
                   } else {
@@ -275,9 +282,9 @@ router.post(
             .json({ status: 400, message: "Attributes not found" });
         } else {
           sql =
-            "select s.* from product_specification ps,specification s where s.specification_id=ps.specification_id and ps.variant_id=" +
+            "select * from product_specification  where variant_id=" +
             req.body.id +
-            " order by s.specification_value";
+            " order by specification_value";
           con.query(sql, (err, data) => {
             if (err) {
               console.log(err);
@@ -380,7 +387,14 @@ router.put(
               if (spec.length > 0) {
                 sql = "insert into product_specification values";
                 for (let i = 0; i < spec.length; i++) {
-                  sql += "(" + variant.variant_id + "," + spec[i] + ")";
+                  sql +=
+                    "(" +
+                    variant.variant_id +
+                    ",'" +
+                    spec[i].specification_key +
+                    "','" +
+                    spec[i].specification_value +
+                    "')";
                   if (i == spec.length - 1) {
                     sql + ";";
                   } else {

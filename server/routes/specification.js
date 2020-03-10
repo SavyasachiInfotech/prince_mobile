@@ -71,7 +71,7 @@ router.get("/get-specification-by-id/:id", verifyToken, (req, res) => {
 
 router.post(
   "/add-specifications",
-  [check("key").isString(), check("value").isString()],
+  [check("key").isString()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -84,10 +84,8 @@ router.post(
     } else {
       let specification = req.body;
       let sql =
-        'insert into specification(specification_key,specification_value) values("' +
+        'insert into specification(specification_key) values("' +
         specification.key +
-        '","' +
-        specification.value +
         '")';
       con.query(sql, (err, result) => {
         if (err) {
@@ -108,7 +106,7 @@ router.post(
 
 router.put(
   "/update-specifications",
-  [check("key").isString(), check("id").isNumeric(), check("value").isString()],
+  [check("key").isString(), check("id").isNumeric()],
   verifyToken,
   (req, res) => {
     const errors = validationResult(req);
@@ -123,8 +121,6 @@ router.put(
       let sql =
         'update specification set specification_key="' +
         specification.key +
-        '",specification_value="' +
-        specification.value +
         '" where specification_id=' +
         specification.id;
       con.query(sql, (err, result) => {

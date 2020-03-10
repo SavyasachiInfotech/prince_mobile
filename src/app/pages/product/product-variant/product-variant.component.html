@@ -273,25 +273,27 @@
                   >+ Add New Specification</a
                 ></span
               >
-              &nbsp;&nbsp;&nbsp;&nbsp;<a
-                href="{{ url }}dashboard/specifications/add-specification/{{
-                  spec
-                }}"
-                target="_blank"
-                >Change Selected Specification</a
-              >
               <hr />
               <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-5">
+                  <label>Key</label>
                   <select class="form-control" name="specis" [(ngModel)]="spec">
                     <option
-                      [value]="specification.specification_id"
+                      [value]="specification.specification_key"
                       *ngFor="let specification of specifications"
-                      >{{ specification.specification_key }} &nbsp;&nbsp; =>
-                      &nbsp;&nbsp;
-                      {{ specification.specification_value }}</option
+                      >{{ specification.specification_key }}</option
                     >
                   </select>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label>Value</label>
+                    <input
+                      class="form-control"
+                      name="specification_value"
+                      [(ngModel)]="specification_value"
+                    />
+                  </div>
                 </div>
                 <div class="col-md-2">
                   <button class="btn btn-success" (click)="addSpecification()">
@@ -307,7 +309,6 @@
                 <table class="table product-overview">
                   <thead>
                     <tr>
-                      <th>ID</th>
                       <th>Key</th>
                       <th>Value</th>
                       <th>Action</th>
@@ -320,7 +321,6 @@
                         let i = index
                       "
                     >
-                      <td>{{ specis.specification_id }}</td>
                       <td>{{ specis.specification_key }}</td>
                       <td>{{ specis.specification_value }}</td>
                       <td>
