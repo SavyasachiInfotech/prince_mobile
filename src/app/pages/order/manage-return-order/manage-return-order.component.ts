@@ -47,7 +47,7 @@ export class ManageReturnOrderComponent implements OnInit {
   acceptRequest(order, i) {
     if (confirm("Do you want to accept request?")) {
       this._orderService
-        .acceptReturnOrder({ order_id: order.order_id })
+        .acceptReturnOrder({ order_id: order.order_id, type: order.type })
         .subscribe(res => {
           //@ts-ignore
           if (res.status == 200) {

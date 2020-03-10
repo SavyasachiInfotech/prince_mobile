@@ -93,16 +93,113 @@ router.post("/get-return-orders", verifyToken, (req, res) => {
 
 router.post("/accept-return-order", verifyToken, (req, res) => {
   let data = req.body;
-  let sql =
-    "update return_request set is_accepted=1 where order_id=" + data.order_id;
-  con.query(sql, (err, result) => {
-    if (err) {
-      console.log(err);
-      res.json({ status: 400, message: "Order is not accepted." });
-    } else {
-      res.json({ status: 200, message: "Order accepted successfully." });
-    }
-  });
+  if (data.type == 1) {
+    let sql = "select * from  customer_order where order_id=" + data.order_id;
+    con.query(sql, (err, order) => {
+      if (err) {
+        res.json({ status: 400, message: "Order is not accepted." });
+      } else {
+        sql = "select * from order_detail where order_id=" + data.order_id;
+        con.query(sql, (err, details) => {
+          if (err) {
+            res.json({ status: 400, message: "Order is not accepted." });
+          } else {
+            if (order && order.length > 0) {
+              order = order[0];
+              sql =
+                "insert into customer_order(user_id,address_id,status_id,is_cod,collectable_amount,order_amount,total_weight,dm_length,dm_breadth,dm_height,taxable_value,cgst,sgst,igst) values(" +
+                order.user_id +
+                "," +
+                order.address_id +
+                ",0,2,0," +
+                order.order_amount +
+                "," +
+                order.total_weight +
+                "," +
+                order.dm_length +
+                "," +
+                order.dm_breadth +
+                "," +
+                order.dm_height +
+                "," +
+                order.taxable_value +
+                "," +
+                order.cgst +
+                "," +
+                order.sgst +
+                "," +
+                order.igst +
+                ")";
+              con.query(sql, (err, insertedOrder) => {
+                if (err) {
+                  res.json({ status: 400, message: "Order is not accepted." });
+                } else {
+                  let order_id = insertedOrder.insertId;
+                  for (let detail of details) {
+                    let product = JSON.parse(detail.variant);
+                    let diff =
+                      (new Date() - new Date(detail.added_date)) /
+                      (1000 * 60 * 60 * 24);
+                    product.warranty = product.warranty - diff;
+                    sql =
+                      "insert into order_detail(order_id,variant_id,user_id,variant,attributes,quantity,mobile_required,mobile_id,promocode) values(" +
+                      order_id +
+                      "," +
+                      detail.variant_id +
+                      "," +
+                      detail.user_id +
+                      "," +
+                      JSON.stringify(product) +
+                      "," +
+                      detail.attributes +
+                      "," +
+                      detail.quantity +
+                      "," +
+                      detail.mobile_required +
+                      "," +
+                      detail.mobile_id +
+                      "," +
+                      detail.promocode +
+                      ")";
+                    con.query(sql);
+                  }
+                  let sql =
+                    "update return_request set is_accepted=1 where order_id=" +
+                    data.order_id;
+                  con.query(sql, (err, result) => {
+                    if (err) {
+                      console.log(err);
+                      res.json({
+                        status: 400,
+                        message: "Order is not accepted."
+                      });
+                    } else {
+                      res.json({
+                        status: 200,
+                        message: "Order accepted successfully."
+                      });
+                    }
+                  });
+                }
+              });
+            } else {
+            }
+          }
+        });
+      }
+    });
+  } else {
+    let sql =
+      "update return_request set is_accepted=1 where order_id=" + data.order_id;
+    con.query(sql, (err, result) => {
+      if (err) {
+        console.log(err);
+        res.json({ status: 400, message: "Order is not accepted." });
+      } else {
+        res.json({ status: 200, message: "Order accepted successfully." });
+      }
+    });
+  }
 });
 
 router.post("/paid-return-order", verifyToken, (req, res) => {
