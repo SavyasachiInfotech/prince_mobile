@@ -143,7 +143,7 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
                       (new Date() - new Date(detail.added_date)) /
                       (1000 * 60 * 60 * 24);
                     product.warranty = product.warranty - diff;
-                    sql =
+                    let sql =
                       "insert into order_detail(order_id,variant_id,user_id,variant,attributes,quantity,mobile_required,mobile_id,promocode) values(" +
                       order_id +
                       "," +
