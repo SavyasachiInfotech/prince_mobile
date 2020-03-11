@@ -150,11 +150,11 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
                       detail.variant_id +
                       "," +
                       detail.user_id +
-                      "," +
+                      ",'" +
                       JSON.stringify(product) +
-                      "," +
+                      "','" +
                       detail.attributes +
-                      "," +
+                      "'," +
                       detail.quantity +
                       "," +
                       detail.mobile_required +
