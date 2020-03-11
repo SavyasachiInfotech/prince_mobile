@@ -44,7 +44,7 @@ router.post("/delete-notification", auth.verifyToken, (req, res) => {
   }
 });
 
-router.get("/test-notification/:token", (req, res) => {
+router.get("/test-notification/:token/:screenNo", (req, res) => {
   let token = [
     {
       meta_value: req.params.token
@@ -56,7 +56,8 @@ router.get("/test-notification/:token", (req, res) => {
     "Order status changes Description",
     "Order status chnaged",
     "10",
-    "336"
+    "336",
+    req.params.screenNo
   );
   res.json({ status: "1", message: "Notification sent successfully." });
 });
