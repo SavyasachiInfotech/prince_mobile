@@ -108,7 +108,7 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
             if (order && order.length > 0) {
               order = order[0];
               sql =
-                "insert into customer_order(user_id,address_id,status_id,is_cod,collectable_amount,order_amount,total_weight,dm_length,dm_breadth,dm_height,taxable_value,cgst,sgst,igst) values(" +
+                "insert into customer_order(user_id,address_id,status_id,iscod,collectable_amount,order_amount,total_weight,dm_length,dm_breadth,dm_height,taxable_value,cgst,sgst,igst) values(" +
                 order.user_id +
                 "," +
                 order.address_id +
