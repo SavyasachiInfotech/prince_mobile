@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
             if (res.status == 200) {
               localStorage.setItem("token", res.token);
               alert("Logged in successfully.");
-              this._router.navigate(["dashboard/category"]);
+              this._router.navigate(["dashboard"]);
             } else {
               alert("Enter data properly.");
             }

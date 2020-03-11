@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { VariantService } from "src/app/core/mock/variant.service";
 import { Config } from "src/app/core/data/config";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-quantity-finish",
@@ -10,7 +11,8 @@ import { Config } from "src/app/core/data/config";
 export class QuantityFinishComponent implements OnInit {
   constructor(
     private _variantService: VariantService,
-    private _config: Config
+    private _config: Config,
+    private _router: Router
   ) {}
   variants = new Array();
   imageBaseUrl = "";
@@ -32,5 +34,12 @@ export class QuantityFinishComponent implements OnInit {
         this._config.showMessage(res.message);
       }
     });
+  }
+
+  goToVariant(variant) {
+    localStorage.setItem("finishedVariant", variant.variant_id.toString());
+    this._router.navigate([
+      "dashboard/product/add-variant/" + variant.product_id
+    ]);
   }
 }

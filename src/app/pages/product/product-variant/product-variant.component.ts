@@ -63,6 +63,22 @@ export class ProductVariantComponent implements OnInit {
           this.allMobile = res.mobiles;
           this.others = this.mobiles.filter(item => item.type == 1);
           this.mobiles = this.mobiles.filter(item => item.type == 0);
+          try {
+            if (
+              this.variants.length > 0 &&
+              localStorage.getItem("finishedVariant")
+            ) {
+              this.editVariant(
+                this.variants.find(
+                  item =>
+                    //@ts-ignore
+                    item.variant_id ==
+                    parseInt(localStorage.getItem("finishedVariant"))
+                )
+              );
+              localStorage.removeItem("finishedVariant");
+            }
+          } catch (error) {}
           // this.selectedMobile = this.mobiles[0].model_id;
         }
       });

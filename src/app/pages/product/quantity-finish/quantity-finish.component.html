@@ -55,8 +55,8 @@
                     }}</span>
                   </td>
                   <td>
-                    <a routerLink="../add-variant/{{ variant.product_id }}"
-                      >+ Increase Quantity</a
+                    <span class="link" (click)="goToVariant(variant)"
+                      >+ Increase Quantity</span
                     >
                   </td>
                 </tr>
