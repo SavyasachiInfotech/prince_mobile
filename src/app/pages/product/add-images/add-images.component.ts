@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { VariantService } from "src/app/core/mock/variant.service";
 import { ActivatedRoute } from "@angular/router";
-import { Config } from 'src/app/core/data/config';
+import { Config } from "src/app/core/data/config";
 
 @Component({
   selector: "app-add-images",
@@ -19,7 +19,7 @@ export class AddImagesComponent implements OnInit {
   constructor(
     private _variantService: VariantService,
     private _route: ActivatedRoute,
-    private _config:Config
+    private _config: Config
   ) {}
 
   ngOnInit() {
@@ -68,14 +68,6 @@ export class AddImagesComponent implements OnInit {
       var img = new Image();
       //@ts-ignore
       img.src = reader.result;
-      img.onload = () => {
-        //console.log(img.width,img.height)
-        if (img.width < 800 || img.height < 800) {
-          window.alert("Please select image with minimum resolution 800*800");
-          return;
-        }
-      };
-
       this.images[index] = reader.result;
     };
   }
@@ -102,47 +94,45 @@ export class AddImagesComponent implements OnInit {
               //@ts-ignore
               img.src = reader.result;
               img.onload = () => {
-                
-                  if (check == 0) {
-                    const formsData = new FormData();
-                    const file: Array<File> = this.filesToUpload;
-                    for (let i = 0; i < file.length; i++) {
-                      formsData.append("uploads[]", file[i], files[i]["name"]);
-                    }
-                    if (index < this.list.length) {
-                      let image = JSON.parse(this.variant.main_image);
-                      this._variantService
-                        .editUploadedImage(
-                          formsData,
-                          this.variant_id,
-                          image[index]
-                        )
-                        .subscribe(
-                          res => {
-                            this.uploadLabel[index] = "Image Uploaded";
-                          },
-                          err => {
-                            window.alert(
-                              "Image is not uploaded. Please try again"
-                            );
-                          }
-                        );
-                    } else {
-                      // formsData.set('file',this.filesToUpload[0]);
-
-                      this._variantService
-                        .uploadImage(formsData, this.variant_id)
-                        .subscribe(
-                          res => {
-                            this.uploadLabel[index] = "Image Uploaded";
-                          },
-                          err => {
-                            console.log(err);
-                          }
-                        );
-                    }
+                if (check == 0) {
+                  const formsData = new FormData();
+                  const file: Array<File> = this.filesToUpload;
+                  for (let i = 0; i < file.length; i++) {
+                    formsData.append("uploads[]", file[i], files[i]["name"]);
                   }
-                
+                  if (index < this.list.length) {
+                    let image = JSON.parse(this.variant.main_image);
+                    this._variantService
+                      .editUploadedImage(
+                        formsData,
+                        this.variant_id,
+                        image[index]
+                      )
+                      .subscribe(
+                        res => {
+                          this.uploadLabel[index] = "Image Uploaded";
+                        },
+                        err => {
+                          window.alert(
+                            "Image is not uploaded. Please try again"
+                          );
+                        }
+                      );
+                  } else {
+                    // formsData.set('file',this.filesToUpload[0]);
+
+                    this._variantService
+                      .uploadImage(formsData, this.variant_id)
+                      .subscribe(
+                        res => {
+                          this.uploadLabel[index] = "Image Uploaded";
+                        },
+                        err => {
+                          console.log(err);
+                        }
+                      );
+                  }
+                }
               };
             };
           }

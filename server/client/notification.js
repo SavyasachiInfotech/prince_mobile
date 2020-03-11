@@ -44,4 +44,21 @@ router.post("/delete-notification", auth.verifyToken, (req, res) => {
   }
 });
 
+router.get("/test-notification/:token", (req, res) => {
+  let token = [
+    {
+      meta_value: req.params.token
+    }
+  ];
+  let notificationService = require("./send-notification");
+  notificationService.sendNotification(
+    token,
+    "Order status changes Description",
+    "Order status chnaged",
+    "10",
+    "336"
+  );
+  res.json({ status: "1", message: "Notification sent successfully." });
+});
+
 module.exports = router;
