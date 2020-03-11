@@ -85,7 +85,7 @@
                       <button
                         class="btn btn-outline-primary"
                         (click)="paidOrder(order, i)"
-                        *ngIf="order.is_paid == 0"
+                        *ngIf="order.is_paid == 0 || order.type == 1"
                       >
                         Pay Order
                       </button>

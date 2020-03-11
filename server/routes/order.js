@@ -102,6 +102,7 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
         sql = "select * from order_detail where order_id=" + data.order_id;
         con.query(sql, (err, details) => {
           if (err) {
+            console.log(err);
             res.json({ status: 400, message: "Order is not accepted." });
           } else {
             if (order && order.length > 0) {
@@ -132,6 +133,7 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
                 ")";
               con.query(sql, (err, insertedOrder) => {
                 if (err) {
+                  console.log(err);
                   res.json({ status: 400, message: "Order is not accepted." });
                 } else {
                   let order_id = insertedOrder.insertId;
