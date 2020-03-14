@@ -14,7 +14,7 @@ router.get("/dashboard-detail", auth.verifyToken, (req, res) => {
       res.json({ status: 400, message: "Dashboard detail found." });
     } else {
       sql =
-        "select count(o.order_id) as orders, count(o.order_amount) as total,s.status,o.status_id from customer_order o, status s where s.id=o.status_id group by o.status_id";
+        "select count(o.order_id) as orders, sum(o.order_amount) as total,s.status,o.status_id from customer_order o, status s where s.id=o.status_id group by o.status_id";
       con.query(sql, (err, countData) => {
         if (err) {
           res.json({

@@ -12,14 +12,17 @@ export class DashboardComponent implements OnInit {
     private _dashboardService: DashboardService,
     private _config: Config
   ) {}
+  public dashboardDetail = new Array();
 
   ngOnInit() {
     this._dashboardService.getDashboardDetail().subscribe(res => {
-      console.log(res);
       //@ts-ignore
       if (res.status == 200) {
+        console.log(res);
         //@ts-ignore
         let stockdata = res.dashboardData;
+        //@ts-ignore
+        this.dashboardDetail = res.countData;
         let data = new Array();
         data.push([stockdata[0].datetime, stockdata[0].total]);
         data = this.addDateBetweenTwoDate(
@@ -39,71 +42,35 @@ export class DashboardComponent implements OnInit {
           stockdata[stockdata.length - 1].datetime,
           stockdata[stockdata.length - 1].total
         ]);
-        console.log(data);
+        //@ts-ignore
         Highcharts.chart("profitDashboard", {
           // title: {
           //   text: null
           // },
-          // yAxis: {
-          //   title: {
-          //     text: "Amount"
-          //   }
-          // },
-          // credits: { enabled: false },
-          // xAxis: {
-          //   title: {
-          //     text: "Date"
-          //   },
-          //   type: "datetime",
-          //   labels: {
-          //     format: "{value:%b-%e}"
-          //   }
-          // },
-
-          // series: [
-          //   {
-          //     name: data,
-          //     showInLegend: false,
-          //     data: data,
-          //     type: "area",
-          //     tooltip: {
-          //       valueDecimals: 2
-          //     },
-          //     threshold: null
-          //   }
-          // ],
-          // responsive: {
-          //   rules: [
-          //     {
-          //       condition: {
-          //         maxWidth: 500
-          //       },
-          //       chartOptions: {
-          //         chart: {
-          //           height: 300
-          //         },
-          //         subtitle: {
-          //           text: null
-          //         },
-          //         navigator: {
-          //           enabled: false
-          //         }
-          //       }
-          //     }
-          //   ]
-          // }
+          yAxis: {
+            title: {
+              text: "Amount"
+            }
+          },
+          credits: { enabled: false },
+          xAxis: {
+            title: {
+              text: "Date"
+            }
+          },
           rangeSelector: {
             selected: 1
           },
 
           title: {
-            text: "AAPL Stock Price"
+            text: "Total Selling"
           },
 
           series: [
             {
-              name: "AAPL Stock Price",
+              name: "Total Selling",
               data: data,
+              //@ts-ignore
               type: "areaspline",
               threshold: null,
               tooltip: {
