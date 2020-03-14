@@ -608,12 +608,12 @@ router.post(
       }
       if (req.body.status == -1) {
         sql =
-          "select d.*,o.status_id from order_detail d, customer_order o where o.order_id=d.order_id and d.user_id=" +
+          "select d.*,o.status_id from order_detail d, customer_order o where o.order_id=d.order_id and (o.status_id<5 or o.status_id=7) and d.user_id=" +
           req.userId +
           " order by d.added_date desc";
       } else {
         sql =
-          "select d.*,o.status_id from order_detail d, customer_order o where o.order_id=d.order_id and o.status_id>5 and d.user_id=" +
+          "select d.*,o.status_id from order_detail d, customer_order o where o.order_id=d.order_id and o.status_id>5 and o.status_id!=7 and d.user_id=" +
           req.userId +
           " order by d.added_date desc";
       }
