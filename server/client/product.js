@@ -373,7 +373,7 @@ router.post(
                             displayMobiles.push(mobiles[i]);
                           }
                         }
-                        mobiles = displayMobiles;
+                        // mobiles = displayMobiles;
                         sql =
                           "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +
                           id +
