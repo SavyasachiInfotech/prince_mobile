@@ -16,6 +16,8 @@ export class ManageOrderComponent implements OnInit {
   public lastPage: number = 1;
   public orders: any[] = new Array();
   public currentStatus: number = 0;
+  public startDate = new Date("2020-01-01").toISOString().split("T")[0];
+  public endDate = new Date().toISOString().split("T")[0];
 
   ngOnInit() {
     this.limit = this._config.displayLimit;
@@ -82,7 +84,9 @@ export class ManageOrderComponent implements OnInit {
     this._orderService
       .getOrdersByStatus({
         status: this.currentStatus,
-        pageno: this.currentPage - 1
+        pageno: this.currentPage - 1,
+        start: this.startDate,
+        end: this.endDate
       })
       .subscribe(res => {
         //@ts-ignore

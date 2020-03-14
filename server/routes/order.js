@@ -34,7 +34,11 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
   let sql =
     "select o.*,v.name,v.thumbnail from customer_order o, product_variant v where o.status_id=" +
     req.body.status +
-    " and o.variant_id=v.variant_id order by o.added_date desc limit " +
+    " and o.variant_id=v.variant_id and date(added_date) '" +
+    req.body.start +
+    "' AND '" +
+    req.body.end +
+    "' BETWEEN  order by o.added_date desc limit " +
     req.body.pageno * limit +
     "," +
     limit;
