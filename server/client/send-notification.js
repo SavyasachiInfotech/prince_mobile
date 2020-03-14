@@ -31,6 +31,7 @@ module.exports = {
           console.log("error");
           console.log(err);
         } else {
+          console.log(response);
         }
       });
     }
