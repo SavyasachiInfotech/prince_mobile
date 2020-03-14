@@ -7,7 +7,7 @@ const auth = require("../auth");
 
 router.get("/dashboard-detail", auth.verifyToken, (req, res) => {
   let sql =
-    "SELECT SUM(order_amount) as total,(UNIX_TIMESTAMP(added_date)*1000) as datetime FROM customer_order where status_id<=4 group by added_date";
+    "SELECT SUM(order_amount) as total,(UNIX_TIMESTAMP(added_date)*1000) as datetime FROM customer_order where status_id<=4 group by date(added_date)";
   con.query(sql, (err, chartData) => {
     if (err) {
       console.log(err);
