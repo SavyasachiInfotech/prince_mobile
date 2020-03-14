@@ -48,7 +48,6 @@ export class ManageOrderComponent implements OnInit {
   }
 
   acceptRequest(order, i) {
-    console.log(order);
     this._config.showMessage("Return request accepted.");
   }
 
