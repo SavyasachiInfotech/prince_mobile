@@ -510,7 +510,7 @@ function changeStatus(res, order) {
                 order.user_id,
                 order.order_id,
                 result[0].item_id,
-                "3"
+                3
               );
             }
           });
