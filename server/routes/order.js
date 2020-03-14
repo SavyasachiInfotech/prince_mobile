@@ -93,6 +93,7 @@ router.post("/get-return-orders", verifyToken, (req, res) => {
 
 router.post("/accept-return-order", verifyToken, (req, res) => {
   let data = req.body;
+  let order_id;
   if (data.type == 1) {
     let sql = "select * from  customer_order where order_id=" + data.order_id;
     con.query(sql, (err, order) => {
@@ -136,7 +137,7 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
                   console.log(err);
                   res.json({ status: 400, message: "Order is not accepted." });
                 } else {
-                  let order_id = insertedOrder.insertId;
+                  order_id = insertedOrder.insertId;
                   for (let detail of details) {
                     let product = JSON.parse(detail.variant);
                     let diff =
@@ -171,6 +172,7 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
                   con.query(sql, (err, result) => {
                     if (err) {
                       console.log(err);
+                      deleteOrder(order_id);
                       res.json({
                         status: 400,
                         message: "Order is not accepted."
@@ -203,6 +205,11 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
     });
   }
 });
+
+function deleteOrder(order_id) {
+  let sql = "delete from customer_order where order_id=" + order_id;
+  con.query(sql);
+}
 
 router.post("/paid-return-order", verifyToken, (req, res) => {
   let data = req.body;
