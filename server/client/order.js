@@ -472,7 +472,6 @@ router.post(
             let diff =
               (new Date() - new Date(result.order_date)) /
               (1000 * 60 * 60 * 24);
-            console.log("diff", diff);
             if (
               product.warranty + 2 >= diff &&
               diff > 2 &&
@@ -802,7 +801,7 @@ router.post(
                           console.log(
                             "*************************************************************"
                           );
-                          con.quantity(sql);
+                          con.query(sql);
                         }
                       }
                     });
