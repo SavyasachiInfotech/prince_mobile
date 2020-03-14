@@ -139,7 +139,7 @@ router.post(
           res.status(200).json({ status: 400, message: "Variant not added." });
         } else {
           if (variantsdata.length > 0) {
-            res.status(200).json({
+            return res.status(200).json({
               status: 400,
               message: "Variant name is duplicated. Please add another name"
             });
