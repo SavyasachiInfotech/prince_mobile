@@ -315,7 +315,8 @@ export class ProductVariantComponent implements OnInit {
             alert("Variant added successfully.");
             this.getVariants();
           } else {
-            alert("Variant is not added. Please enter data properly.");
+            //@ts-ignore
+            alert(res.message);
           }
         },
         err => {
