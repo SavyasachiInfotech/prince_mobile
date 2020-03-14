@@ -583,6 +583,7 @@ router.post(
     } else {
       let sql;
       let id = req.userId;
+      console.log(req.body);
       if (req.body.status >= 0 && req.body.status < 4) {
         sql =
           "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and d.status_id<4 and d.user_id= " +
