@@ -598,7 +598,7 @@ router.post(
             " order by d.added_date desc";
         } else {
           sql =
-            "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and  d.status_id=" +
+            "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and  d.status_id>" +
             req.body.status +
             " and d.user_id=" +
             req.userId +
