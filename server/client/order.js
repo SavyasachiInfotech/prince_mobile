@@ -794,13 +794,6 @@ router.post(
                       if (detail) {
                         for (let data of detail) {
                           sql = `update variant_mobile set quantity=quantity+${data.quantity} where variant_id=${data.variant_id} and mobile_id=${data.mobile_id}`;
-                          console.log(
-                            "**********************Update Order Query*********************"
-                          );
-                          console.log(sql);
-                          console.log(
-                            "*************************************************************"
-                          );
                           con.query(sql);
                         }
                       }

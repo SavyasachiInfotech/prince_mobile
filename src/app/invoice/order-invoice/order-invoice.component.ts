@@ -46,6 +46,9 @@ export class OrderInvoiceComponent implements OnInit {
                   (this.order.order_amount * product.tax) / (100 + product.tax);
                 this.order.taxable_amount =
                   this.order.order_amount - this.order.gst;
+                this.order.totalWithTax =
+                  this.order.gst + this.order.taxable_value;
+                this.order.totalWithTax = this.order.totalWithTax.toFixed(2);
                 this.order.gst = this.order.gst.toFixed(2);
                 this.order.taxable_amount = this.order.taxable_amount.toFixed(
                   2

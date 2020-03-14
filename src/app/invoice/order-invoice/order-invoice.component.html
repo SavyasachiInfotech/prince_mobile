@@ -85,6 +85,13 @@
 
     <table class="balance">
       <tr>
+        <th><span>Taxable Amount</span></th>
+        <td>
+          <span data-prefix>&#8377;</span
+          ><span>{{ order.taxable_value }} </span>
+        </td>
+      </tr>
+      <tr>
         <th><span>GST</span></th>
         <td>
           <span data-prefix>&#8377;</span><span>{{ order.gst }} </span>
@@ -94,7 +101,7 @@
         <th><span>Total</span></th>
         <td>
           <span data-prefix>&#8377;</span
-          ><span>{{ order.taxable_value }} </span>
+          ><span>{{ order.totalWithTax  }} </span>
         </td>
       </tr>
       <tr>
