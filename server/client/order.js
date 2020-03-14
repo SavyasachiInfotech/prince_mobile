@@ -611,6 +611,11 @@ router.post(
           "select d.*,o.status_id from order_detail d, customer_order o where o.order_id=d.order_id and d.user_id=" +
           req.userId +
           " order by d.added_date desc";
+      } else {
+        sql =
+          "select d.*,o.status_id from order_detail d, customer_order o where o.order_id=d.order_id and o.status_id>5 and d.user_id=" +
+          req.userId +
+          " order by d.added_date desc";
       }
       if (req.body.status)
         con.query(sql, (err, result) => {
