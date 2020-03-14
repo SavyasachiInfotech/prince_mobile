@@ -369,11 +369,11 @@ router.post(
                         for (let i = 0; i < mobiles.length; i++) {
                           net_total =
                             net_total + mobiles[i].min_qty * mobiles[i].price;
-                          if (mobiles[i].max_quantity > 1) {
+                          if (mobiles[i].max_quantity > 0) {
                             displayMobiles.push(mobiles[i]);
                           }
                         }
-                        // mobiles = displayMobiles;
+                        mobiles = displayMobiles;
                         sql =
                           "select v.variant_id,v.thumbnail from product_variant v where v.variant_id!=" +
                           id +
