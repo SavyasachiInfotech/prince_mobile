@@ -591,7 +591,7 @@ router.post(
       } else {
         if (req.body.status == 6) {
           sql =
-            "select d.*,o.status_id from return_order_detail d,customer_order o  where o.order_id=d.order_id and  d.status_id=" +
+            "select d.*,o.status_id from return_order_detail d,customer_order o  where o.order_id=d.order_id and  o.status_id>" +
             req.body.status +
             " and d.user_id=" +
             req.userId +
