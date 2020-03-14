@@ -29,6 +29,9 @@
                 <input type="date" name="endDate" [(ngModel)]="endDate" class="form-control" />
               </div>
             </div>
+            <div>
+              <button (click)="getOrderByStatus(currentStatus)" class="btn btn-primary">Get Orders</button>
+            </div>
             <ul class="nav nav-tabs">
               <li class="nav-item" (click)="getOrderByStatus(0)">
                 <a

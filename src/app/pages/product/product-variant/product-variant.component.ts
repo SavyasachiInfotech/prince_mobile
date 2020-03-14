@@ -349,5 +349,6 @@ export class ProductVariantComponent implements OnInit {
         }
       });
     this.editBit = true;
+    console.log(this.variant);
   }
 }
