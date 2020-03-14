@@ -340,7 +340,7 @@ router.post(
                     sql =
                       "select vm.variant_id,vm.mobile_id,vm.quantity as max_quantity,IFNULL((select quantity from  cart where cart_id=" +
                       req.userId +
-                      " and variant_id=v.variant_id and mobile_id=m.model_id),0) as cart_quantity,v.min_qty,m.model_name,vm.price,vm.discount from variant_mobile vm,product_variant v,mobile_models m where m.model_id=vm.mobile_id and vm.variant_id=" +
+                      " and variant_id=v.variant_id and mobile_id=m.model_id),0) as cart_quantity,v.min_qty,m.model_name,vm.price,vm.discount from variant_mobile vm,product_variant v,mobile_models m where m.model_id=vm.mobile_id and vm.quantity>v.min_qty and vm.variant_id=" +
                       id +
                       " and v.variant_id=" +
                       id;
