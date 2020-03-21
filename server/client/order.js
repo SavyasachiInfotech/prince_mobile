@@ -160,7 +160,7 @@ router.post(
                   }
                 }
                 if (queryBit == 0) {
-                  con.query(sql, (err, order) => {
+                  con.query(sql, async (err, order) => {
                     if (err) {
                       console.log(err);
                       deleteOrder(order_id);
@@ -183,8 +183,10 @@ router.post(
                       orderdata.taxable_amount =
                         orderdata.collectable_amount - orderdata.taxable_amount;
                       if (req.body.iscod == 1) {
+                        let cod = require("../codCharge");
+                        let codCharge = await cod.getCodCharge();
                         orderdata.collectable_amount =
-                          orderdata.collectable_amount + 50;
+                          orderdata.collectable_amount + codCharge;
                       }
                       order.order_amount = order.collectable_amount;
                       if (data.promo_id == 0) {
