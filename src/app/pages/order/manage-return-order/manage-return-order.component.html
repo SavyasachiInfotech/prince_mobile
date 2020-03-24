@@ -52,7 +52,10 @@
                   </td>
                   <td>{{ order.reason }}</td>
                   <td>
-                    <a [href]="order.thumbnail" target="_blank">
+                    <a
+                      href="{{ imageBaseUrl }}{{ order.image }}"
+                      target="_blank"
+                    >
                       <img
                         src="{{ imageBaseUrl }}{{ order.image }}"
                         width="50"

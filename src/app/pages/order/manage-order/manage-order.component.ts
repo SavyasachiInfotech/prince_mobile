@@ -35,7 +35,8 @@ export class ManageOrderComponent implements OnInit {
       .changeStatus({
         status: status,
         order_id: order.order_id,
-        user_id: order.user_id
+        user_id: order.user_id,
+        address_id: order.address_id
       })
       .subscribe(res => {
         //@ts-ignore

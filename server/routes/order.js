@@ -244,9 +244,10 @@ function bookShipment(order, res) {
   let sql =
     "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
     order.order_id +
-    " and o.variant_id=v.variant_id and a.address_id=o.address_id";
+    " and o.variant_id=v.variant_id and a.address_id=o.address_id and o.address_id=" +
+    order.address_id;
   console.log(sql);
-  con.query(sql, (err, orderdata) => {
+  con.query(sql, (err, ordersdata) => {
     if (err) {
       console.log(err);
       res
@@ -254,7 +255,7 @@ function bookShipment(order, res) {
         .json({ status: 400, message: "Order status not changed." });
     } else {
       if (orderdata.length > 0) {
-        orderdata = orderdata[0];
+        let orderdata = ordersdata[0];
         let orderDate = new Date(orderdata.order_date);
         orderDate =
           orderDate.getFullYear() +
@@ -301,12 +302,16 @@ function bookShipment(order, res) {
           Weight: orderdata.total_weight,
           Length: "18",
           ProductDetail: orderdata.name,
-          InvoiceAmount: orderdata.order_amount.toString(),
-          CollectableAmount: orderdata.collectable_amount.toString(),
           CheckoutMode: "Auto",
           IsSellerRegUnderGST: "No",
           InvoiceDate: orderDate
         };
+        for (let orderDetail of ordersdata) {
+          shipment.InvoiceAmount = orderDetail.order_amount;
+          shipment.CollectableAmount = orderDetail.collectable_amount;
+        }
+        shipment.InvoiceAmount = shipment.InvoiceAmount.toFixed(2);
+        shipment.CollectableAmount = shipment.CollectableAmount.toFixed(2);
 
         if (orderdata.iscod == 1) {
           shipment.PaymentType = "COD";
@@ -342,130 +347,47 @@ function bookShipment(order, res) {
             let resData = JSON.parse(body.trim());
             console.log(resData);
             if (resData.Msg == "Success") {
-              sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}' where order_id=${order.order_id}`;
-              con.query(sql);
-              changeStatus(res, order);
+              let status = order.status_id;
+              for (let order of ordersdata) {
+                sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}', status_id=${status} where order_id=${order.order_id}`;
+                con.query(sql);
+                sql =
+                  "insert into track_detail(item_id,status_id) values(" +
+                  order.order_id +
+                  "," +
+                  status +
+                  ")";
+                con.query(sql, (err, result) => {
+                  if (err) {
+                    res.status(200).json({
+                      status: 200,
+                      message: "Status changed successfully."
+                    });
+                  } else {
+                    sql =
+                      "select * from order_detail where order_id=" +
+                      order.order_id;
+                    con.query(sql, (err, result) => {
+                      if (result && result.length > 0) {
+                        notification.sendOrderStatusNotification(
+                          order.status,
+                          order.user_id,
+                          order.order_id,
+                          result[0].item_id,
+                          3
+                        );
+                      }
+                    });
+
+                    res.status(200).json({
+                      status: 200,
+                      message: "Status changed successfully."
+                    });
+                  }
+                });
+              }
             } else {
               console.log(resData);
-              res.json({
-                status: 400,
-                message: "Order not dispatched." + resData.Error[0]
-              });
-            }
-          }
-        );
-      } else {
-        res
-          .status(200)
-          .json({ status: 400, message: "Order status not changed" });
-      }
-    }
-  });
-}
-
-function returnBookShipment(order, res) {
-  let sql =
-    "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
-    order.order_id +
-    " and o.variant_id=v.variant_id and a.address_id=o.address_id";
-  console.log(sql);
-  con.query(sql, (err, orderdata) => {
-    if (err) {
-      console.log(err);
-      res.json({ status: 400, message: "Order not accepted." });
-    } else {
-      if (orderdata.length > 0) {
-        orderdata = orderdata[0];
-        let orderDate = new Date(orderdata.order_date);
-        orderDate =
-          orderDate.getFullYear() +
-          "-" +
-          (orderDate.getMonth() + 1) +
-          "-" +
-          orderDate.getDate();
-        if (!orderdata.total_weight || orderDate.total_weight <= 0) {
-          orderdata.total_weight = 0.05;
-        }
-        let shipment = {
-          InvoiceNo: order.order_id.toString(),
-          PickupCode: order.pickupCode.toString(),
-          ShowDiffrenceSender: "Yes",
-          SenderName: "Prince Mobile",
-          SenderMobile: "9737156066",
-          CustomerEmail: orderdata.email,
-          Breadth: "12",
-          Height: "4",
-          ShipPartnerCode: "Auto",
-          SellerGSTNo: "123456789123",
-          SupplySellerStatePlace: "Gujarat",
-          BuyerGSTNo: "",
-          EwayBillSrNumber: "",
-          HSNCode: "",
-          TaxableValue: "",
-          SGSTAmount: "0",
-          CGSTAmount: "0",
-          IGSTAmount: "0",
-          Discount: "0",
-          GSTTaxRateSGSTN: "0",
-          GSTTaxRateCGSTN: "0",
-          GSTTaxRateIGSTN: "0",
-          GSTTaxTotal: "0",
-          CustomerFirstName: orderdata.first_name,
-          CustomerLastName: orderdata.last_name,
-          CustomerAddress1: orderdata.flatno,
-          CustomerAddress2: orderdata.colony,
-          CustomerAddress3: orderdata.landmark,
-          CustomerPincode: orderdata.pincode,
-          CustomerCity: orderdata.city,
-          CustomerState: orderdata.state,
-          CustomerMobile: orderdata.mobile,
-          Weight: orderdata.total_weight,
-          Length: "18",
-          ProductDetail: orderdata.name,
-          InvoiceAmount: orderdata.order_amount,
-          CollectableAmount: orderdata.collectable_amount,
-          CheckoutMode: "Auto",
-          IsSellerRegUnderGST: "No",
-          InvoiceDate: orderDate
-        };
-
-        if (orderdata.iscod == 1) {
-          shipment.PaymentType = "COD";
-        } else {
-          shipment.PaymentType = "Prepaid";
-        }
-        console.log(shipment);
-        let http = require("https");
-        let options = {
-          host: process.env.ZIPPINGBASEURL,
-          path: "/Api/BookShipment",
-          body: {
-            oauth: {
-              username: process.env.ZIPPINGUNAME,
-              key: process.env.ZIPPINGPASS,
-              version: "1"
-            },
-            ManifestDetails: shipment
-          },
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            accept: "application/json"
-          },
-          json: true
-        };
-        let Request = require("request");
-        Request(
-          "https://sandbox.zipping.in/Api/BookShipment",
-          options,
-          (err, response, body) => {
-            console.log(body);
-            let resData = JSON.parse(body.trim());
-            if (resData.Msg == "Success") {
-              sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}' where order_id=${order.order_id}`;
-              con.query(sql);
-              changeStatus(res, order);
-            } else {
               res.json({
                 status: 400,
                 message: "Order not dispatched." + resData.Error[0]
