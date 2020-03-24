@@ -242,7 +242,7 @@ router.post("/change-status", verifyToken, (req, res) => {
 
 function bookShipment(order, res) {
   let sql =
-    "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.status_id=2 and o.variant_id=v.variant_id and a.address_id=o.address_id and o.address_id=" +
+    "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.status_id=1 and o.variant_id=v.variant_id and a.address_id=o.address_id and o.address_id=" +
     order.address_id;
   console.log(sql);
   con.query(sql, (err, ordersdata) => {
