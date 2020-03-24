@@ -242,9 +242,7 @@ router.post("/change-status", verifyToken, (req, res) => {
 
 function bookShipment(order, res) {
   let sql =
-    "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.order_id=" +
-    order.order_id +
-    " and o.variant_id=v.variant_id and a.address_id=o.address_id and o.address_id=" +
+    "select o.*,o.added_date as order_date,v.*,a.* from customer_order o, product_variant v, customer_address a where o.status_id=2 and o.variant_id=v.variant_id and a.address_id=o.address_id and o.address_id=" +
     order.address_id;
   console.log(sql);
   con.query(sql, (err, ordersdata) => {
@@ -254,7 +252,8 @@ function bookShipment(order, res) {
         .status(200)
         .json({ status: 400, message: "Order status not changed." });
     } else {
-      if (orderdata.length > 0) {
+      console.log(ordersdata.length);
+      if (ordersdata.length > 0) {
         let orderdata = ordersdata[0];
         let orderDate = new Date(orderdata.order_date);
         orderDate =
