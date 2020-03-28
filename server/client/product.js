@@ -19,7 +19,7 @@ router.post(
       let pageno = req.body.pageno;
       pageno = pageno - 1;
       let sql =
-        "select v.variant_id,v.name,v.price,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 and p.category_id=c.category_id  and (c.name like '%" +
+        "select distinct(v.variant_id),v.name,v.price,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 and p.category_id=c.category_id  and (c.name like '%" +
         search +
         "%' or p.description like '%" +
         search +
@@ -33,7 +33,7 @@ router.post(
         limit;
       console.log(sql);
       let countSql =
-        "select count(v.variant_id) as total from product p,product_variant v,category c where p.product_id=v.product_id and p.is_display=1 and v.parent=1 and v.parent=1 and p.category_id=c.category_id and (c.name like '" +
+        "select count(distinct(v.variant_id)) as total from product p,product_variant v,category c where p.product_id=v.product_id and p.is_display=1 and v.parent=1 and v.parent=1 and p.category_id=c.category_id and (c.name like '" +
         search +
         "%' or  p.description like '%" +
         search +
