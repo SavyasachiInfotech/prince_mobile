@@ -18,6 +18,10 @@ router.post(
       let search = req.body.search;
       let pageno = req.body.pageno;
       pageno = (pageno - 1) * limit;
+      let searchData = search.split(" ");
+      let mobileSearch = getQueryForSearch("model_name", searchData);
+      let descriptionSearch = getQueryForSearch("p.description", searchData);
+      let variantSearch = getQueryForSearch("v.name", searchData);
       let sql =
         "select distinct(v.variant_id),v.name,v.price,v.discount,t.tax,v.list_image,v.product_id from product p,product_variant v,tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 and p.category_id=c.category_id  and (c.name like '%" +
         search +
@@ -25,9 +29,15 @@ router.post(
         search +
         "%' or v.name like '%" +
         search +
-        "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where m.model_name like '%" +
+        "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where( m.model_name like '%" +
         search +
-        "%' and vm.mobile_id=m.model_id ) limit " +
+        "%' or " +
+        mobileSearch +
+        " ) and vm.mobile_id=m.model_id ) or " +
+        descriptionSearch +
+        " or " +
+        variantSearch +
+        " limit " +
         pageno +
         "," +
         limit;
@@ -41,7 +51,12 @@ router.post(
         search +
         "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where m.model_name like '%" +
         search +
-        "%' and vm.mobile_id=m.model_id )";
+        "%' or " +
+        mobileSearch +
+        " and vm.mobile_id=m.model_id ) or " +
+        descriptionSearch +
+        " or " +
+        variantSearch;
       con.query(countSql, (err, data) => {
         if (err) {
           console.log(err);
@@ -96,6 +111,18 @@ router.post(
     }
   }
 );
+
+function getQueryForSearch(key, searchData) {
+  let sql = "";
+  for (let i = 0; i < searchData.length; i++) {
+    sql += key + "='%" + searchData[i] + "%' ";
+    if (i != searchData.length - 1) {
+      sql += "or ";
+    }
+  }
+
+  return sql;
+}
 
 router.post(
   "/get-products",
