@@ -95,6 +95,7 @@ router.post(
                   typeof val !== "object" && val !== null ? String(val) : val
                 );
                 let totalPages = Math.ceil(data[0].total / limit);
+                console.log(totalPages);
                 res.status(200).json({
                   status: "1",
                   message: "Getting Products successfully.",
