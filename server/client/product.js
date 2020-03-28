@@ -31,6 +31,7 @@ router.post(
         pageno +
         "," +
         limit;
+      console.log(sql);
       let countSql =
         "select count(v.variant_id) as total from product p,product_variant v,category c where p.product_id=v.product_id and p.is_display=1 and v.parent=1 and v.parent=1 and p.category_id=c.category_id and (c.name like '" +
         search +
