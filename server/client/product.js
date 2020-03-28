@@ -17,6 +17,7 @@ router.post(
     } else {
       let search = req.body.search;
       let pageno = req.body.pageno;
+      search = search.trim();
       pageno = (pageno - 1) * limit;
       let searchData = search.split(" ");
       let mobileSearch = getQueryForSearch("model_name", searchData);
