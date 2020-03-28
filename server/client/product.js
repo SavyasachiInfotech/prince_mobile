@@ -32,11 +32,11 @@ router.post(
         search +
         "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where( m.model_name like '%" +
         search +
-        "%' or " +
+        "%' " +
         mobileSearch +
-        " ) and vm.mobile_id=m.model_id ) or " +
+        " ) and vm.mobile_id=m.model_id ) " +
         descriptionSearch +
-        " or " +
+        " " +
         variantSearch +
         " limit " +
         pageno +
@@ -52,11 +52,11 @@ router.post(
         search +
         "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where m.model_name like '%" +
         search +
-        "%' or " +
+        "%' " +
         mobileSearch +
-        " and vm.mobile_id=m.model_id ) or " +
+        " and vm.mobile_id=m.model_id ) " +
         descriptionSearch +
-        " or " +
+        " " +
         variantSearch;
       con.query(countSql, (err, data) => {
         if (err) {
@@ -117,10 +117,7 @@ router.post(
 function getQueryForSearch(key, searchData) {
   let sql = "";
   for (let i = 1; i < searchData.length; i++) {
-    sql += key + "='%" + searchData[i] + "%' ";
-    if (i != searchData.length - 1) {
-      sql += "or ";
-    }
+    sql += "or " + key + "='%" + searchData[i] + "%' ";
   }
 
   return sql;
