@@ -25,7 +25,7 @@ router.post(
         search +
         "%' or v.name like '%" +
         search +
-        "%') or v.variant_id in (select vm.variant_id from variant_mobile vm, mobile_models m where m.model_name like '%" +
+        "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where m.model_name like '%" +
         search +
         "%' and vm.mobile_id=m.model_id ) limit " +
         pageno +
@@ -39,7 +39,7 @@ router.post(
         search +
         "%' or v.name like '%" +
         search +
-        "%') or v.variant_id in (select vm.variant_id from variant_mobile vm, mobile_models m where m.model_name like '%" +
+        "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where m.model_name like '%" +
         search +
         "%' and vm.mobile_id=m.model_id )";
       con.query(countSql, (err, data) => {
