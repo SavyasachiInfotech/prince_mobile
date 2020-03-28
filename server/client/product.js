@@ -121,7 +121,7 @@ function getQueryForSearch(key, searchData) {
     i = 1;
   }
   for (; i < searchData.length; i++) {
-    sql += "or " + key + "='%" + searchData[i] + "%' ";
+    sql += "or " + key + "like '%" + searchData[i] + "%' ";
   }
 
   return sql;
