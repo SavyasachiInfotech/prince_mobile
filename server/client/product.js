@@ -116,7 +116,7 @@ router.post(
 
 function getQueryForSearch(key, searchData) {
   let sql = "";
-  for (let i = 0; i < searchData.length; i++) {
+  for (let i = 1; i < searchData.length; i++) {
     sql += key + "='%" + searchData[i] + "%' ";
     if (i != searchData.length - 1) {
       sql += "or ";
