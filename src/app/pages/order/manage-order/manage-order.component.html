@@ -22,15 +22,30 @@
             <div class="form-group row">
               <div class="col-md-6">
                 <label>Start Date</label>
-                <input type="date" name="startDate" [(ngModel)]="startDate" class="form-control" />
+                <input
+                  type="date"
+                  name="startDate"
+                  [(ngModel)]="startDate"
+                  class="form-control"
+                />
               </div>
               <div class="col-md-6">
                 <label>End Date</label>
-                <input type="date" name="endDate" [(ngModel)]="endDate" class="form-control" />
+                <input
+                  type="date"
+                  name="endDate"
+                  [(ngModel)]="endDate"
+                  class="form-control"
+                />
               </div>
             </div>
             <div>
-              <button (click)="getOrderByStatus(currentStatus)" class="btn btn-primary">Get Orders</button>
+              <button
+                (click)="getOrderByStatus(currentStatus)"
+                class="btn btn-primary"
+              >
+                Get Orders
+              </button>
             </div>
             <ul class="nav nav-tabs">
               <li class="nav-item" (click)="getOrderByStatus(0)">
@@ -78,6 +93,7 @@
                   <th>User ID</th>
                   <th>Amount</th>
                   <th>Date Time</th>
+                  <th>Address</th>
                   <th>Image</th>
                   <th>Action</th>
                 </tr>
@@ -87,6 +103,11 @@
                   <td>{{ order.user_id }}</td>
                   <td>{{ order.collectable_amount }}</td>
                   <td>{{ order.added_date }}</td>
+                  <td>
+                    <span class="{{ order.addressClass }}"
+                      >Address {{ order.address_id }}</span
+                    >
+                  </td>
                   <td>
                     <a [href]="order.thumbnail" target="_blank">
                       <img [src]="order.thumbnail" width="50" height="50" />

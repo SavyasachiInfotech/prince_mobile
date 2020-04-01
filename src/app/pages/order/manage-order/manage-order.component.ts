@@ -18,6 +18,18 @@ export class ManageOrderComponent implements OnInit {
   public currentStatus: number = 0;
   public startDate = new Date("2020-01-01").toISOString().split("T")[0];
   public endDate = new Date().toISOString().split("T")[0];
+  public addressClass = [
+    "badge badge-primary",
+    "badge badge-secondary",
+    "badge badge-success",
+    "badge badge-dark",
+    "badge badge-info",
+    "badge badge-warning",
+    "badge badge-danger",
+    "badge badge-light",
+    "badge badge-custom1",
+    "badge badge-custom2"
+  ];
 
   ngOnInit() {
     this.limit = this._config.displayLimit;
@@ -95,12 +107,26 @@ export class ManageOrderComponent implements OnInit {
           this.lastPage = Math.ceil(res.count / this.limit);
           //@ts-ignore
           this.orders = res.data;
+          let badgeCountBit = 0;
           for (let i = 0; i < this.orders.length; i++) {
             let image = JSON.parse(this.orders[i].thumbnail);
             if (image.length > 0) {
               this.orders[i].thumbnail = this._config.thumbnailUrl + image[0];
             } else {
               this.orders[i].thumbnail = "";
+            }
+            let data = this.orders.filter(
+              order => order.address_id == this.orders[i].address_id
+            );
+            if (data && this.orders[i].order_id == data[0].order_id) {
+              this.orders[i].addressClass = this.addressClass[badgeCountBit];
+              if (badgeCountBit == 9) {
+                badgeCountBit = 0;
+              } else {
+                badgeCountBit++;
+              }
+            } else {
+              this.orders[i].addressClass = data[0].addressClass;
             }
           }
           this.setPagination();
