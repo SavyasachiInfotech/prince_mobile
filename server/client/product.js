@@ -43,20 +43,35 @@ router.post(
         limit;
       console.log(sql);
       let countSql =
-        "select count(distinct(v.variant_id)) as total from product p,product_variant v,category c where p.product_id=v.product_id and p.is_display=1 and v.parent=1 and v.parent=1 and p.category_id=c.category_id and (c.name like '" +
+        "select count(distinct(v.variant_id)) as total from product p,product_variant v,tax t,category c where t.tax_id=v.tax_id and p.product_id=v.product_id and p.is_display=1 and v.parent=1 and p.category_id=c.category_id  and (c.name like '%" +
         search +
-        "%' or  p.description like '%" +
-        search +
-        "%' or v.name like '%" +
-        search +
-        "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where m.model_name like '%" +
+        "%'  or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where ( m.model_name like '%" +
         search +
         "%' " +
         mobileSearch +
-        " and vm.mobile_id=m.model_id  " +
+        " ) and vm.mobile_id=m.model_id )  or p.description like '%" +
+        search +
+        "%' or v.name like '%" +
+        search +
+        "%' " +
         " " +
         variantSearch +
         ")";
+      // let countSql =
+      //   "select count(distinct(v.variant_id)) as total from product p,product_variant v,category c where p.product_id=v.product_id and p.is_display=1 and v.parent=1 and v.parent=1 and p.category_id=c.category_id and (c.name like '" +
+      //   search +
+      //   "%' or  p.description like '%" +
+      //   search +
+      //   "%' or v.name like '%" +
+      //   search +
+      //   "%') or v.variant_id in (select distinct(vm.variant_id) from variant_mobile vm, mobile_models m where m.model_name like '%" +
+      //   search +
+      //   "%' " +
+      //   mobileSearch +
+      //   " and vm.mobile_id=m.model_id  " +
+      //   " " +
+      //   variantSearch +
+      //   ")";
       con.query(countSql, (err, data) => {
         if (err) {
           console.log(err);
