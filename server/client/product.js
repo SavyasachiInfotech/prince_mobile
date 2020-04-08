@@ -35,7 +35,6 @@ router.post(
         "%' or v.name like '%" +
         search +
         "%') " +
-        descriptionSearch +
         " " +
         variantSearch +
         " limit " +
@@ -55,7 +54,6 @@ router.post(
         "%' " +
         mobileSearch +
         " and vm.mobile_id=m.model_id ) " +
-        descriptionSearch +
         " " +
         variantSearch;
       con.query(countSql, (err, data) => {
