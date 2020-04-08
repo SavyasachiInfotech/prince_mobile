@@ -34,10 +34,10 @@ router.post(
         search +
         "%' or v.name like '%" +
         search +
-        "%') " +
+        "%' " +
         " " +
         variantSearch +
-        " limit " +
+        ") limit " +
         pageno +
         "," +
         limit;
@@ -53,9 +53,10 @@ router.post(
         search +
         "%' " +
         mobileSearch +
-        " and vm.mobile_id=m.model_id ) " +
+        " and vm.mobile_id=m.model_id  " +
         " " +
-        variantSearch;
+        variantSearch +
+        ")";
       con.query(countSql, (err, data) => {
         if (err) {
           console.log(err);
