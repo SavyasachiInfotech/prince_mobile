@@ -34,7 +34,7 @@
     "font-awesome": "^4.7.0",
     "highcharts": "^7.1.2",
     "http-server": "^0.11.1",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "json2xls": "^0.1.2",
     "jsonwebtoken": "^8.5.1",
     "material-design-icons": "^3.0.1",
