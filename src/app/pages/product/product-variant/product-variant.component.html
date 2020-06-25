@@ -128,10 +128,7 @@
                         class="form-control"
                         [(ngModel)]="variant.tax_id"
                       >
-                        <option
-                          *ngFor="let tax of taxes"
-                          [selected]="variant.tax_id"
-                          [value]="tax.tax_id"
+                        <option *ngFor="let tax of taxes" [value]="tax.tax_id"
                           >{{ tax.name }} - {{ tax.tax }}</option
                         >
                       </select>
@@ -142,7 +139,7 @@
                       <label class="control-label">Product Warranty</label>
                       <input
                         type="number"
-                        name="tax"
+                        name="warranty"
                         class="form-control"
                         [(ngModel)]="variant.warranty"
                       />

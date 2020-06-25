@@ -507,12 +507,7 @@ router.post(
                                   // );
                                   products[i].colorAttributes = colorAttributes;
                                   products[i].sizeAttributes = sizeAttributes;
-                                  products[
-                                    i
-                                  ].specifications = specifications.filter(
-                                    item =>
-                                      item.variant_id == products[i].variant_id
-                                  );
+                                  products[i].specifications = specifications;
                                 }
                                 products[0].colors = variant;
                                 for (let i = 0; i < variant.length; i++) {

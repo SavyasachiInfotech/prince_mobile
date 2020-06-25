@@ -189,6 +189,7 @@ export class ProductVariantComponent implements OnInit {
     this.variant.warranty = 0;
     this.variant.quantity = 0;
     this.variant.min_qty = 0;
+    this.variant.tax_id = 4;
     this.selectedAttributes = new Array();
     this.selectedSpecifications = new Array();
   }
