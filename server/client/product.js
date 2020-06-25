@@ -380,6 +380,7 @@ router.post(
                   "select specification_key,specification_value,variant_id from product_specification where variant_id=" +
                   id;
                 con.query(sql, (err, specifications) => {
+                  console.log(specifications);
                   if (err) {
                     console.log(err);
                     res
