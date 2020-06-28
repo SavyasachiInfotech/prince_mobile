@@ -285,7 +285,8 @@ router.post(
         } else {
           sql =
             "select * from product_specification  where variant_id=" +
-            req.body.id;
+            req.body.id +
+            " order by srno";
           con.query(sql, (err, data) => {
             if (err) {
               console.log(err);

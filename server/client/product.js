@@ -378,7 +378,8 @@ router.post(
 
                 sql =
                   "select specification_key,specification_value,variant_id from product_specification where variant_id=" +
-                  id;
+                  id +
+                  " order by srno";
                 con.query(sql, (err, specifications) => {
                   if (err) {
                     console.log(err);
