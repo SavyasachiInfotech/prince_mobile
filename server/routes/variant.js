@@ -186,7 +186,9 @@ router.post(
                     spec[i].specification_key +
                     "','" +
                     spec[i].specification_value +
-                    "')";
+                    "'," +
+                    i +
+                    ")";
                   if (i == spec.length - 1) {
                     sql + ";";
                   } else {
@@ -393,7 +395,9 @@ router.put(
                     spec[i].specification_key +
                     "','" +
                     spec[i].specification_value +
-                    "')";
+                    "'," +
+                    i +
+                    ")";
                   if (i == spec.length - 1) {
                     sql + ";";
                   } else {

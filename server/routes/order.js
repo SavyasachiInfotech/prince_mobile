@@ -435,6 +435,12 @@ function changeStatus(res, order) {
                 result[0].item_id,
                 3
               );
+              if (order.status == 7) {
+                for (let data of result) {
+                  sql = `update variant_mobile set quantity=quantity+${data.quantity} where variant_id=${data.variant_id} and mobile_id=${data.mobile_id}`;
+                  con.query(sql);
+                }
+              }
             }
           });
 
