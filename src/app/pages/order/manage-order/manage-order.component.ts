@@ -119,6 +119,12 @@ export class ManageOrderComponent implements OnInit {
           //@ts-ignore
           this.lastPage = Math.ceil(res.count / this.limit);
           //@ts-ignore
+          this.summary.codTotal = res.codTotal || 0;
+          //@ts-ignore
+          this.summary.paytmTotal = res.paytmTotal || 0;
+          //@ts-ignore
+          this.summary.totalDeliveryCharge = res.totalDeliveryCharge || 0;
+          //@ts-ignore
           this.orders = res.data;
           let badgeCountBit = 0;
           for (let i = 0; i < this.orders.length; i++) {
