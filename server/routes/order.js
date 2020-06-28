@@ -48,7 +48,19 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
       res.status(200).json({ status: 400, message: "Orders not found." });
     } else {
       sql =
-        "select count(order_id) as total,sum(deliveryCharge) as totalDeliveryCharge, (select sum(order_amount) from customer_order where iscod=1) as codTotal, (select sum(order_amount) from customer_order where iscod=2) as paytmTotal from customer_order where status_id=" +
+        "select count(order_id) as total,sum(deliveryCharge) as totalDeliveryCharge, (select sum(order_amount) from customer_order where iscod=1 and status_id=" +
+        req.body.status +
+        " and date(added_date) BETWEEN '" +
+        req.body.start +
+        "' AND '" +
+        req.body.end +
+        "') as codTotal, (select sum(order_amount) from customer_order where iscod=2 and status_id=" +
+        req.body.status +
+        " and date(added_date) BETWEEN '" +
+        req.body.start +
+        "' AND '" +
+        req.body.end +
+        "') as paytmTotal from customer_order where status_id=" +
         req.body.status +
         " and date(added_date) BETWEEN '" +
         req.body.start +
