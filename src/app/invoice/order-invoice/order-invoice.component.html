@@ -100,16 +100,14 @@
       <tr>
         <th><span>Total</span></th>
         <td>
-          <span data-prefix>&#8377;</span
-          ><span>{{ order.totalWithTax  }} </span>
+          <span data-prefix>&#8377;</span><span>{{ order.totalWithTax }} </span>
         </td>
       </tr>
       <tr>
         <th><span>COD Charge</span></th>
         <td>
           <span data-prefix>&#8377;</span
-          ><span *ngIf="order.iscod == 1">50.00</span
-          ><span *ngIf="order.iscod == 0">0.00</span>
+          ><span>{{ order.deliveryCharge }}</span>
         </td>
       </tr>
       <tr>

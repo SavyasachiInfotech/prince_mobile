@@ -18,6 +18,11 @@ export class ManageOrderComponent implements OnInit {
   public currentStatus: number = 0;
   public startDate = new Date("2020-01-01").toISOString().split("T")[0];
   public endDate = new Date().toISOString().split("T")[0];
+  public summary = {
+    totalDeliveryCharge: 0,
+    codTotal: 0,
+    paytmTotal: 0
+  };
   public addressClass = [
     "badge badge-primary",
     "badge badge-secondary",
@@ -56,6 +61,14 @@ export class ManageOrderComponent implements OnInit {
         //@ts-ignore
         if (res.status == 200) {
           this.orders.splice(i, 1);
+          if (order.iscod == 1) {
+            this.summary.codTotal = this.summary.codTotal - order.order_amount;
+            this.summary.totalDeliveryCharge =
+              this.summary.totalDeliveryCharge - order.deliveryCharge;
+          } else {
+            this.summary.paytmTotal =
+              this.summary.paytmTotal - order.order_amount;
+          }
         }
       });
   }

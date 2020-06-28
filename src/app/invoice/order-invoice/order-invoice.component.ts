@@ -27,6 +27,11 @@ export class OrderInvoiceComponent implements OnInit {
           if (res.status == 200) {
             //@ts-ignore
             this.order = res.order[0];
+            if (this.order.deliveryCharge) {
+              this.order.deliveryCharge = this.order.deliveryCharge.toFixed(2);
+            } else {
+              this.order.deliveryCharge = "0.00";
+            }
             //@ts-ignore
             this.orderDetails = res.order_detail;
             for (let i = 0; i < this.orderDetails.length; i++) {

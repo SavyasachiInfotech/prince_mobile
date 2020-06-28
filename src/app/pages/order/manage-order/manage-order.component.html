@@ -47,6 +47,26 @@
                 Get Orders
               </button>
             </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="detail">
+                  <div class="title">Total Cash Payment</div>
+                  <div class="value">{{ summary.codTotal }}</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="detail">
+                  <div class="title">Total Curior Charge</div>
+                  <div class="value">{{ summary.totalDeliveryCharge }}</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="detail">
+                  <div class="title">Totla Online Payment</div>
+                  <div class="value">{{ summary.paytmTotal }}</div>
+                </div>
+              </div>
+            </div>
             <ul class="nav nav-tabs">
               <li class="nav-item" (click)="getOrderByStatus(0)">
                 <a

@@ -4,3 +4,26 @@ table {
 .btn {
   margin-bottom: 10px;
 }
+.detail {
+  box-shadow: 6px 11px 41px -28px #a99de7;
+  -webkit-box-shadow: 6px 11px 41px -28px #a99de7;
+  background: linear-gradient(230deg, #759bff, #843cf6);
+  padding: 20px;
+  width: 100%;
+  margin-right: 10px;
+  margin-bottom: 20px;
+  margin-top: 5px;
+  border-radius: 0.625rem;
+  color: white;
+}
+.title,
+.value {
+  text-align: center;
+}
+.title {
+  font-size: 18px;
+}
+.value {
+  font-size: 30px;
+  font-weight: 700;
+}

@@ -43,7 +43,7 @@ router.post(
       let data = req.body;
       let order_id;
       let sql =
-        "insert into customer_order(user_id,address_id,promo_id,iscod,variant_id) values(" +
+        "insert into customer_order(user_id,address_id,promo_id,iscod,variant_id,deliveryCharge) values(" +
         req.userId +
         "," +
         data.address_id +
@@ -53,6 +53,8 @@ router.post(
         data.iscod +
         "," +
         data.variant_id +
+        "," +
+        process.env.DELIDELIVERY_CHARGE +
         ")";
       con.query(sql, (err, result) => {
         if (err) {

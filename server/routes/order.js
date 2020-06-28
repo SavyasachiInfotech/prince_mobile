@@ -48,8 +48,13 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
       res.status(200).json({ status: 400, message: "Orders not found." });
     } else {
       sql =
-        "select count(order_id) as total from customer_order where status_id=" +
-        req.body.status;
+        "select count(order_id) as total,sum(deliveryCharge) as totalDeliveryCharge, (select sum(order_amount) from customer_order where iscod=1) as codTotal, (select sum(order_amount) from customer_order where iscod=2) as paytmTotal from customer_order where status_id=" +
+        req.body.status +
+        " and date(added_date) BETWEEN '" +
+        req.body.start +
+        "' AND '" +
+        req.body.end +
+        "'";
       con.query(sql, (err, count) => {
         if (err) {
           res.status(200).json({ status: 400, message: "Orders not found" });
@@ -58,7 +63,10 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
             status: 200,
             message: "Getting order by status successfully.",
             data: result,
-            count: count[0].total
+            count: count[0].total,
+            totalDeliveryCharge: count[0].totalDeliveryCharge,
+            codTotal: count[0].codTotal,
+            paytmTotal: count[0].paytmTotal
           });
         }
       });
