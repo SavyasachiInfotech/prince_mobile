@@ -48,19 +48,7 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
       res.status(200).json({ status: 400, message: "Orders not found." });
     } else {
       sql =
-        "select count(order_id) as total,sum(deliveryCharge) as totalDeliveryCharge, (select sum(order_amount) from customer_order where iscod=1 and status_id=" +
-        req.body.status +
-        " and date(added_date) BETWEEN '" +
-        req.body.start +
-        "' AND '" +
-        req.body.end +
-        "') as codTotal, (select sum(order_amount) from customer_order where iscod=2 and status_id=" +
-        req.body.status +
-        " and date(added_date) BETWEEN '" +
-        req.body.start +
-        "' AND '" +
-        req.body.end +
-        "') as paytmTotal from customer_order where status_id=" +
+        "select count(order_id) as total from customer_order where status_id=" +
         req.body.status +
         " and date(added_date) BETWEEN '" +
         req.body.start +
@@ -75,13 +63,35 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
             status: 200,
             message: "Getting order by status successfully.",
             data: result,
-            count: count[0].total,
-            totalDeliveryCharge: count[0].totalDeliveryCharge,
-            codTotal: count[0].codTotal,
-            paytmTotal: count[0].paytmTotal
+            count: count[0].total
           });
         }
       });
+    }
+  });
+});
+
+router.post("/sell-report-data", verifyToken, (req, res) => {
+  let sql =
+    "select o.*,v.name,v.thumbnail from customer_order o, product_variant v where o.status_id=" +
+    req.body.status +
+    " and o.variant_id=v.variant_id and date(added_date) BETWEEN '" +
+    req.body.start +
+    "' AND '" +
+    req.body.end +
+    "' order by o.added_date";
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(error);
+      res.status(200).json({ status: 400, message: "Orders not found" });
+    } else {
+      res
+        .status(200)
+        .json({
+          status: 200,
+          message: "Getting sell report data successfully.",
+          data: result
+        });
     }
   });
 });

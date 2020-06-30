@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { OrderService } from "src/app/core/mock/order.service";
 import { Config } from "src/app/core/data/config";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-manage-order",
@@ -8,7 +9,11 @@ import { Config } from "src/app/core/data/config";
   styleUrls: ["./manage-order.component.scss"]
 })
 export class ManageOrderComponent implements OnInit {
-  constructor(private _orderService: OrderService, private _config: Config) {}
+  constructor(
+    private _orderService: OrderService,
+    private _config: Config,
+    private _router: Router
+  ) {}
 
   public limit = 0;
   public displayPages: number[] = new Array();
@@ -18,11 +23,6 @@ export class ManageOrderComponent implements OnInit {
   public currentStatus: number = 0;
   public startDate = new Date("2020-01-01").toISOString().split("T")[0];
   public endDate = new Date().toISOString().split("T")[0];
-  public summary = {
-    totalDeliveryCharge: 0,
-    codTotal: 0,
-    paytmTotal: 0
-  };
   public addressClass = [
     "badge badge-primary",
     "badge badge-secondary",
@@ -61,14 +61,6 @@ export class ManageOrderComponent implements OnInit {
         //@ts-ignore
         if (res.status == 200) {
           this.orders.splice(i, 1);
-          if (order.iscod == 1) {
-            this.summary.codTotal = this.summary.codTotal - order.order_amount;
-            this.summary.totalDeliveryCharge =
-              this.summary.totalDeliveryCharge - order.deliveryCharge;
-          } else {
-            this.summary.paytmTotal =
-              this.summary.paytmTotal - order.order_amount;
-          }
         }
       });
   }
@@ -105,6 +97,14 @@ export class ManageOrderComponent implements OnInit {
     }
   }
 
+  getDeliveryReport() {
+    localStorage.setItem("deliveryStartDate", this.startDate);
+    localStorage.setItem("deliveryEndDate", this.endDate);
+    this._router.navigate([]).then(result => {
+      window.open(this._config.appPath + "/report/sell-report", "_blank");
+    });
+  }
+
   getOrders() {
     this._orderService
       .getOrdersByStatus({
@@ -118,12 +118,6 @@ export class ManageOrderComponent implements OnInit {
         if (res.status == 200) {
           //@ts-ignore
           this.lastPage = Math.ceil(res.count / this.limit);
-          //@ts-ignore
-          this.summary.codTotal = res.codTotal || 0;
-          //@ts-ignore
-          this.summary.paytmTotal = res.paytmTotal || 0;
-          //@ts-ignore
-          this.summary.totalDeliveryCharge = res.totalDeliveryCharge || 0;
           //@ts-ignore
           this.orders = res.data;
           let badgeCountBit = 0;

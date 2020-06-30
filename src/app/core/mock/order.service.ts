@@ -23,6 +23,8 @@ export class OrderService {
     this._config.apiBaseUrl + this.service + "paid-return-order";
   private _orderCountUrl =
     this._config.apiBaseUrl + this.service + "get-order-count";
+  private _sellReportUrl =
+    this._config.apiBaseUrl + this.service + "sell-report-data";
 
   recievedOrderCount() {
     let options = this._config.getHeader();
@@ -57,5 +59,10 @@ export class OrderService {
   getOrderDetail(data) {
     let options = this._config.getHeader();
     return this._http.post<any>(this._getOrderDetailUrl, data, options);
+  }
+
+  getSellReportData(data) {
+    let options = this._config.getHeader();
+    return this._http.post<any>(this._sellReportUrl, data, options);
   }
 }
