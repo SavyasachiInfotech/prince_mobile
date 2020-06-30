@@ -8,9 +8,9 @@ export class Config {
   public categoryUrl = "http://13.126.140.244:3000/category/";
   public bannerUrl = "http://13.126.140.244:3000/banners/";
   public returnBaseUrl = "http://13.126.140.244:3000/return/";
-  // public appPath = "http://13.126.140.244:3000";
+  public appPath = "http://13.126.140.244:3000";
 
-  public appPath = "http://localhost:4200";
+  // public appPath = "http://localhost:4200";
   // public apiBaseUrl = "http://localhost:3000/api/";
   // public clientBaseUrl = "http://localhost:3000/";
   // public imageUrl = "http://localhost:3000/list-image/";

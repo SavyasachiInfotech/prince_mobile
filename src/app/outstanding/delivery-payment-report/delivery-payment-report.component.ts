@@ -8,17 +8,39 @@ import { OrderService } from "src/app/core/mock/order.service";
 })
 export class DeliveryPaymentReportComponent implements OnInit {
   constructor(private _orderService: OrderService) {}
+  public orders = new Array();
+  public totalCodAmount = 0;
+  public totalPaytmAmount = 0;
+  public totalDeliveryCharge = 0;
+  public totalCollection = 0;
 
   ngOnInit() {
     this._orderService
-      .getOrdersByStatus({
-        status: 7,
-        pageno: 1,
+      .getSellReportData({
+        status: 4,
         start: localStorage.getItem("deliveryStartDate"),
         end: localStorage.getItem("deliveryEndDate")
       })
       .subscribe(res => {
         console.log(res);
+        //@ts-ignore
+        this.orders = res.data;
+        this.calculateTotal();
       });
+  }
+
+  calculateTotal() {
+    if (this.orders.length) {
+      for (let order of this.orders) {
+        if (order.iscod == 1) {
+          this.totalCodAmount += order.order_amount;
+        } else {
+          this.totalPaytmAmount += order.order_amount;
+        }
+        this.totalDeliveryCharge += order.deliveryCharge;
+      }
+      this.totalCollection =
+        this.totalCodAmount + this.totalPaytmAmount + this.totalDeliveryCharge;
+    }
   }
 }

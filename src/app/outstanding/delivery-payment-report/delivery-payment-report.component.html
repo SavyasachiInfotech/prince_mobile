@@ -1,1 +1,52 @@
-<p>delivery-payment-report works!</p>
+<div class="detail">
+  <header>
+    <h1>Sell Report</h1>
+  </header>
+  <table>
+    <thead>
+      <tr>
+        <th>Order No</th>
+        <th>Name</th>
+        <th>User ID</th>
+        <th>Date</th>
+        <th>Payment Type</th>
+        <th>Order Amount</th>
+        <th>Delivery Charge</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of orders">
+        <td>{{ order.order_id }}</td>
+        <td>{{ order.name }}</td>
+        <td>{{ order.user_id }}</td>
+        <td>{{ order.added_date | date: "dd/MM/yyyy" }}</td>
+        <td>
+          <span *ngIf="order.iscod == 1">COD</span>
+          <span *ngIf="order.iscod != 1">PAYTM</span>
+        </td>
+        <td>{{ order.order_amount }}</td>
+        <td>{{ order.deliveryCharge }}</td>
+        <td>{{ order.order_amount + order.deliveryCharge }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="balance">
+    <tr>
+      <th>Total COD Collection</th>
+      <td>{{ totalCodAmount }}</td>
+    </tr>
+    <tr>
+      <th>Total Paytm Collection</th>
+      <td>{{ totalPaytmAmount }}</td>
+    </tr>
+    <tr>
+      <th>Total Delivery Charge</th>
+      <td>{{ totalDeliveryCharge }}</td>
+    </tr>
+    <tr>
+      <th>Total Collection</th>
+      <td>{{ totalCollection }}</td>
+    </tr>
+  </table>
+</div>
