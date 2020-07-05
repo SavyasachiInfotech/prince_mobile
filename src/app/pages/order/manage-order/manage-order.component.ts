@@ -100,6 +100,7 @@ export class ManageOrderComponent implements OnInit {
   getDeliveryReport() {
     localStorage.setItem("deliveryStartDate", this.startDate);
     localStorage.setItem("deliveryEndDate", this.endDate);
+    localStorage.setItem("orderStatus", this.currentStatus.toString());
     this._router.navigate([]).then(result => {
       window.open(this._config.appPath + "/report/sell-report", "_blank");
     });

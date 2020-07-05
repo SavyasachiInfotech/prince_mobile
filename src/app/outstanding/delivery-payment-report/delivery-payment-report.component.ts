@@ -13,11 +13,13 @@ export class DeliveryPaymentReportComponent implements OnInit {
   public totalPaytmAmount = 0;
   public totalDeliveryCharge = 0;
   public totalCollection = 0;
+  public totalCodOrders = 0;
+  public totalPaytmOrders = 0;
 
   ngOnInit() {
     this._orderService
       .getSellReportData({
-        status: 4,
+        status: localStorage.getItem("orderStatus"),
         start: localStorage.getItem("deliveryStartDate"),
         end: localStorage.getItem("deliveryEndDate")
       })
@@ -34,8 +36,10 @@ export class DeliveryPaymentReportComponent implements OnInit {
       for (let order of this.orders) {
         if (order.iscod == 1) {
           this.totalCodAmount += order.order_amount;
+          this.totalCodOrders++;
         } else {
           this.totalPaytmAmount += order.order_amount;
+          this.totalPaytmOrders++;
         }
         this.totalDeliveryCharge += order.deliveryCharge;
       }

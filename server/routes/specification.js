@@ -30,7 +30,7 @@ function verifyToken(req, res, next) {
 }
 
 router.get("/get-specifications", verifyToken, (req, res) => {
-  let sql = "select * from specification";
+  let sql = "select * from specification order by specification_key";
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);

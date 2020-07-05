@@ -7,7 +7,10 @@ const limit = process.env.RECORD_LIMIT;
 const auth = require("../auth");
 
 router.get("/get-notifications", (req, res) => {
-  let sql = "select * from notifications order by added_on desc";
+  let sql =
+    "select * from notifications where user_id=" +
+    req.userId +
+    " order by added_on desc";
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);

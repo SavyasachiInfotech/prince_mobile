@@ -54,7 +54,7 @@ router.post(
         "," +
         data.variant_id +
         "," +
-        process.env.DELIDELIVERY_CHARGE +
+        process.env.DELIVERY_CHARGE +
         ")";
       con.query(sql, (err, result) => {
         if (err) {
