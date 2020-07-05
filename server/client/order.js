@@ -7,6 +7,7 @@ const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 const path = require("path");
 const auth = require("../auth");
+const cod = require("../codCharge");
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -31,7 +32,7 @@ router.post(
     check("iscod").isBoolean()
   ],
   auth.verifyToken,
-  (req, res) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({
@@ -41,6 +42,7 @@ router.post(
       });
     } else {
       let data = req.body;
+      let codCharge = await cod.getCodCharge();
       let order_id;
       let sql =
         "insert into customer_order(user_id,address_id,promo_id,iscod,variant_id,deliveryCharge) values(" +
@@ -54,7 +56,7 @@ router.post(
         "," +
         data.variant_id +
         "," +
-        process.env.DELIVERY_CHARGE +
+        codCharge +
         ")";
       con.query(sql, (err, result) => {
         if (err) {
