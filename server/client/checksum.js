@@ -347,7 +347,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
           if (err) {
             console.log(err);
             sql =
-              "insert into refund(paytm_id,amount,res,order_id) values('" +
+              "insert into refund(paytm_id,amount,response,order_id) values('" +
               decodedBody.TXNID +
               "'," +
               decodedBody.TXNAMOUNT +
@@ -382,7 +382,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
               if (err) {
                 console.log(err);
                 sql =
-                  "insert into refund(paytm_id,amount,res,order_id) values('" +
+                  "insert into refund(paytm_id,amount,response,order_id) values('" +
                   decodedBody.TXNID +
                   "'," +
                   decodedBody.TXNAMOUNT +
@@ -422,7 +422,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                   if (err) {
                     console.log(err);
                     sql =
-                      "insert into refund(paytm_id,amount,res,order_id) values('" +
+                      "insert into refund(paytm_id,amount,response,order_id) values('" +
                       decodedBody.TXNID +
                       "'," +
                       decodedBody.TXNAMOUNT +
@@ -519,8 +519,10 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                           cart[i].variant_id +
                           "," +
                           req.userId +
-                          `,'${JSON.stringify(cart[i])} ',` +
-                          JSON.stringify(cart[i]) +
+                          `,'${JSON.stringify(cart[i]).replace(
+                            /'/g,
+                            "''"
+                          )} ',` +
                           cart[i].cart_quantity +
                           "," +
                           cart[i].mobile_required +
@@ -540,7 +542,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                           console.log(err);
                           deleteOrder(order_id);
                           sql =
-                            "insert into refund(paytm_id,amount,res,order_id) values('" +
+                            "insert into refund(paytm_id,amount,response,order_id) values('" +
                             decodedBody.TXNID +
                             "'," +
                             decodedBody.TXNAMOUNT +
@@ -605,7 +607,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                               console.log(err);
                               deleteOrder(order_id);
                               sql =
-                                "insert into refund(paytm_id,amount,res,order_id) values('" +
+                                "insert into refund(paytm_id,amount,response,order_id) values('" +
                                 decodedBody.TXNID +
                                 "'," +
                                 decodedBody.TXNAMOUNT +
@@ -682,7 +684,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                     } else {
                       deleteOrder(order_id);
                       sql =
-                        "insert into refund(paytm_id,amount,res,order_id) values('" +
+                        "insert into refund(paytm_id,amount,response,order_id) values('" +
                         decodedBody.TXNID +
                         "'," +
                         decodedBody.TXNAMOUNT +
