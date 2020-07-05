@@ -25,6 +25,7 @@ const promocode = require("./routes/promocode");
 const banner = require("./routes/banner");
 const dashboard = require("./routes/dashboard");
 const cod = require("./routes/cod");
+const support = require("./routes/support");
 
 app.use("/client", client);
 app.use("/authentication", authentication);
@@ -45,5 +46,6 @@ app.use("/promocode", promocode);
 app.use("/banner", banner);
 app.use("/dashboard", dashboard);
 app.use("/cod", cod);
+app.use("/support", support);
 
 module.exports = app;

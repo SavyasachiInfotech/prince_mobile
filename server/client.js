@@ -15,6 +15,7 @@ const cart = require("./client/cart");
 const order = require("./client/order");
 const address = require("./client/address");
 const paytm = require("./client/checksum");
+const support = require("./client/support");
 
 app.use("/authentication", authentication);
 app.use("/home", home);
@@ -25,5 +26,6 @@ app.use("/cart", cart);
 app.use("/order", order);
 app.use("/address", address);
 app.use("/paytm", paytm);
+app.use("/support", support);
 
 module.exports = app;

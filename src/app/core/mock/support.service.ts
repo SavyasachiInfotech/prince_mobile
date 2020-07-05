@@ -8,7 +8,7 @@ import { Config } from "../data/config";
 export class SupportService {
   constructor(private _http: HttpClient, private _config: Config) {}
 
-  private service = "support/";
+  private service = "support";
 
   private _getSupportUrl = this._config.apiBaseUrl + this.service;
   private _updateSupportUrl =

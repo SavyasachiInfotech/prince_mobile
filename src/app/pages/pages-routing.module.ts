@@ -80,6 +80,11 @@ const routes: Routes = [
         path: "cod-charge",
         loadChildren: () =>
           import("./cod-charge/cod-charge.module").then(m => m.CodChargeModule)
+      },
+      {
+        path: "support",
+        loadChildren: () =>
+          import("./support/support.module").then(m => m.SupportModule)
       }
     ]
   }
