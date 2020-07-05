@@ -6,7 +6,7 @@ const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 const auth = require("../auth");
 
-router.get("/get-notifications", (req, res) => {
+router.get("/get-notifications", auth.verifyToken, (req, res) => {
   let sql =
     "select * from notifications where user_id=" +
     req.userId +
