@@ -5,8 +5,7 @@ const limit = process.env.RECORD_LIMIT;
 const auth = require("../auth");
 
 router.post("/update-support", auth.verifyToken, (req, res) => {
-  let sql = `update support set mobiles='${(req.body,
-  mobiles)}', whatsapp_link='${req.body.whatsapp_link}' where id=1`;
+  let sql = `update support set mobiles='${req.body.mobiles}', whatsapp_link='${req.body.whatsapp_link}' where id=1`;
 
   con.query(sql, (err, result) => {
     if (err) {
