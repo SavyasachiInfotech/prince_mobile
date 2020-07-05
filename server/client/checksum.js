@@ -519,9 +519,8 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                           cart[i].variant_id +
                           "," +
                           req.userId +
-                          ",'" +
+                          `,'${JSON.stringify(cart[i])} ',` +
                           JSON.stringify(cart[i]) +
-                          "'," +
                           cart[i].cart_quantity +
                           "," +
                           cart[i].mobile_required +

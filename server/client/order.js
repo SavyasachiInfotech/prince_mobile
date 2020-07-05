@@ -147,9 +147,7 @@ router.post(
                       cart[i].variant_id +
                       "," +
                       req.userId +
-                      ",'" +
-                      JSON.stringify(cart[i]) +
-                      "'," +
+                      `,'${JSON.stringify(cart[i])} ',` +
                       cart[i].cart_quantity +
                       "," +
                       cart[i].mobile_required +
