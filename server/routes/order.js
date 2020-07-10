@@ -85,13 +85,11 @@ router.post("/sell-report-data", verifyToken, (req, res) => {
       console.log(error);
       res.status(200).json({ status: 400, message: "Orders not found" });
     } else {
-      res
-        .status(200)
-        .json({
-          status: 200,
-          message: "Getting sell report data successfully.",
-          data: result
-        });
+      res.status(200).json({
+        status: 200,
+        message: "Getting sell report data successfully.",
+        data: result
+      });
     }
   });
 });
@@ -372,9 +370,9 @@ function bookShipment(order, res) {
           "https://sandbox.zipping.in/Api/BookShipment",
           options,
           (err, response, body) => {
-            console.log(body);
+            console.log("Body", body);
             let resData = JSON.parse(body.trim());
-            console.log(resData);
+            // console.log(resData);
             if (resData.Msg == "Success") {
               let status = order.status_id;
               for (let order of ordersdata) {
