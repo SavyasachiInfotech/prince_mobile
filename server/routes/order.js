@@ -367,7 +367,7 @@ function bookShipment(order, res) {
         };
         let Request = require("request");
         Request(
-          "https://sandbox.zipping.in/Api/BookShipment",
+          "https://sandbox.zippingxpress.com/Api/BookShipment",
           options,
           (err, response, body) => {
             console.log("Body", body);
