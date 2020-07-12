@@ -22,7 +22,8 @@ router.get("/support-detail", auth.verifyToken, (req, res) => {
         }
         mobiles += data.mobiles[i];
       }
-      data.mobiles = mobiles;
+      data.mobile = mobiles;
+      delete data.mobiles;
       return res.json({
         status: "1",
         message: "Support detail getting successfully.",
