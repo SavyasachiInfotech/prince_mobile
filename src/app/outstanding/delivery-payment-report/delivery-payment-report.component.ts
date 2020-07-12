@@ -1,5 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { OrderService } from "src/app/core/mock/order.service";
+import { Config } from "src/app/core/data/config";
 
 @Component({
   selector: "app-delivery-payment-report",
@@ -7,7 +8,7 @@ import { OrderService } from "src/app/core/mock/order.service";
   styleUrls: ["./delivery-payment-report.component.scss"]
 })
 export class DeliveryPaymentReportComponent implements OnInit {
-  constructor(private _orderService: OrderService) {}
+  constructor(private _orderService: OrderService, private _config: Config) {}
   public orders = new Array();
   public totalCodAmount = 0;
   public totalPaytmAmount = 0;
@@ -15,8 +16,11 @@ export class DeliveryPaymentReportComponent implements OnInit {
   public totalCollection = 0;
   public totalCodOrders = 0;
   public totalPaytmOrders = 0;
+  public reportTitle = "";
 
   ngOnInit() {
+    let title = this._config.orderStatus[localStorage.getItem("orderStatus")];
+    this.reportTitle = title + " Report";
     this._orderService
       .getSellReportData({
         status: localStorage.getItem("orderStatus"),

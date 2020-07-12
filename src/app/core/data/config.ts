@@ -32,4 +32,12 @@ export class Config {
   showMessage(message) {
     alert(message);
   }
+
+  public orderStatus = {
+    "0": "Recieved Orders",
+    "1": "Confirmed Order",
+    "2": "Dispatched Order",
+    "4": "Delivered Order",
+    "7": "Cancelled Order"
+  };
 }
