@@ -4,7 +4,7 @@ const con = require("../database-connection");
 const limit = process.env.RECORD_LIMIT;
 const auth = require("../auth");
 
-router.get("/support-detail", auth.verifyToken, (req, res) => {
+router.get("/support-detail", (req, res) => {
   let sql = "select * from support where id=1";
   con.query(sql, (err, result) => {
     if (err) {
