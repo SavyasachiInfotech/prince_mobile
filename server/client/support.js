@@ -15,6 +15,13 @@ router.get("/support-detail", auth.verifyToken, (req, res) => {
       let data = {};
       data.whatsapp_link = result[0].whatsapp_link;
       data.mobiles = JSON.parse(result[0].mobiles);
+      let mobiles = "";
+      for (let i = 0; i < data.mobiles.length; i++) {
+        mobiles += data.mobiles[i];
+        if (i != 0) {
+          mobiles += "\n";
+        }
+      }
       return res.json({
         status: "1",
         message: "Support detail getting successfully.",
