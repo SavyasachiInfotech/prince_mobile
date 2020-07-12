@@ -17,10 +17,10 @@ router.get("/support-detail", auth.verifyToken, (req, res) => {
       data.mobiles = JSON.parse(result[0].mobiles);
       let mobiles = "";
       for (let i = 0; i < data.mobiles.length; i++) {
-        mobiles += data.mobiles[i];
         if (i != 0 && data.mobiles[i] != "") {
           mobiles += "\n";
         }
+        mobiles += data.mobiles[i];
       }
       data.mobiles = mobiles;
       return res.json({
