@@ -18,7 +18,7 @@ router.get("/support-detail", auth.verifyToken, (req, res) => {
       let mobiles = "";
       for (let i = 0; i < data.mobiles.length; i++) {
         mobiles += data.mobiles[i];
-        if (i != 0) {
+        if (i != 0 && data.mobiles[i] != "") {
           mobiles += "\n";
         }
       }
