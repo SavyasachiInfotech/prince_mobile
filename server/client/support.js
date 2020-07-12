@@ -26,7 +26,7 @@ router.get("/support-detail", auth.verifyToken, (req, res) => {
       return res.json({
         status: "1",
         message: "Support detail getting successfully.",
-        data: data
+        other_details: data
       });
     } else {
       return res.json({ status: "0", message: "Support detail not found" });
