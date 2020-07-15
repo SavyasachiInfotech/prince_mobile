@@ -103,15 +103,15 @@ router.post("/get-return-orders", verifyToken, (req, res) => {
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
-      res.json({ status: 200, message: "No return request found." });
+      return res.json({ status: 200, message: "No return request found." });
     } else {
       let sql = "select count(*) as total from  return_request";
       con.query(sql, (err, count) => {
         if (err) {
           console.log(err);
-          res.json({ status: 400, message: "No return request found." });
+          return res.json({ status: 400, message: "No return request found." });
         } else {
-          res.json({
+          return res.json({
             status: 200,
             message: "Getting return request successfully.",
             data: result,
@@ -130,13 +130,13 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
     let sql = "select * from  customer_order where order_id=" + data.order_id;
     con.query(sql, (err, order) => {
       if (err) {
-        res.json({ status: 400, message: "Order is not accepted." });
+        return res.json({ status: 400, message: "Order is not accepted." });
       } else {
         sql = "select * from order_detail where order_id=" + data.order_id;
         con.query(sql, (err, details) => {
           if (err) {
             console.log(err);
-            res.json({ status: 400, message: "Order is not accepted." });
+            return res.json({ status: 400, message: "Order is not accepted." });
           } else {
             if (order && order.length > 0) {
               order = order[0];
@@ -169,7 +169,10 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
               con.query(sql, (err, insertedOrder) => {
                 if (err) {
                   console.log(err);
-                  res.json({ status: 400, message: "Order is not accepted." });
+                  return res.json({
+                    status: 400,
+                    message: "Order is not accepted."
+                  });
                 } else {
                   order_id = insertedOrder.insertId;
                   for (let detail of details) {
@@ -207,12 +210,12 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
                     if (err) {
                       console.log(err);
                       deleteOrder(order_id);
-                      res.json({
+                      return res.json({
                         status: 400,
                         message: "Order is not accepted."
                       });
                     } else {
-                      res.json({
+                      return res.json({
                         status: 200,
                         message: "Order accepted successfully."
                       });
@@ -232,9 +235,12 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
     con.query(sql, (err, result) => {
       if (err) {
         console.log(err);
-        res.json({ status: 400, message: "Order is not accepted." });
+        return res.json({ status: 400, message: "Order is not accepted." });
       } else {
-        res.json({ status: 200, message: "Order accepted successfully." });
+        return res.json({
+          status: 200,
+          message: "Order accepted successfully."
+        });
       }
     });
   }
@@ -252,9 +258,9 @@ router.post("/paid-return-order", verifyToken, (req, res) => {
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
-      res.json({ status: 400, message: "Order is not paid." });
+      return res.json({ status: 400, message: "Order is not paid." });
     } else {
-      res.json({ status: 200, message: "Order paid successfully." });
+      return res.json({ status: 200, message: "Order paid successfully." });
     }
   });
 });
@@ -376,7 +382,7 @@ function bookShipment(order, res) {
             if (resData.Msg == "Success") {
               let status = order.status_id;
               for (let order of ordersdata) {
-                sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}', status_id=3 where order_id=${order.order_id}`;
+                sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}', status_id=2 where order_id=${order.order_id}`;
                 con.query(sql);
                 sql =
                   "insert into track_detail(item_id,status_id) values(" +
@@ -415,7 +421,7 @@ function bookShipment(order, res) {
               }
             } else {
               console.log(resData);
-              res.json({
+              return res.json({
                 status: 400,
                 message: "Order not dispatched." + resData.Error[0]
               });
@@ -484,7 +490,7 @@ function changeStatus(res, order) {
 router.post("/get-order-detail", verifyToken, (req, res) => {
   let order_id = req.body.order_id;
   if (isNaN(order_id)) {
-    res.json({ status: 400, message: "Enter valid order id" });
+    return res.json({ status: 400, message: "Enter valid order id" });
   } else {
     let sql =
       "select o.*,a.* from customer_order o, customer_address a where o.order_id=" +
@@ -503,7 +509,10 @@ router.post("/get-order-detail", verifyToken, (req, res) => {
           " and m.model_id=d.mobile_id";
         con.query(sql, (err, order_detail) => {
           if (err) {
-            res.json({ status: 400, message: "Order details not found." });
+            return res.json({
+              status: 400,
+              message: "Order details not found."
+            });
           } else {
             sql =
               "select p.* from promocode p, customer_order o where p.id=o.promo_id and o.order_id=" +
@@ -512,7 +521,7 @@ router.post("/get-order-detail", verifyToken, (req, res) => {
               if (err) {
                 console.log(err);
               }
-              res.json({
+              return res.json({
                 status: 200,
                 message: "Getting order detail successfully.",
                 order: result,
@@ -533,16 +542,16 @@ router.get("/get-order-count", verifyToken, (req, res) => {
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
-      res.json({ status: 400, message: "Count not found." });
+      return res.json({ status: 400, message: "Count not found." });
     } else {
       sql =
         "select count(vm.variant_id) as count from variant_mobile vm,product_variant v where vm.variant_id=v.variant_id and  vm.quantity<v.min_qty";
       con.query(sql, (err, data) => {
         if (err) {
           console.log(err);
-          res.json({ status: 400, message: "Count not found." });
+          return res.json({ status: 400, message: "Count not found." });
         } else {
-          res.json({
+          return res.json({
             status: 200,
             message: "Getting order count successfully",
             data: result,
