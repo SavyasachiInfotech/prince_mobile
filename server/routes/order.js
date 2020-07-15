@@ -376,7 +376,7 @@ function bookShipment(order, res) {
             if (resData.Msg == "Success") {
               let status = order.status_id;
               for (let order of ordersdata) {
-                sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}', status_id=${status} where order_id=${order.order_id}`;
+                sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}', status_id=3 where order_id=${order.order_id}`;
                 con.query(sql);
                 sql =
                   "insert into track_detail(item_id,status_id) values(" +
