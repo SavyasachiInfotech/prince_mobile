@@ -13,7 +13,9 @@ export class ManageOrderComponent implements OnInit {
     private _orderService: OrderService,
     private _config: Config,
     private _router: Router
-  ) {}
+  ) {
+    this.invoiceLink = this._config.invoiceLink;
+  }
 
   public limit = 0;
   public displayPages: number[] = new Array();
@@ -23,6 +25,7 @@ export class ManageOrderComponent implements OnInit {
   public currentStatus: number = 0;
   public startDate = new Date("2020-01-01").toISOString().split("T")[0];
   public endDate = new Date().toISOString().split("T")[0];
+  public invoiceLink = "";
   public addressClass = [
     "badge badge-primary",
     "badge badge-secondary",

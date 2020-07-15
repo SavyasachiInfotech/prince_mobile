@@ -145,6 +145,17 @@
                       >
                         Dispatch Order
                       </button>
+                      <a
+                        href="{{ invoiceLink }}{{ order.shipment_id }}"
+                        target="_blank"
+                      >
+                        <button
+                          *ngIf="currentStatus == 2"
+                          class="btn btn-outline-success"
+                        >
+                          <i class="material-icons">print</i>
+                        </button>
+                      </a>
                       <button
                         class="btn btn-outline-danger"
                         *ngIf="currentStatus == 0"
