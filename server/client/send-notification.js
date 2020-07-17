@@ -87,7 +87,7 @@ module.exports = {
           item_id,
           screenNo
         );
-        sql = `insert into notifications(user_id,title,description) values (${user_id} , '${title}', '${message}')`;
+        sql = `insert into notifications(user_id,title,description,orderId,itemId) values (${user_id} , '${title}', '${message}',${order_id},${item_id})`;
         con.query(sql);
       }
     });
