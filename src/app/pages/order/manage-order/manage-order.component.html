@@ -97,6 +97,7 @@
                   <th>Amount</th>
                   <th>Date Time</th>
                   <th>Address</th>
+                  <th *ngIf="currentStatus==2">Shipmemt Id</th>
                   <th>Image</th>
                   <th>Action</th>
                 </tr>
@@ -105,12 +106,13 @@
                   <td>{{ order.name }}</td>
                   <td>{{ order.user_id }}</td>
                   <td>{{ order.collectable_amount }}</td>
-                  <td>{{ order.added_date }}</td>
+                  <td>{{ order.added_date | date: "dd/MM/yyyy hh:mm:ss" }}</td>
                   <td>
                     <span class="{{ order.addressClass }}"
                       >Address {{ order.address_id }}</span
                     >
                   </td>
+                  <td *ngIf="currentStatus==2">{{order.shipment_id}}</td>
                   <td>
                     <a [href]="order.thumbnail" target="_blank">
                       <img [src]="order.thumbnail" width="50" height="50" />

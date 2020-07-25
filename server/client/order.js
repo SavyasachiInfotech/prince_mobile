@@ -959,32 +959,47 @@ router.post(
                   } catch (error) { }
                 }
                 sql =
-                  "replace into return_request(order_id,item_id,type,reason,image) values(" +
-                  order_id +
-                  "," +
-                  item_id +
-                  ",1,'" +
+                  "insert into return_reason(reason) values('" +
                   req.body.reason +
-                  "','" +
-                  filename +
                   "')";
-                con.query(sql, (err, data) => {
+                con.query(sql, (err, resultData) => {
                   if (err) {
+                    console.log(err);
                     res.status(200).json({
                       status: "0",
-                      message: "Your order replace request already placed."
+                      message: "Your order return request already placed."
                     });
                   } else {
                     sql =
-                      "update customer_order set status_id=10 where order_id=" +
-                      order_id;
-                    con.query(sql);
-                    res.status(200).json({
-                      status: "1",
-                      message: "Order replace request is placed successfully"
+                      "replace into return_request(order_id,item_id,type,reason,image) values(" +
+                      order_id +
+                      "," +
+                      item_id +
+                      ",1,'" +
+                      req.body.reason +
+                      "','" +
+                      filename +
+                      "')";
+                    con.query(sql, (err, data) => {
+                      if (err) {
+                        res.status(200).json({
+                          status: "0",
+                          message: "Your order replace request already placed."
+                        });
+                      } else {
+                        sql =
+                          "update customer_order set status_id=10 where order_id=" +
+                          order_id;
+                        con.query(sql);
+                        res.status(200).json({
+                          status: "1",
+                          message: "Order replace request is placed successfully"
+                        });
+                      }
                     });
                   }
                 });
+
               }
             });
             break;
