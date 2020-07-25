@@ -282,7 +282,7 @@ function bookShipment(order, res) {
   con.query(sql, (err, ordersdata) => {
     if (err) {
       console.log(err);
-      res
+      return res
         .status(200)
         .json({ status: 400, message: "Order status not changed." });
     } else {
@@ -429,7 +429,7 @@ function bookShipment(order, res) {
           }
         );
       } else {
-        res
+        return res
           .status(200)
           .json({ status: 400, message: "Order status not changed" });
       }
@@ -445,7 +445,7 @@ function changeStatus(res, order) {
     order.order_id;
   con.query(sql, (err, result) => {
     if (err) {
-      res
+      return res
         .status(200)
         .json({ status: 400, message: "Order status not changed" });
     } else {
@@ -478,7 +478,7 @@ function changeStatus(res, order) {
             }
           });
 
-          res
+          return res
             .status(200)
             .json({ status: 200, message: "Status changed successfully." });
         }
@@ -499,7 +499,7 @@ router.post("/get-order-detail", verifyToken, (req, res) => {
     con.query(sql, (err, result) => {
       if (err) {
         console.log(err);
-        res
+        return res
           .status(200)
           .json({ status: 400, message: "Order detail not found" });
       } else {
