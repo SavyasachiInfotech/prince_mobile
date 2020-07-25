@@ -300,7 +300,6 @@ function bookShipment(order, res) {
           orderdata.total_weight = 0.05;
         }
         let shipment = {
-          InvoiceNo: order.order_id.toString(),
           PickupCode: "1",
           ShowDiffrenceSender: "Yes",
           SenderName: "Prince Mobile",
