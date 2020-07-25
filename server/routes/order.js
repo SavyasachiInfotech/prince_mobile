@@ -338,15 +338,17 @@ function bookShipment(order, res) {
           IsSellerRegUnderGST: "No",
           InvoiceDate: orderDate
         };
+        shipment.InvoiceNo = "";
         shipment.InvoiceAmount = 0;
         shipment.CollectableAmount = 0;
-        shipment.InvoiceNo = "";
         for (let orderDetail of ordersdata) {
           shipment.InvoiceAmount += orderDetail.collectable_amount;
           shipment.CollectableAmount += orderDetail.collectable_amount;
           shipment.InvoiceNo += orderDetail.order_id + " , ";
+          shipment.ProductDetail += orderDetail.name + " , ";
         }
         shipment.InvoiceNo = shipment.InvoiceNo.substr(0, shipment.InvoiceNo.length - 2);
+        shipment.ProductDetail = shipment.ProductDetail.substr(0, shipment.ProductDetail.length - 2);
         shipment.InvoiceAmount = shipment.InvoiceAmount.toFixed(2);
         shipment.CollectableAmount = shipment.CollectableAmount.toFixed(2);
         shipment.PaymentType = "Prepaid";
