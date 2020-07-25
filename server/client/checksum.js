@@ -677,7 +677,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                                   if (notificationData && notificationData.length) {
                                     notification.sendOrderStatusNotification(
                                       0,
-                                      req.user_id,
+                                      req.userId,
                                       order_id,
                                       notificationData[0].item_id,
                                       3

@@ -270,7 +270,7 @@ router.post(
                                 if (notificationData && notificationData.length) {
                                   notification.sendOrderStatusNotification(
                                     0,
-                                    req.user_id,
+                                    req.userId,
                                     order_id,
                                     notificationData[0].item_id,
                                     3
@@ -393,7 +393,7 @@ router.post(
                                         if (notificationData && notificationData.length) {
                                           notification.sendOrderStatusNotification(
                                             0,
-                                            req.user_id,
+                                            req.userId,
                                             order_id,
                                             notificationData[0].item_id,
                                             3
