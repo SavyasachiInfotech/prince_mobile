@@ -348,11 +348,12 @@ function bookShipment(order, res) {
         shipment.InvoiceNo = shipment.InvoiceNo.substr(0, shipment.InvoiceNo.length - 2);
         shipment.InvoiceAmount = shipment.InvoiceAmount.toFixed(2);
         shipment.CollectableAmount = shipment.CollectableAmount.toFixed(2);
-
-        if (orderdata.iscod == 1) {
-          shipment.PaymentType = "COD";
-        } else {
-          shipment.PaymentType = "Prepaid";
+        shipment.PaymentType = "Prepaid";
+        for (let orderDetail of ordersdata) {
+          if (orderDetail.iscod == 1) {
+            shipment.PaymentType = "COD";
+            break;
+          }
         }
         console.log(shipment);
         let http = require("https");
