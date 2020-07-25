@@ -8,6 +8,7 @@ const limit = process.env.RECORD_LIMIT;
 const path = require("path");
 const auth = require("../auth");
 const cod = require("../codCharge");
+const notification = require("../client/send-notification");
 
 var storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -233,7 +234,7 @@ router.post(
                                   cart[i].variant_id +
                                   " and mobile_id=" +
                                   cart[i].mobile_id;
-                                con.query(sql, (err, result) => {});
+                                con.query(sql, (err, result) => { });
                                 sql =
                                   "update product_variant set order_count=order_count+" +
                                   cart[i].cart_quantity +
@@ -249,7 +250,7 @@ router.post(
                                   cart[i].variant_id +
                                   ";";
                               }
-                              con.query(sql, (err, result) => {});
+                              con.query(sql, (err, result) => { });
                             }
                             sql =
                               "insert into track_detail(item_id,status_id) values(" +
@@ -264,6 +265,18 @@ router.post(
                               " and variant_id=" +
                               req.body.variant_id;
                             con.query(sql, (err, result) => {
+                              sql = "select * from order_detail where order_id=" + order_id;
+                              con.query(sql, (err, notificationData) => {
+                                if (notificationData && notificationData.length) {
+                                  notification.sendOrderStatusNotification(
+                                    0,
+                                    req.user_id,
+                                    order_id,
+                                    notificationData[0].item_id,
+                                    3
+                                  );
+                                }
+                              });
                               res.status(200).json({
                                 status: 1,
                                 message: "Order placed successfully."
@@ -344,7 +357,7 @@ router.post(
                                           cart[i].variant_id +
                                           " and mobile_id=" +
                                           cart[i].mobile_id;
-                                        con.query(sql, (err, result) => {});
+                                        con.query(sql, (err, result) => { });
                                         sql =
                                           "update product_variant set order_count=order_count+" +
                                           cart[i].cart_quantity +
@@ -360,7 +373,7 @@ router.post(
                                           cart[i].variant_id +
                                           ";";
                                       }
-                                      con.query(sql, (err, result) => {});
+                                      con.query(sql, (err, result) => { });
                                     }
                                     sql =
                                       "insert into track_detail(item_id,status_id) values(" +
@@ -375,6 +388,7 @@ router.post(
                                       " and variant_id=" +
                                       req.body.variant_id;
                                     con.query(sql, (err, result) => {
+
                                       res.status(200).json({
                                         status: 1,
                                         message: "Order placed successfully."
@@ -500,14 +514,14 @@ router.post(
             try {
               data.color = product.color;
               data.size = product.size;
-            } catch (error) {}
+            } catch (error) { }
             data.sold_by = "MS WORLD";
             data.image = product.thumbnail;
             data.postage_packing = 0.0;
             let mrp =
               product.price * product.cart_quantity -
               (product.price * product.cart_quantity * product.tax) /
-                (100 + product.tax);
+              (100 + product.tax);
             data.items = mrp.toFixed(2);
             data.taxable_amount = mrp.toFixed(2);
 
@@ -857,7 +871,7 @@ router.post(
                     fs.unlinkSync(
                       path.join(__dirname, "../assets/return" + result[0].image)
                     );
-                  } catch (error) {}
+                  } catch (error) { }
                 }
                 sql =
                   "insert into return_reason(reason) values('" +
@@ -931,7 +945,7 @@ router.post(
                         "../../dist/admin/assets/return" + result[0].image
                       )
                     );
-                  } catch (error) {}
+                  } catch (error) { }
                 }
                 sql =
                   "replace into return_request(order_id,item_id,type,reason,image) values(" +
@@ -981,7 +995,7 @@ router.post(
 
 function deleteOrder(order_id) {
   let sql = "delete from customer_order where order_id=" + order_id;
-  con.query(sql, (err, data) => {});
+  con.query(sql, (err, data) => { });
 }
 
 module.exports = router;

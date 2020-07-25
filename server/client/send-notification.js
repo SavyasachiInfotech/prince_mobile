@@ -47,6 +47,10 @@ module.exports = {
     let message, title;
     message = title = "";
     switch (status) {
+      case 0:
+        title = "Order Placed";
+        message = `Order (${order_id}) placed successfully.`;
+        break;
       case 1:
         title = "Order Accepted";
         message = `Your order no  ${order_id} is acccepted by seller.`;
