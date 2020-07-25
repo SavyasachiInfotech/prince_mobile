@@ -333,13 +333,14 @@ function bookShipment(order, res) {
           CustomerMobile: orderdata.mobile,
           Weight: orderdata.total_weight,
           Length: "18",
-          ProductDetail: orderdata.name,
+          ProductDetail: "",
           CheckoutMode: "Auto",
           IsSellerRegUnderGST: "No",
           InvoiceDate: orderDate
         };
         shipment.InvoiceAmount = 0;
         shipment.CollectableAmount = 0;
+        shipment.InvoiceNo = "";
         for (let orderDetail of ordersdata) {
           shipment.InvoiceAmount += orderDetail.collectable_amount;
           shipment.CollectableAmount += orderDetail.collectable_amount;
