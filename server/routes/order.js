@@ -398,12 +398,7 @@ function bookShipment(order, res) {
                   status +
                   ")";
                 con.query(sql, (err, result) => {
-                  if (err) {
-                    return res.status(200).json({
-                      status: 200,
-                      message: "Status changed successfully."
-                    });
-                  } else {
+                  if (err) { } else {
                     sql =
                       "select * from order_detail where order_id=" +
                       order.order_id;
@@ -418,14 +413,13 @@ function bookShipment(order, res) {
                         );
                       }
                     });
-
-                    return res.status(200).json({
-                      status: 200,
-                      message: "Status changed successfully."
-                    });
                   }
                 });
               }
+              return res.status(200).json({
+                status: 200,
+                message: "Status changed successfully."
+              });
             } else {
               console.log(resData);
               return res.json({
