@@ -8,6 +8,7 @@ var paytm_config = require("./paytm/paytm_config").paytm_config;
 var paytm_checksum = require("./paytm/checksum");
 var querystring = require("querystring");
 const auth = require("../auth");
+const notification = require("./send-notification");
 
 router.post(
   "/generate_checksum",
@@ -106,7 +107,7 @@ router.post(
                           paytm_checksum.genchecksum(
                             paramarray,
                             paytm_config.MERCHANT_KEY,
-                            function(err, checksum) {
+                            function (err, checksum) {
                               console.log(checksum);
                               console.log(
                                 "Checksum: ",
@@ -217,7 +218,7 @@ router.post(
                                   paytm_checksum.genchecksum(
                                     paramarray,
                                     paytm_config.MERCHANT_KEY,
-                                    function(err, checksum) {
+                                    function (err, checksum) {
                                       console.log(checksum);
                                       console.log(
                                         "Checksum: ",
@@ -642,7 +643,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                                     cart[i].variant_id +
                                     " and mobile_id=" +
                                     cart[i].mobile_id;
-                                  con.query(sql, (err, result) => {});
+                                  con.query(sql, (err, result) => { });
                                   sql =
                                     "update product_variant set order_count=order_count+" +
                                     cart[i].cart_quantity +
@@ -658,7 +659,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                                     cart[i].variant_id +
                                     ";";
                                 }
-                                con.query(sql, (err, result) => {});
+                                con.query(sql, (err, result) => { });
                               }
                               sql =
                                 "insert into track_detail(item_id,status_id) values(" +
@@ -671,6 +672,18 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                                 " and variant_id=" +
                                 result[0].variant_id;
                               con.query(sql, (err, result) => {
+                                sql = "select * from order_detail where order_id=" + order_id;
+                                con.query(sql, (err, notificationData) => {
+                                  if (notificationData && notificationData.length) {
+                                    notification.sendOrderStatusNotification(
+                                      0,
+                                      req.user_id,
+                                      order_id,
+                                      notificationData[0].item_id,
+                                      3
+                                    );
+                                  }
+                                });
                                 console.log(err);
                                 res.status(200).json({
                                   status: 1,
@@ -736,7 +749,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
 
 function deleteOrder(order_id) {
   let sql = "delete from customer_order where order_id=" + order_id;
-  con.query(sql, (err, data) => {});
+  con.query(sql, (err, data) => { });
 }
 
 function htmlEscape(str) {

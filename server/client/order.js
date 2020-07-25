@@ -388,7 +388,18 @@ router.post(
                                       " and variant_id=" +
                                       req.body.variant_id;
                                     con.query(sql, (err, result) => {
-
+                                      sql = "select * from order_detail where order_id=" + order_id;
+                                      con.query(sql, (err, notificationData) => {
+                                        if (notificationData && notificationData.length) {
+                                          notification.sendOrderStatusNotification(
+                                            0,
+                                            req.user_id,
+                                            order_id,
+                                            notificationData[0].item_id,
+                                            3
+                                          );
+                                        }
+                                      });
                                       res.status(200).json({
                                         status: 1,
                                         message: "Order placed successfully."
