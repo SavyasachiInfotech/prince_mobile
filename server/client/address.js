@@ -7,7 +7,7 @@ const limit = process.env.RECORD_LIMIT;
 const auth = require("../auth");
 
 router.get("/get-address", auth.verifyToken, (req, res) => {
-  let sql = "select * from customer_address where customer_id=" + req.userId;
+  let sql = "select * from customer_address where customer_id=" + req.userId + " and isDeleted=false";
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -32,7 +32,7 @@ router.get("/get-address", auth.verifyToken, (req, res) => {
 router.get("/get-shipping-address", auth.verifyToken, (req, res) => {
   let sql =
     "select * from customer_address where default_address=1 and customer_id=" +
-    req.userId;
+    req.userId + " and isDeleted=false";
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -121,7 +121,7 @@ router.post(
     } else {
       let data = req.body;
       let sql =
-        "delete from customer_address where address_id=" + data.address_id;
+        "update customer_order set isDeleted=true where address_id=" + data.address_id;
       con.query(sql, (err, result) => {
         if (err) {
           console.log(err);
@@ -183,7 +183,7 @@ router.post(
       let sql;
       if (add.id == "") {
         sql =
-          'insert into customer_address(first_name,last_name,email,flatno,colony,landmark,city,state,pincode,mobile,customer_id,default_address) values("' +
+          'insert into customer_address(first_name,last_name,email,flatno,colony,landmark,city,state,pincode,mobile,customer_id,default_address,isDeleted) values("' +
           add.first_name +
           '","' +
           add.last_name +
@@ -207,7 +207,7 @@ router.post(
           req.userId +
           "," +
           add.default_address +
-          ")";
+          ",false)";
       } else {
         sql =
           'update customer_address set first_name="' +
