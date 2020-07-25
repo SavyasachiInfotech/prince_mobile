@@ -96,7 +96,7 @@ router.post("/sell-report-data", verifyToken, (req, res) => {
 
 router.post("/get-return-orders", verifyToken, (req, res) => {
   let sql =
-    "select o.*,v.name,v.thumbnail,r.reason,r.image,r.item_id,r.added_date as request_date,r.type,r.is_accepted,r.is_paid from customer_order o, product_variant v, return_request r where o.order_id=r.order_id and o.variant_id=v.variant_id order by r.added_date limit " +
+    "select o.*,v.name,v.thumbnail,rr.reason,r.image,r.item_id,r.added_date as request_date,r.type,r.is_accepted,r.is_paid from customer_order o, product_variant v, return_request r,return_reason rr where o.order_id=r.order_id and r.reason=rr.id and o.variant_id=v.variant_id order by r.added_date limit " +
     req.body.pageno * limit +
     "," +
     limit;
