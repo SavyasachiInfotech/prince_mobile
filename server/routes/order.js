@@ -45,7 +45,7 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
-      res.status(200).json({ status: 400, message: "Orders not found." });
+      return res.status(200).json({ status: 400, message: "Orders not found." });
     } else {
       sql =
         "select count(order_id) as total from customer_order where status_id=" +
@@ -57,9 +57,9 @@ router.post("/get-orders-by-status", verifyToken, (req, res) => {
         "'";
       con.query(sql, (err, count) => {
         if (err) {
-          res.status(200).json({ status: 400, message: "Orders not found" });
+          return res.status(200).json({ status: 400, message: "Orders not found" });
         } else {
-          res.status(200).json({
+          return res.status(200).json({
             status: 200,
             message: "Getting order by status successfully.",
             data: result,
@@ -83,9 +83,9 @@ router.post("/sell-report-data", verifyToken, (req, res) => {
   con.query(sql, (err, result) => {
     if (err) {
       console.log(error);
-      res.status(200).json({ status: 400, message: "Orders not found" });
+      return res.status(200).json({ status: 400, message: "Orders not found" });
     } else {
-      res.status(200).json({
+      return res.status(200).json({
         status: 200,
         message: "Getting sell report data successfully.",
         data: result
@@ -392,7 +392,7 @@ function bookShipment(order, res) {
                   ")";
                 con.query(sql, (err, result) => {
                   if (err) {
-                    res.status(200).json({
+                    return res.status(200).json({
                       status: 200,
                       message: "Status changed successfully."
                     });
@@ -412,7 +412,7 @@ function bookShipment(order, res) {
                       }
                     });
 
-                    res.status(200).json({
+                    return res.status(200).json({
                       status: 200,
                       message: "Status changed successfully."
                     });
@@ -457,7 +457,7 @@ function changeStatus(res, order) {
         ")";
       con.query(sql, (err, result) => {
         if (err) {
-          res.status(200).json({ status: 400, message: "Status not changed" });
+          return res.status(200).json({ status: 400, message: "Status not changed" });
         } else {
           sql = "select * from order_detail where order_id=" + order.order_id;
           con.query(sql, (err, result) => {
