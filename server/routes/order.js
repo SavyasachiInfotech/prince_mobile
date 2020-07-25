@@ -340,7 +340,7 @@ function bookShipment(order, res) {
           InvoiceDate: orderDate
         };
         for (let orderDetail of ordersdata) {
-          shipment.InvoiceAmount = orderDetail.order_amount;
+          shipment.InvoiceAmount = orderDetail.collectable_amount;
           shipment.CollectableAmount = orderDetail.collectable_amount;
         }
         shipment.InvoiceAmount = shipment.InvoiceAmount.toFixed(2);
