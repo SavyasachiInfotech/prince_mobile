@@ -11,7 +11,7 @@ export class Config {
   public appPath = "http://13.126.140.244:3000";
 
   public invoiceLink =
-    "https://sandbox.zippingxpress.com/Shipment/PrintLable?id=";
+    "https://accounts.zippingxpress.com/Shipment/PrintLable?id=";
 
   // public appPath = "http://localhost:4200";
   // public apiBaseUrl = "http://localhost:3000/api/";
