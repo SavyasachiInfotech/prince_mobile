@@ -50,9 +50,9 @@ function registerUser(req, res, next) {
   let user = req.body;
   let sql =
     "select * from customer where email='" +
-    user.email +
+    user.email || '' +
     "' or mobile1=" +
-    user.mobile;
+    user.mobile || '';
 
   con.query(sql, (err, result) => {
     if (err) {
@@ -183,7 +183,7 @@ router.post(
             __dirname,
             "../../dist/admin/assets/profile/" + data[0].profile_image
           ),
-          error => {}
+          error => { }
         );
         sql =
           'update customer set profile_image="' +
@@ -249,7 +249,7 @@ router.post(
         ) {
           fs.unlink(
             path.join(__dirname, "../assets/profile/" + data[0].profile_image),
-            error => {}
+            error => { }
           );
         }
       }
@@ -283,7 +283,7 @@ router.post(
             if (result[0].register_otp == data.otp) {
               con.query(
                 "update customer set register_otp=0, mobile_verified=1 where id=" +
-                  result[0].id,
+                result[0].id,
                 (err, upData) => {
                   if (err) {
                     console.log(err);
@@ -361,7 +361,7 @@ router.post(
               String(otp) +
               process.env.SMSLAST;
 
-            http.get(process.env.SMSHOST + path, res => {});
+            http.get(process.env.SMSHOST + path, res => { });
             res
               .status(200)
               .json({ status: "1", message: "User registered successfully." });
@@ -377,7 +377,7 @@ router.post(
             if (otpdata.length > 0) {
               if (otpdata[0].otp == req.body.otp) {
                 query = "delete from user_otp where mobile=" + req.body.mobile;
-                con.query(query, (err, data) => {});
+                con.query(query, (err, data) => { });
                 let user = req.body;
                 let sql =
                   "select * from customer where email='" +
@@ -506,7 +506,7 @@ router.post(
             "&msg=Your mobile number verification OTP is " +
             String(otp) +
             process.env.SMSLAST;
-          http.get(process.env.SMSHOST + path, res => {});
+          http.get(process.env.SMSHOST + path, res => { });
           res
             .status(200)
             .json({ status: "1", message: "OTP send successfully." });
@@ -613,7 +613,7 @@ router.post("/forget-password", (req, res) => {
                 String(otp) +
                 process.env.SMSLAST +
                 " Please don't share it with anyone.";
-              http.get(process.env.SMSHOST + path, res => {});
+              http.get(process.env.SMSHOST + path, res => { });
               res.json({
                 status: "1",
                 message:

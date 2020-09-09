@@ -14,7 +14,7 @@ export class ManageReturnOrderComponent implements OnInit {
   public orders = new Array();
   public imageBaseUrl = this._config.returnBaseUrl;
 
-  constructor(private _orderService: OrderService, private _config: Config) {}
+  constructor(private _orderService: OrderService, private _config: Config) { }
 
   ngOnInit() {
     this.getReturnRequests();
@@ -47,7 +47,7 @@ export class ManageReturnOrderComponent implements OnInit {
   acceptRequest(order, i) {
     if (confirm("Do you want to accept request?")) {
       this._orderService
-        .acceptReturnOrder({ order_id: order.order_id, type: order.type })
+        .acceptReturnOrder({ order_id: order.order_id, type: order.type, item_id: order.item_id })
         .subscribe(res => {
           //@ts-ignore
           if (res.status == 200) {
@@ -62,7 +62,7 @@ export class ManageReturnOrderComponent implements OnInit {
   paidOrder(order, i) {
     if (confirm("Do you want to pay order?")) {
       this._orderService
-        .paidReturnOrder({ order_id: order.order_id })
+        .paidReturnOrder({ order_id: order.order_id, item_id: order.item_id })
         .subscribe(res => {
           //@ts-ignore
           if (res.status == 200) {
@@ -74,7 +74,7 @@ export class ManageReturnOrderComponent implements OnInit {
     }
   }
 
-  changePage(pageno) {}
+  changePage(pageno) { }
 
   setPagination() {
     delete this.displayPages;

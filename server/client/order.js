@@ -617,7 +617,7 @@ router.post(
         sql =
           "select d.*,o.status_id from order_detail d,customer_order o  where o.order_id=d.order_id and d.status_id<4 and d.user_id= " +
           req.userId +
-          " order by d.added_date desc";
+          " and iscod<>2 order by d.added_date desc";
       } else {
         if (req.body.status == 6) {
           sql =

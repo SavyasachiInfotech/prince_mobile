@@ -20,7 +20,7 @@ export class AddImagesComponent implements OnInit {
     private _variantService: VariantService,
     private _route: ActivatedRoute,
     private _config: Config
-  ) {}
+  ) { }
 
   ngOnInit() {
     this._route.params.subscribe(params => {
@@ -102,35 +102,38 @@ export class AddImagesComponent implements OnInit {
                   }
                   if (index < this.list.length) {
                     let image = JSON.parse(this.variant.main_image);
-                    this._variantService
-                      .editUploadedImage(
-                        formsData,
-                        this.variant_id,
-                        image[index]
-                      )
-                      .subscribe(
-                        res => {
-                          this.uploadLabel[index] = "Image Uploaded";
-                        },
-                        err => {
-                          window.alert(
-                            "Image is not uploaded. Please try again"
-                          );
-                        }
-                      );
+                    if (confirm("Do you want to change the image?")) {
+                      this._variantService
+                        .editUploadedImage(
+                          formsData,
+                          this.variant_id,
+                          image[index]
+                        )
+                        .subscribe(
+                          res => {
+                            this.uploadLabel[index] = "Image Uploaded";
+                          },
+                          err => {
+                            window.alert(
+                              "Image is not uploaded. Please try again"
+                            );
+                          }
+                        );
+                    }
                   } else {
                     // formsData.set('file',this.filesToUpload[0]);
-
-                    this._variantService
-                      .uploadImage(formsData, this.variant_id)
-                      .subscribe(
-                        res => {
-                          this.uploadLabel[index] = "Image Uploaded";
-                        },
-                        err => {
-                          console.log(err);
-                        }
-                      );
+                    if (window.confirm("Do you want to upload image?")) {
+                      this._variantService
+                        .uploadImage(formsData, this.variant_id)
+                        .subscribe(
+                          res => {
+                            this.uploadLabel[index] = "Image Uploaded";
+                          },
+                          err => {
+                            console.log(err);
+                          }
+                        );
+                    }
                   }
                 }
               };

@@ -44,7 +44,7 @@ export class ProductVariantComponent implements OnInit {
     private _specificationService: SpecificationService,
     private _taxService: TaxService,
     private _config: Config
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.cancelVariant();
@@ -78,7 +78,7 @@ export class ProductVariantComponent implements OnInit {
               );
               localStorage.removeItem("finishedVariant");
             }
-          } catch (error) {}
+          } catch (error) { }
           // this.selectedMobile = this.mobiles[0].model_id;
         }
       });
@@ -120,7 +120,7 @@ export class ProductVariantComponent implements OnInit {
       let data = this.mobiles.find(
         item => item.model_id == this.selectedMobile[i]
       );
-      if (data) {
+      if (data && !this.allMobiles.find(item => item.model_id == this.selectedMobile[i])) {
         data.quantity = this.selectQuantity;
         this.allMobiles.push(data);
       }
@@ -132,7 +132,7 @@ export class ProductVariantComponent implements OnInit {
       let data = this.others.find(
         item => item.model_id == this.selectedOther[i]
       );
-      if (data) {
+      if (data && !this.allMobiles.find(item => item.model_id == this.selectedOther[i])) {
         data.quantity = this.selectOtherQuantity;
         this.allMobiles.push(data);
       }

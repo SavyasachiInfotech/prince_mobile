@@ -39,12 +39,8 @@
                   <td>{{ order.collectable_amount }}</td>
                   <td>
                     <h6>
-                      <span class="badge badge-danger" *ngIf="order.type == 0"
-                        >Return</span
-                      >
-                      <span class="badge badge-primary" *ngIf="order.type == 1"
-                        >Replace</span
-                      >
+                      <span class="badge badge-danger" *ngIf="order.type == 0">Return</span>
+                      <span class="badge badge-primary" *ngIf="order.type == 1">Replace</span>
                     </h6>
                   </td>
                   <td>
@@ -52,15 +48,8 @@
                   </td>
                   <td>{{ order.reason }}</td>
                   <td>
-                    <a
-                      href="{{ imageBaseUrl }}{{ order.image }}"
-                      target="_blank"
-                    >
-                      <img
-                        src="{{ imageBaseUrl }}{{ order.image }}"
-                        width="50"
-                        height="50"
-                      />
+                    <a href="{{ imageBaseUrl }}{{ order.image }}" target="_blank">
+                      <img src="{{ imageBaseUrl }}{{ order.image }}" width="50" height="50" />
                     </a>
                   </td>
                   <td>
@@ -69,27 +58,16 @@
                         <i class="material-icons">visibility</i>
                       </a>
                       <h6>
-                        <span
-                          *ngIf="order.is_accepted == 1"
-                          class="badge badge-success"
-                          >Accepted</span
-                        >
+                        <span *ngIf="order.is_accepted == 1" class="badge badge-success">Accepted</span>
                       </h6>
-                      <button
-                        class="btn btn-outline-success"
-                        (click)="acceptRequest(order, i)"
-                        *ngIf="order.is_accepted == 0"
-                      >
+                      <button class="btn btn-outline-success" (click)="acceptRequest(order, i)"
+                        *ngIf="order.is_accepted == 0">
                         Accept Request
                       </button>
                       <h6 *ngIf="order.is_paid == 1">
                         <span class="badge badge-primary">Paid</span>
                       </h6>
-                      <button
-                        class="btn btn-outline-primary"
-                        (click)="paidOrder(order, i)"
-                        *ngIf="order.is_paid == 0 || order.type == 1"
-                      >
+                      <button class="btn btn-outline-primary" (click)="paidOrder(order, i)" *ngIf="order.is_paid == 0 ">
                         Pay Order
                       </button>
                     </div>
@@ -104,40 +82,20 @@
           <div class="card-footer" *ngIf="orders.length > 0">
             <nav aria-label="Page">
               <ul class="pagination justify-content-center">
-                <li
-                  class="page-item"
-                  *ngIf="currentPage != 1"
-                  (click)="changePage(1)"
-                >
+                <li class="page-item" *ngIf="currentPage != 1" (click)="changePage(1)">
                   <a class="page-link">First</a>
                 </li>
-                <li
-                  class="page-item"
-                  *ngIf="currentPage != 1"
-                  (click)="changePage(currentPage - 1)"
-                >
+                <li class="page-item" *ngIf="currentPage != 1" (click)="changePage(currentPage - 1)">
                   <a class="page-link"><i class="ion-md-skip-backward"></i></a>
                 </li>
-                <li
-                  class="page-item"
-                  [class.active]="pageno == currentPage"
-                  (click)="changePage(pageno)"
-                  *ngFor="let pageno of displayPages"
-                >
+                <li class="page-item" [class.active]="pageno == currentPage" (click)="changePage(pageno)"
+                  *ngFor="let pageno of displayPages">
                   <a class="page-link">{{ pageno }}</a>
                 </li>
-                <li
-                  class="page-item"
-                  *ngIf="currentPage != lastPage"
-                  (click)="changePage(currentPage + 1)"
-                >
+                <li class="page-item" *ngIf="currentPage != lastPage" (click)="changePage(currentPage + 1)">
                   <a class="page-link"><i class="ion-md-skip-forward"></i></a>
                 </li>
-                <li
-                  class="page-item"
-                  *ngIf="currentPage != lastPage"
-                  (click)="changePage(lastPage)"
-                >
+                <li class="page-item" *ngIf="currentPage != lastPage" (click)="changePage(lastPage)">
                   <a class="page-link">Last</a>
                 </li>
               </ul>

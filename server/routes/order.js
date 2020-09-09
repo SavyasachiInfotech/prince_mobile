@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
+const axios = require('axios');
 const {
   check,
   validationResult,
@@ -127,124 +128,283 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
   let data = req.body;
   let order_id;
   if (data.type == 1) {
-    let sql = "select * from  customer_order where order_id=" + data.order_id;
-    con.query(sql, (err, order) => {
-      if (err) {
-        return res.json({ status: 400, message: "Order is not accepted." });
-      } else {
-        sql = "select * from order_detail where order_id=" + data.order_id;
-        con.query(sql, (err, details) => {
-          if (err) {
-            console.log(err);
-            return res.json({ status: 400, message: "Order is not accepted." });
-          } else {
-            if (order && order.length > 0) {
-              order = order[0];
-              sql =
-                "insert into customer_order(user_id,address_id,status_id,iscod,collectable_amount,order_amount,total_weight,dm_length,dm_breadth,dm_height,taxable_value,cgst,sgst,igst,variant_id) values(" +
-                order.user_id +
-                "," +
-                order.address_id +
-                ",0,2,0," +
-                order.order_amount +
-                "," +
-                order.total_weight +
-                "," +
-                order.dm_length +
-                "," +
-                order.dm_breadth +
-                "," +
-                order.dm_height +
-                "," +
-                order.taxable_value +
-                "," +
-                order.cgst +
-                "," +
-                order.sgst +
-                "," +
-                order.igst +
-                "," +
-                order.variant_id +
-                ")";
-              con.query(sql, (err, insertedOrder) => {
-                if (err) {
-                  console.log(err);
-                  return res.json({
-                    status: 400,
-                    message: "Order is not accepted."
-                  });
-                } else {
-                  order_id = insertedOrder.insertId;
-                  for (let detail of details) {
-                    let product = JSON.parse(detail.variant);
-                    let diff =
-                      (new Date() - new Date(detail.added_date)) /
-                      (1000 * 60 * 60 * 24);
-                    product.warranty = product.warranty - diff;
-                    let sql =
-                      "insert into order_detail(order_id,variant_id,user_id,variant,attributes,quantity,mobile_required,mobile_id,promocode) values(" +
-                      order_id +
-                      "," +
-                      detail.variant_id +
-                      "," +
-                      detail.user_id +
-                      ",'" +
-                      JSON.stringify(product) +
-                      "','" +
-                      detail.attributes +
-                      "'," +
-                      detail.quantity +
-                      "," +
-                      detail.mobile_required +
-                      "," +
-                      detail.mobile_id +
-                      "," +
-                      detail.promocode +
-                      ")";
-                    con.query(sql);
-                  }
-                  let sql =
-                    "update return_request set is_accepted=1 where order_id=" +
-                    data.order_id;
-                  con.query(sql, (err, result) => {
-                    if (err) {
-                      console.log(err);
-                      deleteOrder(order_id);
-                      return res.json({
-                        status: 400,
-                        message: "Order is not accepted."
-                      });
-                    } else {
-                      return res.json({
-                        status: 200,
-                        message: "Order accepted successfully."
-                      });
-                    }
-                  });
-                }
-              });
-            } else {
-            }
-          }
-        });
-      }
-    });
-  } else {
-    let sql =
-      "update return_request set is_accepted=1 where order_id=" + data.order_id;
-    con.query(sql, (err, result) => {
+    con.query("select o.order_id,a.* from customer_order o, customer_address a where o.order_id=" + data.order_id + " and a.address_id=o.address_id", (err, address) => {
       if (err) {
         console.log(err);
         return res.json({ status: 400, message: "Order is not accepted." });
       } else {
-        return res.json({
-          status: 200,
-          message: "Order accepted successfully."
-        });
+        let zipping_address_id;
+        console.log(address);
+        address = address[0];
+        if (address.zipping_address_id == 0) {
+          let body = {
+            oauth: {
+              username: process.env.ZIPPINGUNAME,
+              key: process.env.ZIPPINGPASS,
+              version: "1"
+            },
+            Manifest: {
+              "FirstName": address.first_name,
+              "LastName": address.last_name,
+              "Mobile": address.mobile.toString(),
+              "Email": address.email,
+              "Address1": address.flatno,
+              "Address2": address.colony,
+              "Address3": address.landmark,
+              "Pincode": address.pincode,
+              "City": address.city,
+              "State": address.state,
+              "Country": "India"
+            }
+          };
+          let options = {
+            host: process.env.ZIPPINGBASEURL,
+            path: "/Api/CreatePickupAddress",
+            body: body,
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              accept: "application/json"
+            },
+            json: true
+          };
+          console.log(body);
+          let Request = require("request");
+          Request(
+            `https://${process.env.ZIPPINGBASEURL}/Api/CreatePickupAddress`,
+            options,
+            (err, response, body) => {
+              if (err) {
+                console.log(err);
+                return res.json({ status: 400, message: "Order is not accepted." });
+              } else {
+                console.log("Body", body);
+                let resData = JSON.parse(body.trim());
+                if (resData.Msg == "Successful") {
+                  zipping_address_id = resData.Result.AddressCode;
+                  con.query("update customer_address set zipping_address_id=" + resData.Result.AddressCode + " where address_id=" + address.address_id);
+                  bookReturnOrder(data, res, zipping_address_id);
+                } else {
+
+                  return res.json({ status: 400, message: "Order is not accepted." });
+                }
+              }
+            });
+        } else {
+          zipping_address_id = address.zipping_address_id;
+          bookReturnOrder(data, res, zipping_address_id);
+        }
       }
     });
+
+    /**
+     * iscod status
+     * 
+     * 0 - paytm
+     * 1 - Cod
+     * 2 - Get return order
+     * 3 - Replaced order
+     */
+  } else {
+    acceptReturnOrder(data, res);
   }
 });
+
+function replaceReturnedOrder() {
+
+}
+
+function bookReturnOrder(data, res, zipping_address_id) {
+  let sql = "select o.*,a.* from  customer_order o,customer_address a where order_id=" + data.order_id + " and a.address_id=o.address_id";
+  con.query(sql, (err, order) => {
+    if (err) {
+      console.log(err);
+      return res.json({ status: 400, message: "Order is not accepted." });
+    } else {
+      sql = "select * from order_detail where item_id=" + data.item_id;
+      con.query(sql, (err, details) => {
+        if (err) {
+          console.log(err);
+          return res.json({ status: 400, message: "Order is not accepted." });
+        } else {
+          if (order && order.length > 0) {
+            let order_id;
+            order = order[0];
+            sql =
+              "insert into customer_order(user_id,address_id,status_id,iscod,collectable_amount,order_amount,total_weight,dm_length,dm_breadth,dm_height,taxable_value,cgst,sgst,igst,variant_id,deliveryCharge) values(" +
+              order.user_id +
+              "," +
+              order.address_id +
+              ",0,2,0," +
+              order.order_amount +
+              "," +
+              order.total_weight +
+              "," +
+              order.dm_length +
+              "," +
+              order.dm_breadth +
+              "," +
+              order.dm_height +
+              "," +
+              order.taxable_value +
+              "," +
+              order.cgst +
+              "," +
+              order.sgst +
+              "," +
+              order.igst +
+              "," +
+              order.variant_id +
+              ",0)";
+            con.query(sql, (err, insertedOrder) => {
+              if (err) {
+                console.log(err);
+                return res.json({
+                  status: 400,
+                  message: "Order is not accepted."
+                });
+              } else {
+                order_id = insertedOrder.insertId;
+                for (let detail of details) {
+                  let product = JSON.parse(detail.variant);
+                  let diff =
+                    (new Date() - new Date(detail.added_date)) /
+                    (1000 * 60 * 60 * 24);
+                  product.warranty = product.warranty - diff;
+                  let sql =
+                    "insert into order_detail(order_id,variant_id,user_id,variant,attributes,quantity,mobile_required,mobile_id,promocode) values(" +
+                    order_id +
+                    "," +
+                    detail.variant_id +
+                    "," +
+                    detail.user_id +
+                    ",'" +
+                    JSON.stringify(product) +
+                    "','" +
+                    detail.attributes +
+                    "'," +
+                    detail.quantity +
+                    "," +
+                    detail.mobile_required +
+                    "," +
+                    detail.mobile_id +
+                    "," +
+                    detail.promocode +
+                    ")";
+                  con.query(sql);
+                  sql = `update variant_mobile set quantity=quantity+1 where variant_id=${detail.variant_id} and mobile_id=${detail.mobile_id}`
+                  con.query(sql);
+                }
+                let orderDate = new Date();
+                orderDate =
+                  orderDate.getFullYear() +
+                  "-" +
+                  (orderDate.getMonth() + 1) +
+                  "-" +
+                  orderDate.getDate();
+                let shipment = {
+                  PickupCode: zipping_address_id.toString(),
+                  ShowDiffrenceSender: "Yes",
+                  SenderName: order.first_name + " " + order.last_name,
+                  SenderMobile: order.mobile.toString(),
+                  CustomerEmail: order.email,
+                  Breadth: "12",
+                  Height: "4",
+                  ShipPartnerCode: "Auto",
+                  SellerGSTNo: "123456789123",
+                  SupplySellerStatePlace: "Gujarat",
+                  BuyerGSTNo: "",
+                  EwayBillSrNumber: "",
+                  HSNCode: "",
+                  TaxableValue: "",
+                  SGSTAmount: "0",
+                  CGSTAmount: "0",
+                  IGSTAmount: "0",
+                  Discount: "0",
+                  GSTTaxRateSGSTN: "0",
+                  GSTTaxRateCGSTN: "0",
+                  GSTTaxRateIGSTN: "0",
+                  GSTTaxTotal: "0",
+                  CustomerFirstName: "Mehulbhai",
+                  CustomerLastName: "Senta",
+                  CustomerAddress1: "Shopno-6, Momai Chamber, Labheshwar Chowk",
+                  CustomerAddress2: "LH Road, Varachha",
+                  CustomerAddress3: "Labheshwar Chowk",
+                  CustomerPincode: "395006",
+                  CustomerCity: "Surat",
+                  CustomerState: "Gujarat",
+                  CustomerMobile: "9998613265",
+                  Weight: order.total_weight,
+                  Length: "18",
+                  ProductDetail: "Return replacement",
+                  CheckoutMode: "Auto",
+                  IsSellerRegUnderGST: "No",
+                  InvoiceDate: orderDate,
+                  PaymentType: "Prepaid",
+                  CollectableAmount: "0",
+                  InvoiceAmount: "0",
+                  InvoiceNo: order_id
+                };
+                axios.post(`https://${process.env.ZIPPINGBASEURL}/Api/BookShipment`, {
+                  oauth: {
+                    username: process.env.ZIPPINGUNAME,
+                    key: process.env.ZIPPINGPASS,
+                    version: "1"
+                  },
+                  ManifestDetails: shipment
+                }).then(function (body) {
+                  let resData = body.data;
+                  console.log(resData);
+                  if (resData.Msg == "Success") {
+                    sql = "update customer_order set status_id=1 where order_id=" + order_id;
+                    con.query(sql);
+                    let title = 'Return request is accepted for order ' + data.order_id + ".";
+                    let message = 'Keep your parcel ready. Our currior boy will pick up it within 1-2 days.';
+                    notification.sendNotificationWithMessage(order.user_id, title, message);
+                    acceptReturnOrder(data, res);
+                  } else {
+                    deleteOrder(order_id);
+                    console.log("response wrong")
+                    return res.json({
+                      status: 400,
+                      message: "Order is not accepted."
+                    });
+                  }
+                }).catch(function (error) {
+                  console.log(error);
+                  deleteOrder(order_id)
+                  return res.json({
+                    status: 400,
+                    message: "Order is not accepted."
+                  });
+                });
+              }
+            });
+          } else {
+            console.log("Order not found");
+            return res.json({ status: 400, message: "Order is not accepted." });
+          }
+        }
+      });
+    }
+  });
+}
+
+function acceptReturnOrder(data, res) {
+  let sql =
+    "update return_request set is_accepted=1 where order_id=" + data.order_id;
+  con.query(sql, (err, result) => {
+    if (err) {
+      console.log(err);
+      return res.json({ status: 400, message: "Order is not accepted." });
+    } else {
+      return res.json({
+        status: 200,
+        message: "Order accepted successfully."
+      });
+    }
+  });
+}
 
 function deleteOrder(order_id) {
   let sql = "delete from customer_order where order_id=" + order_id;
@@ -253,8 +413,80 @@ function deleteOrder(order_id) {
 
 router.post("/paid-return-order", verifyToken, (req, res) => {
   let data = req.body;
-  let sql =
-    "update return_request set is_paid=1 where order_id=" + data.order_id;
+  console.log(data);
+  let sql = `select * from return_request where order_id=${data.order_id}`;
+  con.query(sql, (err, orders) => {
+    if (err) {
+      console.log(err);
+      return res.json({ status: 400, message: "Order is not paid." });
+    } else {
+      if (!orders || !orders.length) {
+        console.log("orders not found");
+        return res.json({ status: 400, message: "Order is not paid." });
+      }
+      let returnOrder = orders[0];
+      if (returnOrder.type == 1) {
+        sql = `select * from customer_order where order_id=${data.order_id}`;
+        con.query(sql, (err, orderData) => {
+          if (err || !orderData || !orderData.length) {
+            console.log(err);
+            return res.json({ status: 400, message: "Order is not paid." });
+          } else {
+            sql = `select * from order_detail where item_id=${data.item_id}`;
+            con.query(sql, (err, items) => {
+              if (err || !items || !items.length) {
+                console.log(err);
+                return res.json({ status: 400, message: "Order is not paid." });
+              } else {
+                let order = orderData[0];
+                let item = items[0];
+                sql = `insert into customer_order(user_id,address_id,status_id,iscod,collectable_amount,order_amount,total_weight,dm_length,dm_breadth,dm_height,taxable_value,cgst,sgst,igst,variant_id,deliveryCharge) values(${order.user_id},${order.address_id},0,3,0,0,${order.total_weight},${order.dm_length},${order.dm_breadth},${order.dm_height},0,0,0,0,${item.variant_id},0)`;
+                con.query(sql, (err, insertedOrder) => {
+                  if (err) {
+                    console.log(err);
+                    return res.json({ status: 400, message: "Order is not paid." });
+                  } else {
+                    let order_id = insertedOrder.insertId;
+                    sql = `insert into order_detail(order_id,variant_id,user_id,variant,attributes,quantity,mobile_required,mobile_id,promocode) values(${order_id},${item.variant_id},${item.user_id},'${item.variant}','${item.attributes}',${item.quantity},${item.mobile_required},${item.mobile_id},${item.promocode})`;
+                    con.query(sql, (err, ordersDetail) => {
+                      if (err) {
+                        console.log(err);
+                        deleteOrder(order_id);
+                        return res.json({ status: 400, message: "Order is not paid." });
+                      } else {
+                        let item_id = ordersDetail.insertId;
+                        sql = `insert into track_detail(item_id,status_id) values(${order_id},0)`;
+                        con.query(sql);
+                        sql = `update variant_mobile set quantity=quantity-1 where variant_id=${item.variant_id} and mobile_id=${item.mobile_id}`;
+                        con.query(sql);
+                        sql = `update return_request set is_paid=1 where item_id=${data.item_id}`;
+                        con.query(sql);
+                        notification.sendOrderStatusNotification(
+                          0,
+                          order.user_id,
+                          order_id,
+                          item_id,
+                          3
+                        );
+
+                        return res.json({ status: 400, message: "Order paid successfully." });
+                      }
+                    });
+                  }
+                });
+              }
+            });
+          }
+        })
+      } else {
+        paidReturnedReplacedOrder(data, res);
+      }
+    }
+  });
+});
+
+function paidReturnedReplacedOrder(data, res) {
+  let sql = "update return_request set is_paid=1 where order_id=" + data.order_id;
   con.query(sql, (err, result) => {
     if (err) {
       console.log(err);
@@ -263,7 +495,7 @@ router.post("/paid-return-order", verifyToken, (req, res) => {
       return res.json({ status: 200, message: "Order paid successfully." });
     }
   });
-});
+}
 
 router.post("/change-status", verifyToken, (req, res) => {
   let order = req.body;
@@ -359,76 +591,65 @@ function bookShipment(order, res) {
           }
         }
         console.log(shipment);
-        let http = require("https");
-        let options = {
-          host: process.env.ZIPPINGBASEURL,
-          path: "/Api/BookShipment",
-          body: {
-            oauth: {
-              username: process.env.ZIPPINGUNAME,
-              key: process.env.ZIPPINGPASS,
-              version: "1"
-            },
-            ManifestDetails: shipment
+        axios.post(
+          `https://${process.env.ZIPPINGBASEURL}/Api/BookShipment`, {
+          oauth: {
+            username: process.env.ZIPPINGUNAME,
+            key: process.env.ZIPPINGPASS,
+            version: "1"
           },
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            accept: "application/json"
-          },
-          json: true
-        };
-        let Request = require("request");
-        Request(
-          "https://sandbox.zippingxpress.com/Api/BookShipment",
-          options,
-          (err, response, body) => {
-            console.log("Body", body);
-            let resData = JSON.parse(body.trim());
-            // console.log(resData);
-            if (resData.Msg == "Success") {
-              let status = order.status_id;
-              for (let order of ordersdata) {
-                sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}', status_id=2 where order_id=${order.order_id}`;
-                con.query(sql);
-                sql =
-                  "insert into track_detail(item_id,status_id) values(" +
-                  order.order_id +
-                  "," +
-                  status +
-                  ")";
-                con.query(sql, (err, result) => {
-                  if (err) { } else {
-                    sql =
-                      "select * from order_detail where order_id=" +
-                      order.order_id;
-                    con.query(sql, (err, result) => {
-                      if (result && result.length > 0) {
-                        notification.sendOrderStatusNotification(
-                          order.status,
-                          order.user_id,
-                          order.order_id,
-                          result[0].item_id,
-                          3
-                        );
-                      }
-                    });
-                  }
-                });
-              }
-              return res.status(200).json({
-                status: 200,
-                message: "Status changed successfully."
-              });
-            } else {
-              console.log(resData);
-              return res.json({
-                status: 400,
-                message: "Order not dispatched." + resData.Error[0]
+          ManifestDetails: shipment
+        }).then(function (resData) {
+          resData = resData.data;
+          console.log(resData);
+          if (resData.Msg == "Success") {
+            let status = order.status_id;
+            for (let order of ordersdata) {
+              sql = `update customer_order set shipment_id='${resData.Result[0].ShipmentId}', awbno='${resData.Result[0].AWBNO}', status_id=2 where order_id=${order.order_id}`;
+              con.query(sql);
+              sql =
+                "insert into track_detail(item_id,status_id) values(" +
+                order.order_id +
+                "," +
+                status +
+                ")";
+              con.query(sql, (err, result) => {
+                if (err) { } else {
+                  sql =
+                    "select * from order_detail where order_id=" +
+                    order.order_id;
+                  con.query(sql, (err, result) => {
+                    if (result && result.length > 0) {
+                      notification.sendOrderStatusNotification(
+                        order.status,
+                        order.user_id,
+                        order.order_id,
+                        result[0].item_id,
+                        3
+                      );
+                    }
+                  });
+                }
               });
             }
+            return res.status(200).json({
+              status: 200,
+              message: "Status changed successfully."
+            });
+          } else {
+            console.log(resData);
+            return res.json({
+              status: 400,
+              message: "Order not dispatched." + resData.Error[0]
+            });
           }
-        );
+        }).catch(function (error) {
+          console.log(error);
+          return res.json({
+            status: 400,
+            message: "Order not dispatched." + resData.Error[0]
+          });
+        });
       } else {
         return res
           .status(200)
