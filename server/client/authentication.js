@@ -50,9 +50,9 @@ function registerUser(req, res, next) {
   let user = req.body;
   let sql =
     "select * from customer where email='" +
-    user.email || '' +
+    (user.email || '') +
     "' or mobile1=" +
-    user.mobile || '';
+    (user.mobile || '');
 
   con.query(sql, (err, result) => {
     if (err) {
