@@ -612,8 +612,8 @@ router.post("/forget-password", (req, res) => {
                 process.env.SMSSENDERID +
                 "&msg=Your Reset Password OTP is " +
                 String(otp) +
-                process.env.SMSLAST +
-                " Please don't share it with anyone.";
+                ". Please don't share it with anyone." +
+                process.env.SMSLAST;
               console.log(path);
               http.get(process.env.SMSHOST + path, res => { });
               res.json({
