@@ -360,6 +360,7 @@ router.post(
               "&msg=Your mobile number verification OTP is " +
               String(otp) +
               process.env.SMSLAST;
+            console.log(path)
 
             http.get(process.env.SMSHOST + path, res => { });
             res
@@ -613,6 +614,7 @@ router.post("/forget-password", (req, res) => {
                 String(otp) +
                 process.env.SMSLAST +
                 " Please don't share it with anyone.";
+              console.log(path);
               http.get(process.env.SMSHOST + path, res => { });
               res.json({
                 status: "1",
