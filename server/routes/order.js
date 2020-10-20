@@ -599,7 +599,7 @@ function bookShipment(order, res) {
             version: "1"
           },
           ManifestDetails: shipment
-        }).then(function async(resData) {
+        }).then(async function (resData) {
           resData = resData.data;
           console.log(resData);
           if (resData.Msg == "Success") {
