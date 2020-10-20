@@ -599,7 +599,7 @@ function bookShipment(order, res) {
             version: "1"
           },
           ManifestDetails: shipment
-        }).then(function (resData) {
+        }).then(function async(resData) {
           resData = resData.data;
           console.log(resData);
           if (resData.Msg == "Success") {
@@ -613,23 +613,26 @@ function bookShipment(order, res) {
                 "," +
                 status +
                 ")";
-              con.query(sql, (err, result) => {
-                if (err) { } else {
-                  sql =
-                    "select * from order_detail where order_id=" +
-                    order.order_id;
-                  con.query(sql, (err, result) => {
-                    if (result && result.length > 0) {
-                      notification.sendOrderStatusNotification(
-                        order.status,
-                        order.user_id,
-                        order.order_id,
-                        result[0].item_id,
-                        3
-                      );
-                    }
-                  });
-                }
+              await new Promise((resolve, reject) => {
+                con.query(sql, (err, result) => {
+                  if (err) { } else {
+                    sql =
+                      "select * from order_detail where order_id=" +
+                      order.order_id;
+                    con.query(sql, (err, result) => {
+                      if (result && result.length > 0) {
+                        notification.sendOrderStatusNotification(
+                          order.status,
+                          order.user_id,
+                          order.order_id,
+                          result[0].item_id,
+                          3
+                        );
+                      }
+                    });
+                  }
+                  resolve(true);
+                });
               });
             }
             return res.status(200).json({

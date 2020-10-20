@@ -2,9 +2,13 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const cors = require("cors");
+const axios = require('axios');
 const port = 3000;
 const api = require("./server/api");
+const con = require("./server/database-connection");
 var compression = require("compression");
+var CronJob = require('cron').CronJob;
+const notification = require('./server/client/send-notification');
 require("dotenv").config();
 const app = express();
 
@@ -58,11 +62,120 @@ app.use("/api", api);
 //   res.sendFile(path.join(__dirname, "server/assets/termscondition.html"));
 // });
 
-app.get("*", function(req, res) {
+app.get("*", function (req, res) {
   res.sendFile(path.join(__dirname, "dist/admin/index.html"));
 });
 
-app.listen(3000, function() {
+function startJob() {
+  var job = new CronJob('00 00 00 * * *', function () {
+    // 
+    /*
+     * Runs every day
+     * at 00:00:00 AM. 
+     */
+    // DO SOMETHING
+    con.query(
+      'select * from customer_order where status_id=2',
+      (err, result) => {
+        if (err) {
+          console.log(err);
+        } else {
+          // Math.ceil(result.length / 10)
+          for (i = 0; i < 1; i++) {
+            var shipment_ids = [];
+            for (j = i * 10; j < ((i + 1) * 10); j++) {
+              shipment_ids[i] = result[i].shipment_id;
+            }
+            axios.post(
+              `https://${process.env.ZIPPINGBASEURL}/Api/Tracking`, {
+              oauth: {
+                username: process.env.ZIPPINGUNAME,
+                key: process.env.ZIPPINGPASS,
+                version: "1"
+              },
+              // Manifest: 
+              Manifest: {
+                ShipmentID: shipment_ids.join(",")
+              }
+            }).then(async function (resData) {
+              console.log(resData.data);
+              var shipments = resData.data.Result;
+              for (i = 0; i < shipments.length; i++) {
+                let lastStatus;
+                if (shipments[i].LastStatus == "Delivered") {
+                  lastStatus = 4;
+                } else if (shipments[i].LastStatus == "Return") {
+                  lastStatus = 7;
+                }
+                await new Promise(async (resolve, reject) => {
+                  sql = `update customer_order set status_id='${lastStatus}' where shipment_id=${shipments[i].ShipmentID}`;
+                  await new Promise(async (resolve, reject) => {
+                    await con.query(sql, (err, result) => {
+                      if (err) {
+
+                      } else {
+                        if (shipments[i].LastStatus == "Return") {
+                          let variantID;
+                          sql = `select variant_id from customer_table where shipment_id=${shipments[i].ShipmentID}`;
+                          con.query(sql, (err, result) => {
+                            if (result && result.length > 0) {
+                              variantID = result[0];
+                            }
+                          });
+                          sql = `update variant_mobile set quantity=quantity+1 where variant_id=${variantID}`;
+                          con.query(sql, (err, result) => {
+                          });
+                          sql = `select order_id from customer_order where shipment_id=${shipments[i].ShipmentID}`;
+                          con.query(sql, (err, result) => {
+                            if (result && result.length > 0) {
+                              let orderID = result[0];
+                              sql = `select * from order_detail where order_id=${orderID}`;
+                              con.query(sql, (err, result) => {
+                                if (err) {
+
+                                } else {
+                                  sql =
+                                    "insert into track_detail(item_id,status_id) values(" +
+                                    result[0].order_id +
+                                    "," +
+                                    lastStatus +
+                                    ")";
+                                  con.query(sql);
+                                  notification.sendOrderStatusNotification(
+                                    lastStatus,
+                                    result[0].user_id,
+                                    result[0].order_id,
+                                    result[0].item_id,
+                                    3
+                                  );
+                                }
+                              });
+                            }
+                          });
+                          resolve(true);
+                        }
+                      }
+                    });
+                  });
+                  resolve(true);
+                });
+              }
+            }).catch(function (error) {
+              console.log(error);
+            });
+          }
+        }
+      }
+    );
+  }, function () {
+    /* This function is executed when the job stops */
+  },
+    true /* Start the job right now */
+  );
+}
+
+app.listen(3000, function () {
+  startJob();
   console.log("Server running on " + port);
 });
 
