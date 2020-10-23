@@ -622,7 +622,7 @@ function bookShipment(order, res) {
                     con.query(sql, (err, result) => {
                       if (result && result.length > 0) {
                         notification.sendOrderStatusNotification(
-                          order.status,
+                          order.status_id,
                           order.user_id,
                           order.order_id,
                           result[0].item_id,

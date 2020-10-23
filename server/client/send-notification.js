@@ -55,11 +55,11 @@ module.exports = {
         title = "Order Accepted";
         message = `Your order no  ${order_id} is acccepted by seller.`;
         break;
+      // case 2:
+      //   title = "Order Processing";
+      //   message = `Your order no ${order_id} is processing by seller.`;
+      //   break;
       case 2:
-        title = "Order Processing";
-        message = `Your order no ${order_id} is processing by seller.`;
-        break;
-      case 3:
         title = "Order Shipped";
         message = `Your order no ${order_id} is shipped by seller.`;
         break;
