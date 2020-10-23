@@ -615,14 +615,16 @@ function bookShipment(order, res) {
                 ")";
               await new Promise((resolve, reject) => {
                 con.query(sql, (err, result) => {
-                  if (err) { } else {
+                  if (err) {
+                    console.log(err);
+                  } else {
                     sql =
                       "select * from order_detail where order_id=" +
                       order.order_id;
                     con.query(sql, (err, result) => {
                       if (result && result.length > 0) {
                         notification.sendOrderStatusNotification(
-                          order.status_id,
+                          2,
                           order.user_id,
                           order.order_id,
                           result[0].item_id,
