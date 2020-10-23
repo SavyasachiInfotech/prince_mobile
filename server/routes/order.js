@@ -610,9 +610,7 @@ function bookShipment(order, res) {
               sql =
                 "insert into track_detail(item_id,status_id) values(" +
                 order.order_id +
-                "," +
-                status +
-                ")";
+                ",2)";
               await new Promise((resolve, reject) => {
                 con.query(sql, (err, result) => {
                   if (err) {
