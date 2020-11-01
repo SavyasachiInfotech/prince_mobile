@@ -67,8 +67,8 @@ app.get("*", function (req, res) {
 });
 
 function startJob() {
-  var job = new CronJob('00 00 00 * * *', function () {
-    // 
+  var job = new CronJob('* * * * *', function () {
+    // 00 00 00 * * *
     /*
      * Runs every day
      * at 00:00:00 AM. 
@@ -80,12 +80,16 @@ function startJob() {
         if (err) {
           console.log(err);
         } else {
-          // Math.ceil(result.length / 10)
-          for (i = 0; i < 1; i++) {
+          for (i = 0; i < Math.ceil(result.length / 10); i++) {
             var shipment_ids = [];
-            for (j = i * 10; j < ((i + 1) * 10); j++) {
-              shipment_ids[i] = result[i].shipment_id;
+            let length = ((i + 1) * 10);
+            if (Math.ceil(result.length / 10) == 1) {
+              length = result.length;
             }
+            for (j = i * 10; j < length; j++) {
+              shipment_ids.push(result[j].shipment_id);
+            }
+            console.log("ids", shipment_ids.join(","))
             axios.post(
               `https://${process.env.ZIPPINGBASEURL}/Api/Tracking`, {
               oauth: {
