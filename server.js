@@ -114,7 +114,7 @@ function startJob() {
                 }
                 if (lastStatus) {
                   await new Promise(async (resolve, reject) => {
-                    sql = `update customer_order set status_id=${lastStatus} where shipment_id=${shipments[i].ShipmentID}`;
+                    sql = `update customer_order set status_id=${lastStatus} where shipment_id='${shipments[i].ShipmentID}'`;
                     await new Promise(async (resolve1, reject) => {
                       con.query(sql, (err, result) => {
                         if (err) {
@@ -123,16 +123,15 @@ function startJob() {
                         } else {
                           if (shipments[i].LastStatus == "Return") {
                             let variantID;
-                            sql = `select variant_id from customer_table where shipment_id=${shipments[i].ShipmentID}`;
+                            sql = `select variant_id from customer_order where shipment_id='${shipments[i].ShipmentID}'`;
                             con.query(sql, (err, result) => {
                               if (result && result.length > 0) {
-                                variantID = result[0];
+                                sql = `update variant_mobile set quantity=quantity+1 where variant_id=${result[0].variantId}`;
+                                con.query(sql, (err, result) => {
+                                });
                               }
                             });
-                            sql = `update variant_mobile set quantity=quantity+1 where variant_id=${variantID}`;
-                            con.query(sql, (err, result) => {
-                            });
-                            sql = `select order_id from customer_order where shipment_id=${shipments[i].ShipmentID}`;
+                            sql = `select order_id from customer_order where shipment_id='${shipments[i].ShipmentID}'`;
                             con.query(sql, (err, result) => {
                               if (result && result.length > 0) {
                                 let orderID = result[0];
