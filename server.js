@@ -102,8 +102,9 @@ function startJob() {
                 ShipmentID: shipment_ids.join(",")
               }
             }).then(async function (resData) {
-              console.log(resData.data);
+              // console.log(resData.data);
               var shipments = resData.data.Result;
+              console.log(shipments);
               for (i = 0; i < shipments.length; i++) {
                 let lastStatus;
                 if (shipments[i].LastStatus == "Delivered") {
@@ -111,58 +112,63 @@ function startJob() {
                 } else if (shipments[i].LastStatus == "Return") {
                   lastStatus = 7;
                 }
-                await new Promise(async (resolve, reject) => {
-                  sql = `update customer_order set status_id='${lastStatus}' where shipment_id=${shipments[i].ShipmentID}`;
+                if (lastStatus) {
                   await new Promise(async (resolve, reject) => {
-                    await con.query(sql, (err, result) => {
-                      if (err) {
+                    sql = `update customer_order set status_id='${lastStatus}' where shipment_id=${shipments[i].ShipmentID}`;
+                    await new Promise(async (resolve1, reject) => {
+                      con.query(sql, (err, result) => {
+                        if (err) {
+                          console.log(err);
+                          resolve1(true);
+                        } else {
+                          if (shipments[i].LastStatus == "Return") {
+                            let variantID;
+                            sql = `select variant_id from customer_table where shipment_id=${shipments[i].ShipmentID}`;
+                            con.query(sql, (err, result) => {
+                              if (result && result.length > 0) {
+                                variantID = result[0];
+                              }
+                            });
+                            sql = `update variant_mobile set quantity=quantity+1 where variant_id=${variantID}`;
+                            con.query(sql, (err, result) => {
+                            });
+                            sql = `select order_id from customer_order where shipment_id=${shipments[i].ShipmentID}`;
+                            con.query(sql, (err, result) => {
+                              if (result && result.length > 0) {
+                                let orderID = result[0];
+                                sql = `select * from order_detail where order_id=${orderID}`;
+                                con.query(sql, (err, result) => {
+                                  if (err) {
 
-                      } else {
-                        if (shipments[i].LastStatus == "Return") {
-                          let variantID;
-                          sql = `select variant_id from customer_table where shipment_id=${shipments[i].ShipmentID}`;
-                          con.query(sql, (err, result) => {
-                            if (result && result.length > 0) {
-                              variantID = result[0];
-                            }
-                          });
-                          sql = `update variant_mobile set quantity=quantity+1 where variant_id=${variantID}`;
-                          con.query(sql, (err, result) => {
-                          });
-                          sql = `select order_id from customer_order where shipment_id=${shipments[i].ShipmentID}`;
-                          con.query(sql, (err, result) => {
-                            if (result && result.length > 0) {
-                              let orderID = result[0];
-                              sql = `select * from order_detail where order_id=${orderID}`;
-                              con.query(sql, (err, result) => {
-                                if (err) {
-
-                                } else {
-                                  sql =
-                                    "insert into track_detail(item_id,status_id) values(" +
-                                    result[0].order_id +
-                                    "," +
-                                    lastStatus +
-                                    ")";
-                                  con.query(sql);
-                                  notification.sendOrderStatusNotification(
-                                    lastStatus,
-                                    result[0].user_id,
-                                    result[0].order_id,
-                                    result[0].item_id,
-                                    3
-                                  );
-                                }
-                              });
-                            }
-                          });
-                          resolve(true);
+                                  } else {
+                                    sql =
+                                      "insert into track_detail(item_id,status_id) values(" +
+                                      result[0].order_id +
+                                      "," +
+                                      lastStatus +
+                                      ")";
+                                    con.query(sql);
+                                    notification.sendOrderStatusNotification(
+                                      lastStatus,
+                                      result[0].user_id,
+                                      result[0].order_id,
+                                      result[0].item_id,
+                                      3
+                                    );
+                                  }
+                                });
+                              }
+                            });
+                            resolve1(true);
+                          } else {
+                            resolve1(true);
+                          }
                         }
-                      }
+                      });
                     });
+                    resolve(true);
                   });
-                  resolve(true);
-                });
+                }
               }
             }).catch(function (error) {
               console.log(error);
