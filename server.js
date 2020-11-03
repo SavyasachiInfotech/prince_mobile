@@ -67,9 +67,10 @@ app.get("*", function (req, res) {
 });
 
 function startJob() {
-  var job = new CronJob('00 00 00 * * *', function () {
+  var job = new CronJob('* * * * *', function () {
     // * * * * *
     /*
+     *     00 00 00 * * *
      * Runs every day
      * at 00:00:00 AM. 
      */
@@ -114,9 +115,9 @@ function startJob() {
                 }
                 if (lastStatus) {
                   await new Promise(async (resolve, reject) => {
-                    sql = `update customer_order set status_id=${lastStatus} where shipment_id='${shipments[i].ShipmentID}'`;
+                    sql = `update customer_order set status_id=${lastStatus}, delivery_date='${new Date().toJSON()}' where shipment_id='${shipments[i].ShipmentID}'`;
                     await new Promise(async (resolve1, reject) => {
-                      con.query(sql, (err, result) => {
+                      con.query(sql, async (err, result) => {
                         if (err) {
                           console.log(err);
                           resolve1(true);
@@ -131,35 +132,76 @@ function startJob() {
                                 });
                               }
                             });
-                            sql = `select order_id from customer_order where shipment_id='${shipments[i].ShipmentID}'`;
-                            con.query(sql, (err, result) => {
-                              if (result && result.length > 0) {
-                                let orderID = result[0];
-                                sql = `select * from order_detail where order_id=${orderID}`;
-                                con.query(sql, (err, result) => {
-                                  if (err) {
+                            await new Promise(async (resolve2, reject) => {
+                              sql = `select order_id from customer_order where shipment_id='${shipments[i].ShipmentID}'`;
+                              con.query(sql, async (err, result) => {
+                                if (result && result.length > 0) {
+                                  let orderID = result[0].order_id;
+                                  await new Promise(async (resolve3, reject) => {
+                                    sql = `select * from order_detail where order_id=${orderID}`;
+                                    con.query(sql, (err, result) => {
+                                      if (err) {
 
-                                  } else {
-                                    sql =
-                                      "insert into track_detail(item_id,status_id) values(" +
-                                      result[0].order_id +
-                                      "," +
-                                      lastStatus +
-                                      ")";
-                                    con.query(sql);
-                                    notification.sendOrderStatusNotification(
-                                      lastStatus,
-                                      result[0].user_id,
-                                      result[0].order_id,
-                                      result[0].item_id,
-                                      3
-                                    );
-                                  }
-                                });
-                              }
+                                      } else {
+                                        sql =
+                                          "insert into track_detail(item_id,status_id) values(" +
+                                          result[0].order_id +
+                                          "," +
+                                          7 +
+                                          ")";
+                                        console.log(sql)
+                                        con.query(sql);
+                                        notification.sendOrderStatusNotification(
+                                          7,
+                                          result[0].user_id,
+                                          result[0].order_id,
+                                          result[0].item_id,
+                                          3
+                                        );
+                                      }
+                                      resolve3(true);
+                                    });
+                                  });
+                                }
+                                resolve2(true);
+                              });
                             });
                             resolve1(true);
                           } else {
+                            await new Promise(async (resolve2, reject) => {
+                              sql = `select order_id from customer_order where shipment_id='${shipments[i].ShipmentID}'`;
+                              con.query(sql, async (err, result) => {
+                                if (result && result.length > 0) {
+                                  let orderID = result[0].order_id;
+                                  await new Promise(async (resolve3, reject) => {
+                                    sql = `select * from order_detail where order_id=${orderID}`;
+                                    con.query(sql, (err, result) => {
+                                      if (err) {
+
+                                      } else {
+                                        sql =
+                                          "insert into track_detail(item_id,status_id) values(" +
+                                          result[0].order_id +
+                                          "," +
+                                          4 +
+                                          ")";
+                                        console.log(sql)
+                                        con.query(sql);
+                                        notification.sendOrderStatusNotification(
+                                          4,
+                                          result[0].user_id,
+                                          result[0].order_id,
+                                          result[0].item_id,
+                                          3
+                                        );
+                                      }
+                                      resolve3(true);
+                                    });
+                                  });
+                                }
+                                resolve2(true);
+                              });
+                            });
                             resolve1(true);
                           }
                         }

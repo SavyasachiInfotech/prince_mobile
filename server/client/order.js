@@ -497,9 +497,12 @@ router.post(
             }
             let product = JSON.parse(result.variant);
             data.is_replacable = 0;
-            console.log("Added date", result.order_date);
+            console.log("Added date", result.delivery_date);
+            if (!result.delivery_date) {
+              result.delivery_date = new Date();
+            }
             let diff =
-              (new Date() - new Date(result.order_date)) /
+              (new Date() - new Date(result.delivery_date)) /
               (1000 * 60 * 60 * 24);
             if (
               product.warranty + 2 >= diff &&

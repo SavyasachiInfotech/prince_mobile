@@ -480,14 +480,14 @@ router.post(
                                       products[i].mobiles[j].price +
                                       (products[i].mobiles[j].price *
                                         products[i].mobiles[j].discount) /
-                                        100;
+                                      100;
                                     products[i].mobiles[j].category =
                                       products[i].category;
                                   }
                                   products[i].mrp =
                                     products[i].price +
                                     (products[i].price * products[i].discount) /
-                                      100;
+                                    100;
                                   products[i].main_image = JSON.parse(
                                     products[i].main_image
                                   );
