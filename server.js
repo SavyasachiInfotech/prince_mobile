@@ -115,7 +115,7 @@ function startJob() {
                 }
                 if (lastStatus) {
                   await new Promise(async (resolve, reject) => {
-                    sql = `update customer_order set status_id=${lastStatus}, delivery_date='${new Date().toJSON()}' where shipment_id='${shipments[i].ShipmentID}'`;
+                    sql = `update customer_order set status_id=${lastStatus}, delivery_date='${new Date().toISOString()}' where shipment_id='${shipments[i].ShipmentID}'`;
                     await new Promise(async (resolve1, reject) => {
                       con.query(sql, async (err, result) => {
                         if (err) {
