@@ -792,6 +792,7 @@ router.post(
     check("return_type").isString()
   ],
   (req, res) => {
+    console.log("Cancel order");
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       res.status(200).json({
