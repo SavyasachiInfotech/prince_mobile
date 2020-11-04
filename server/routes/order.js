@@ -127,7 +127,7 @@ router.post("/get-return-orders", verifyToken, (req, res) => {
 router.post("/accept-return-order", verifyToken, (req, res) => {
   let data = req.body;
   let order_id;
-  if (data.type == 1) {
+  if (data.type == 1 || data.type == 0) {
     con.query("select o.order_id,a.* from customer_order o, customer_address a where o.order_id=" + data.order_id + " and a.address_id=o.address_id", (err, address) => {
       if (err) {
         console.log(err);
