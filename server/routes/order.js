@@ -525,9 +525,9 @@ function bookShipment(order, res) {
         orderDate =
           orderDate.getFullYear() +
           "-" +
-          (orderDate.getMonth() + 1) +
+          "00" + (orderDate.getMonth() + 1).toString().substr(-2) +
           "-" +
-          orderDate.getDate();
+          "00" + orderDate.getDate().toString().substr(-2);
         if (!orderdata.total_weight || orderDate.total_weight <= 0) {
           orderdata.total_weight = 0.05;
         }
