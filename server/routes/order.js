@@ -182,7 +182,7 @@ router.post("/accept-return-order", verifyToken, (req, res) => {
                 let resData = JSON.parse(body.trim());
                 if (resData.Msg == "Successful") {
                   zipping_address_id = resData.Result.Result[0].PickupCode;
-                  con.query("update customer_address set zipping_address_id=" + resData.Result.AddressCode + " where address_id=" + address.address_id);
+                  con.query("update customer_address set zipping_address_id=" + zipping_address_id + " where address_id=" + address.address_id);
                   bookReturnOrder(data, res, zipping_address_id);
                 } else {
 
