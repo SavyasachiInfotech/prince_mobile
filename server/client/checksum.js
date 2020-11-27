@@ -293,7 +293,7 @@ router.post(
 
 router.post("/verify_checksum", auth.verifyToken, (req, res) => {
   var decodedBody = req.body.paytm_token;
-
+  console.log(req.body);
   // get received checksum
   var checksum = decodedBody.CHECKSUMHASH;
   // remove this from body, will be passed to function as separate argument
