@@ -9,6 +9,7 @@ var paytm_checksum = require("./paytm/checksum");
 var querystring = require("querystring");
 const auth = require("../auth");
 const notification = require("./send-notification");
+const axios = require('axios');
 
 router.post(
   "/generate_checksum",
@@ -293,7 +294,7 @@ router.post(
 
 router.post("/verify_checksum", auth.verifyToken, (req, res) => {
   var decodedBody = req.body.paytm_token;
-  console.log(req.body);
+  console.log("**************************************\nBody\n***********************************", req.body);
   // get received checksum
   var checksum = decodedBody.CHECKSUMHASH;
   // remove this from body, will be passed to function as separate argument
@@ -306,45 +307,25 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
     )
   ) {
     console.log("Checksum Verification => true");
-    let sql =
-      "update paytm_details set paytm_order_id='" +
-      decodedBody.TXNID +
-      "', paytm_response='" +
-      JSON.stringify(decodedBody) +
-      "', is_completed=1 where id=" +
-      decodedBody.ORDERID;
-    con.query(sql, (err, data) => {
-      if (err) {
-        console.log(err);
-        sql =
-          "insert into refund(paytm_id,amount,response,order_id) values('" +
+    axios.post(`${process.env.TRANSACTION_STATUS_URL}`, {
+      "body": {
+        "mid": process.env.MID,
+        "orderId": req.body.paytm_token.ORDERID
+      },
+      "head": {
+        "signature": checksum
+      }
+    }).then(function (body) {
+      console.log("\nTransaction Status \n\n", body);
+      if (body.resultInfo.resultCode == "01") {
+        let sql =
+          "update paytm_details set paytm_order_id='" +
           decodedBody.TXNID +
-          "'," +
-          decodedBody.TXNAMOUNT +
-          ",'" +
+          "', paytm_response='" +
           JSON.stringify(decodedBody) +
-          "'," +
-          decodedBody.ORDERID +
-          ")";
+          "', is_completed=1 where id=" +
+          decodedBody.ORDERID;
         con.query(sql, (err, data) => {
-          if (err) {
-            console.log(err);
-            res.status(200).json({
-              status: "0",
-              message:
-                "Your order is not completed. Please call in the help center or do communication in chat."
-            });
-          } else {
-            res.status(200).json({
-              status: "0",
-              message:
-                "Your order is not placed. Your transaction amount will be refunded in your account"
-            });
-          }
-        });
-      } else {
-        sql = "select * from paytm_details where id=" + decodedBody.ORDERID;
-        con.query(sql, (err, result) => {
           if (err) {
             console.log(err);
             sql =
@@ -374,12 +355,8 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
               }
             });
           } else {
-            sql =
-              "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.*,t.tax,p.total_weight,p.dimention_length,p.dimention_breadth,p.dimention_height,p.hsncode,m.quantity as mquantity,m.price as mprice, m.discount as mdiscount,(select value from attribute_value where attribute_value_id=c.size_id) as size,(select value from attribute_value where attribute_value_id=c.color_id) as color from cart c, product_variant v, tax t,product p,variant_mobile m where v.variant_id=m.variant_id and m.mobile_id=c.mobile_id and  p.product_id=v.product_id and v.tax_id=t.tax_id and c.variant_id=v.variant_id and c.cart_id=" +
-              req.userId +
-              " and c.variant_id=" +
-              result[0].variant_id;
-            con.query(sql, (err, cart) => {
+            sql = "select * from paytm_details where id=" + decodedBody.ORDERID;
+            con.query(sql, (err, result) => {
               if (err) {
                 console.log(err);
                 sql =
@@ -410,16 +387,11 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                 });
               } else {
                 sql =
-                  "insert into customer_order(user_id,address_id,iscod,variant_id,promo_id) values(" +
+                  "select c.item_id,c.quantity as cart_quantity,c.mobile_required,c.mobile_id,c.added_date as cart_date,v.*,t.tax,p.total_weight,p.dimention_length,p.dimention_breadth,p.dimention_height,p.hsncode,m.quantity as mquantity,m.price as mprice, m.discount as mdiscount,(select value from attribute_value where attribute_value_id=c.size_id) as size,(select value from attribute_value where attribute_value_id=c.color_id) as color from cart c, product_variant v, tax t,product p,variant_mobile m where v.variant_id=m.variant_id and m.mobile_id=c.mobile_id and  p.product_id=v.product_id and v.tax_id=t.tax_id and c.variant_id=v.variant_id and c.cart_id=" +
                   req.userId +
-                  "," +
-                  req.body.address_id +
-                  ",0," +
-                  result[0].variant_id +
-                  "," +
-                  result[0].promo_id +
-                  ")";
-                con.query(sql, (err, order) => {
+                  " and c.variant_id=" +
+                  result[0].variant_id;
+                con.query(sql, (err, cart) => {
                   if (err) {
                     console.log(err);
                     sql =
@@ -449,161 +421,136 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                       }
                     });
                   } else {
-                    let order_id = order.insertId;
-                    let orderdata = {
-                      dm_height: 0,
-                      dm_length: 0,
-                      dm_breadth: 0,
-                      total_weight: 0,
-                      collectable_amount: 0,
-                      taxable_amount: 0,
-                      sgst: 0,
-                      cgst: 0,
-                      igst: 0,
-                      order_amount: 0
-                    };
-                    let queryBit = 0;
                     sql =
-                      "insert into order_detail(order_id,variant_id,user_id,variant,quantity,mobile_required,mobile_id) values";
-                    for (let i = 0; i < cart.length; i++) {
-                      cart[i].attributes = "";
-                      if (cart[i].size) {
-                        cart[i].attributes += "Size : " + cart[i].size;
-                      }
-                      if (cart[i].color) {
-                        cart[i].attributes += "Color : " + cart[i].color;
-                      }
-                      if (
-                        (cart[i].mobile_required == 0 &&
-                          cart[i].cart_quantity > cart[i].quantity) ||
-                        (cart[i].mobile_required == 1 &&
-                          cart[i].cart_quantity > cart[i].mquantity)
-                      ) {
-                        queryBit = 1;
-                        deleteOrder(order_id);
-                        res.status(200).json({
-                          status: "0",
-                          message: "Not enough stock to complete your order."
-                        });
-                        break;
-                      } else {
-                        orderdata.dm_height =
-                          orderdata.dm_height + cart[i].dimention_height;
-                        orderdata.dm_length = cart[i].dimention_length;
-                        orderdata.dm_breadth = cart[i].dimention_breadth;
-                        orderdata.total_weight =
-                          orderdata.total_weight + cart[i].total_weight;
-                        if (cart[i].mobile_required == 1) {
-                          orderdata.collectable_amount =
-                            orderdata.collectable_amount +
-                            cart[i].mprice * cart[i].cart_quantity;
-                        } else {
-                          orderdata.collectable_amount =
-                            orderdata.collectable_amount +
-                            cart[i].price * cart[i].cart_quantity;
-                        }
-
-                        cart[i].thumbnail = JSON.parse(cart[i].thumbnail);
-                        if (cart[i].thumbnail.length > 0) {
-                          cart[i].thumbnail =
-                            process.env.THUMBNAIL + cart[i].thumbnail[0];
-                        } else {
-                          cart[i].thumbnail = "";
-                        }
-                        cart[i].list_image = "";
-                        cart[i].view_image = "";
-                        cart[i].main_image = "";
-                        sql +=
-                          "(" +
-                          order_id +
-                          "," +
-                          cart[i].variant_id +
-                          "," +
-                          req.userId +
-                          `,'${JSON.stringify(cart[i]).replace(
-                            /'/g,
-                            "''"
-                          )} ',` +
-                          cart[i].cart_quantity +
-                          "," +
-                          cart[i].mobile_required +
-                          "," +
-                          cart[i].mobile_id +
+                      "insert into customer_order(user_id,address_id,iscod,variant_id,promo_id) values(" +
+                      req.userId +
+                      "," +
+                      req.body.address_id +
+                      ",0," +
+                      result[0].variant_id +
+                      "," +
+                      result[0].promo_id +
+                      ")";
+                    con.query(sql, (err, order) => {
+                      if (err) {
+                        console.log(err);
+                        sql =
+                          "insert into refund(paytm_id,amount,response,order_id) values('" +
+                          decodedBody.TXNID +
+                          "'," +
+                          decodedBody.TXNAMOUNT +
+                          ",'" +
+                          JSON.stringify(decodedBody) +
+                          "'," +
+                          decodedBody.ORDERID +
                           ")";
-                        if (i != cart.length - 1) {
-                          sql += ", ";
-                        } else {
-                          sql += ";";
-                        }
-                      }
-                    }
-                    if (queryBit == 0) {
-                      con.query(sql, (err, order_detail) => {
-                        if (err) {
-                          console.log(err);
-                          deleteOrder(order_id);
-                          sql =
-                            "insert into refund(paytm_id,amount,response,order_id) values('" +
-                            decodedBody.TXNID +
-                            "'," +
-                            decodedBody.TXNAMOUNT +
-                            ",'" +
-                            JSON.stringify(decodedBody) +
-                            "'," +
-                            decodedBody.ORDERID +
-                            ")";
-                          con.query(sql, (err, data) => {
-                            if (err) {
-                              console.log(err);
-                              res.status(200).json({
-                                status: "0",
-                                message:
-                                  "Your order is not completed. Please call in the help center or do communication in chat."
-                              });
+                        con.query(sql, (err, data) => {
+                          if (err) {
+                            console.log(err);
+                            res.status(200).json({
+                              status: "0",
+                              message:
+                                "Your order is not completed. Please call in the help center or do communication in chat."
+                            });
+                          } else {
+                            res.status(200).json({
+                              status: "0",
+                              message:
+                                "Your order is not placed. Your transaction amount will be refunded in your account"
+                            });
+                          }
+                        });
+                      } else {
+                        let order_id = order.insertId;
+                        let orderdata = {
+                          dm_height: 0,
+                          dm_length: 0,
+                          dm_breadth: 0,
+                          total_weight: 0,
+                          collectable_amount: 0,
+                          taxable_amount: 0,
+                          sgst: 0,
+                          cgst: 0,
+                          igst: 0,
+                          order_amount: 0
+                        };
+                        let queryBit = 0;
+                        sql =
+                          "insert into order_detail(order_id,variant_id,user_id,variant,quantity,mobile_required,mobile_id) values";
+                        for (let i = 0; i < cart.length; i++) {
+                          cart[i].attributes = "";
+                          if (cart[i].size) {
+                            cart[i].attributes += "Size : " + cart[i].size;
+                          }
+                          if (cart[i].color) {
+                            cart[i].attributes += "Color : " + cart[i].color;
+                          }
+                          if (
+                            (cart[i].mobile_required == 0 &&
+                              cart[i].cart_quantity > cart[i].quantity) ||
+                            (cart[i].mobile_required == 1 &&
+                              cart[i].cart_quantity > cart[i].mquantity)
+                          ) {
+                            queryBit = 1;
+                            deleteOrder(order_id);
+                            res.status(200).json({
+                              status: "0",
+                              message: "Not enough stock to complete your order."
+                            });
+                            break;
+                          } else {
+                            orderdata.dm_height =
+                              orderdata.dm_height + cart[i].dimention_height;
+                            orderdata.dm_length = cart[i].dimention_length;
+                            orderdata.dm_breadth = cart[i].dimention_breadth;
+                            orderdata.total_weight =
+                              orderdata.total_weight + cart[i].total_weight;
+                            if (cart[i].mobile_required == 1) {
+                              orderdata.collectable_amount =
+                                orderdata.collectable_amount +
+                                cart[i].mprice * cart[i].cart_quantity;
                             } else {
-                              res.status(200).json({
-                                status: "0",
-                                message:
-                                  "Your order is not placed. Your transaction amount will be refunded in your account"
-                              });
+                              orderdata.collectable_amount =
+                                orderdata.collectable_amount +
+                                cart[i].price * cart[i].cart_quantity;
                             }
-                          });
-                        } else {
-                          orderdata.order_amount = orderdata.collectable_amount;
-                          orderdata.taxable_amount =
-                            (orderdata.collectable_amount * cart[0].tax) /
-                            (100 + cart[0].tax);
-                          orderdata.cgst = orderdata.taxable_amount / 2;
-                          orderdata.sgst = orderdata.taxable_amount / 2;
-                          orderdata.igst = 0;
-                          orderdata.taxable_amount =
-                            orderdata.collectable_amount -
-                            orderdata.taxable_amount;
-                          orderdata.collectable_amount = 0;
-                          sql =
-                            "update customer_order set collectable_amount=" +
-                            orderdata.collectable_amount +
-                            ", total_weight=" +
-                            orderdata.total_weight +
-                            ", dm_length=" +
-                            orderdata.dm_length +
-                            ", dm_breadth=" +
-                            orderdata.dm_breadth +
-                            ", dm_height=" +
-                            orderdata.dm_height +
-                            ", taxable_value=" +
-                            orderdata.taxable_amount +
-                            ",sgst=" +
-                            orderdata.sgst +
-                            ", cgst=" +
-                            orderdata.cgst +
-                            ", igst=" +
-                            orderdata.igst +
-                            ",order_amount=" +
-                            orderdata.order_amount +
-                            " where order_id=" +
-                            order_id;
-                          con.query(sql, (err, orderinfo) => {
+
+                            cart[i].thumbnail = JSON.parse(cart[i].thumbnail);
+                            if (cart[i].thumbnail.length > 0) {
+                              cart[i].thumbnail =
+                                process.env.THUMBNAIL + cart[i].thumbnail[0];
+                            } else {
+                              cart[i].thumbnail = "";
+                            }
+                            cart[i].list_image = "";
+                            cart[i].view_image = "";
+                            cart[i].main_image = "";
+                            sql +=
+                              "(" +
+                              order_id +
+                              "," +
+                              cart[i].variant_id +
+                              "," +
+                              req.userId +
+                              `,'${JSON.stringify(cart[i]).replace(
+                                /'/g,
+                                "''"
+                              )} ',` +
+                              cart[i].cart_quantity +
+                              "," +
+                              cart[i].mobile_required +
+                              "," +
+                              cart[i].mobile_id +
+                              ")";
+                            if (i != cart.length - 1) {
+                              sql += ", ";
+                            } else {
+                              sql += ";";
+                            }
+                          }
+                        }
+                        if (queryBit == 0) {
+                          con.query(sql, (err, order_detail) => {
                             if (err) {
                               console.log(err);
                               deleteOrder(order_id);
@@ -634,112 +581,185 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
                                 }
                               });
                             } else {
-                              for (let i = 0; i < cart.length; i++) {
-                                if (cart[i].mobile_required == 1) {
+                              orderdata.order_amount = orderdata.collectable_amount;
+                              orderdata.taxable_amount =
+                                (orderdata.collectable_amount * cart[0].tax) /
+                                (100 + cart[0].tax);
+                              orderdata.cgst = orderdata.taxable_amount / 2;
+                              orderdata.sgst = orderdata.taxable_amount / 2;
+                              orderdata.igst = 0;
+                              orderdata.taxable_amount =
+                                orderdata.collectable_amount -
+                                orderdata.taxable_amount;
+                              orderdata.collectable_amount = 0;
+                              sql =
+                                "update customer_order set collectable_amount=" +
+                                orderdata.collectable_amount +
+                                ", total_weight=" +
+                                orderdata.total_weight +
+                                ", dm_length=" +
+                                orderdata.dm_length +
+                                ", dm_breadth=" +
+                                orderdata.dm_breadth +
+                                ", dm_height=" +
+                                orderdata.dm_height +
+                                ", taxable_value=" +
+                                orderdata.taxable_amount +
+                                ",sgst=" +
+                                orderdata.sgst +
+                                ", cgst=" +
+                                orderdata.cgst +
+                                ", igst=" +
+                                orderdata.igst +
+                                ",order_amount=" +
+                                orderdata.order_amount +
+                                " where order_id=" +
+                                order_id;
+                              con.query(sql, (err, orderinfo) => {
+                                if (err) {
+                                  console.log(err);
+                                  deleteOrder(order_id);
                                   sql =
-                                    "update variant_mobile set quantity=quantity-" +
-                                    cart[i].cart_quantity +
-                                    " where  variant_id=" +
-                                    cart[i].variant_id +
-                                    " and mobile_id=" +
-                                    cart[i].mobile_id;
-                                  con.query(sql, (err, result) => { });
-                                  sql =
-                                    "update product_variant set order_count=order_count+" +
-                                    cart[i].cart_quantity +
-                                    " where variant_id=" +
-                                    cart[i].variant_id;
+                                    "insert into refund(paytm_id,amount,response,order_id) values('" +
+                                    decodedBody.TXNID +
+                                    "'," +
+                                    decodedBody.TXNAMOUNT +
+                                    ",'" +
+                                    JSON.stringify(decodedBody) +
+                                    "'," +
+                                    decodedBody.ORDERID +
+                                    ")";
+                                  con.query(sql, (err, data) => {
+                                    if (err) {
+                                      console.log(err);
+                                      res.status(200).json({
+                                        status: "0",
+                                        message:
+                                          "Your order is not completed. Please call in the help center or do communication in chat."
+                                      });
+                                    } else {
+                                      res.status(200).json({
+                                        status: "0",
+                                        message:
+                                          "Your order is not placed. Your transaction amount will be refunded in your account"
+                                      });
+                                    }
+                                  });
                                 } else {
-                                  sql =
-                                    "update product_variant set quantity=quantity-" +
-                                    cart[i].cart_quantity +
-                                    ", order_count=order_count+" +
-                                    cart[i].cart_quantity +
-                                    " where variant_id=" +
-                                    cart[i].variant_id +
-                                    ";";
-                                }
-                                con.query(sql, (err, result) => { });
-                              }
-                              sql =
-                                "insert into track_detail(item_id,status_id) values(" +
-                                order_id +
-                                ",0)";
-                              con.query(sql);
-                              sql =
-                                "delete from cart where cart_id=" +
-                                req.userId +
-                                " and variant_id=" +
-                                result[0].variant_id;
-                              con.query(sql, (err, result) => {
-                                sql = "select * from order_detail where order_id=" + order_id;
-                                con.query(sql, (err, notificationData) => {
-                                  if (notificationData && notificationData.length) {
-                                    notification.sendOrderStatusNotification(
-                                      0,
-                                      req.userId,
-                                      order_id,
-                                      notificationData[0].item_id,
-                                      3
-                                    );
+                                  for (let i = 0; i < cart.length; i++) {
+                                    if (cart[i].mobile_required == 1) {
+                                      sql =
+                                        "update variant_mobile set quantity=quantity-" +
+                                        cart[i].cart_quantity +
+                                        " where  variant_id=" +
+                                        cart[i].variant_id +
+                                        " and mobile_id=" +
+                                        cart[i].mobile_id;
+                                      con.query(sql, (err, result) => { });
+                                      sql =
+                                        "update product_variant set order_count=order_count+" +
+                                        cart[i].cart_quantity +
+                                        " where variant_id=" +
+                                        cart[i].variant_id;
+                                    } else {
+                                      sql =
+                                        "update product_variant set quantity=quantity-" +
+                                        cart[i].cart_quantity +
+                                        ", order_count=order_count+" +
+                                        cart[i].cart_quantity +
+                                        " where variant_id=" +
+                                        cart[i].variant_id +
+                                        ";";
+                                    }
+                                    con.query(sql, (err, result) => { });
                                   }
-                                });
-                                console.log(err);
-                                res.status(200).json({
-                                  status: 1,
-                                  message: "Order placed successfully."
-                                });
+                                  sql =
+                                    "insert into track_detail(item_id,status_id) values(" +
+                                    order_id +
+                                    ",0)";
+                                  con.query(sql);
+                                  sql =
+                                    "delete from cart where cart_id=" +
+                                    req.userId +
+                                    " and variant_id=" +
+                                    result[0].variant_id;
+                                  con.query(sql, (err, result) => {
+                                    sql = "select * from order_detail where order_id=" + order_id;
+                                    con.query(sql, (err, notificationData) => {
+                                      if (notificationData && notificationData.length) {
+                                        notification.sendOrderStatusNotification(
+                                          0,
+                                          req.userId,
+                                          order_id,
+                                          notificationData[0].item_id,
+                                          3
+                                        );
+                                      }
+                                    });
+                                    console.log(err);
+                                    res.status(200).json({
+                                      status: 1,
+                                      message: "Order placed successfully."
+                                    });
+                                  });
+                                }
+                              });
+                            }
+                          });
+                        } else {
+                          deleteOrder(order_id);
+                          sql =
+                            "insert into refund(paytm_id,amount,response,order_id) values('" +
+                            decodedBody.TXNID +
+                            "'," +
+                            decodedBody.TXNAMOUNT +
+                            ",'" +
+                            JSON.stringify(decodedBody) +
+                            "'," +
+                            decodedBody.ORDERID +
+                            ")";
+                          con.query(sql, (err, data) => {
+                            if (err) {
+                              console.log(err);
+                              res.status(200).json({
+                                status: "0",
+                                message:
+                                  "Your order is not completed. Please call in the help center or do communication in chat."
+                              });
+                            } else {
+                              res.status(200).json({
+                                status: "0",
+                                message:
+                                  "Your order is not placed. Your transaction amount will be refunded in your account"
                               });
                             }
                           });
                         }
-                      });
-                    } else {
-                      deleteOrder(order_id);
-                      sql =
-                        "insert into refund(paytm_id,amount,response,order_id) values('" +
-                        decodedBody.TXNID +
-                        "'," +
-                        decodedBody.TXNAMOUNT +
-                        ",'" +
-                        JSON.stringify(decodedBody) +
-                        "'," +
-                        decodedBody.ORDERID +
-                        ")";
-                      con.query(sql, (err, data) => {
-                        if (err) {
-                          console.log(err);
-                          res.status(200).json({
-                            status: "0",
-                            message:
-                              "Your order is not completed. Please call in the help center or do communication in chat."
-                          });
-                        } else {
-                          res.status(200).json({
-                            status: "0",
-                            message:
-                              "Your order is not placed. Your transaction amount will be refunded in your account"
-                          });
-                        }
-                      });
-                    }
+                      }
+                    });
                   }
                 });
               }
             });
           }
         });
+        sql = "select * from paytm_details where id=" + decodedBody.ORDERID;
+        con.query(sql, (err, result) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      } else {
+        console.log("Transaction Status Verification => failed");
+        res.json({ status: "0", message: "Payment failed. Please try again." });
       }
-    });
-    sql = "select * from paytm_details where id=" + decodedBody.ORDERID;
-    con.query(sql, (err, result) => {
-      if (err) {
-        console.log(err);
-      }
+    }).catch(function (error) {
+      console.log("Transaction Status Verification => failed");
+      res.json({ status: "0", message: "Payment failed. Please try again." });
     });
   } else {
     console.log("Checksum Verification => false");
-    res.json({ status: "Checksum Verification => false" });
+    res.json({ status: "0", message: "Payment failed. Please try again." });
   }
   // if checksum is validated Kindly verify the amount and status
   // if transaction is successful
