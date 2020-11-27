@@ -316,7 +316,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
         "signature": checksum
       }
     }).then(function (body) {
-      console.log("\nTransaction Status \n\n", body);
+      console.log("\nTransaction Status \n\n", JSON.stringify(body.data));
       if (body.data.resultInfo.resultCode == "01") {
         let sql =
           "update paytm_details set paytm_order_id='" +
