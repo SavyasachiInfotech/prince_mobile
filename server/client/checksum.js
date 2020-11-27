@@ -317,7 +317,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
       }
     }).then(function (body) {
       console.log("\nTransaction Status \n\n", body);
-      if (body.resultInfo.resultCode == "01") {
+      if (body.data.resultInfo.resultCode == "01") {
         let sql =
           "update paytm_details set paytm_order_id='" +
           decodedBody.TXNID +
