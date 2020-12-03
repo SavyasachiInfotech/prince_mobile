@@ -199,23 +199,23 @@ router.post(
                               } else {
                                 if (user.length > 0) {
                                   var paramarray = {};
-                                  paramarray["MID"] = process.env.MID; //Provided by Paytm
-                                  paramarray[
-                                    "ORDER_ID"
-                                  ] = result.insertId.toString(); //unique OrderId for every req
-                                  paramarray["CUST_ID"] = req.userId.toString(); // unique customer identifier
-                                  paramarray["INDUSTRY_TYPE_ID"] =
-                                    process.env.INDUTYPEID; //Provided by Paytm
-                                  paramarray["CHANNEL_ID"] =
-                                    process.env.CHANNELID; //Provided by Paytm
-                                  paramarray["TXN_AMOUNT"] = price.toString(); // transaction amount
-                                  paramarray["WEBSITE"] = process.env.WEBSITE; //Provided by Paytm
-                                  paramarray["CALLBACK_URL"] =
+                                  paramarray["mid"] = process.env.MID; //Provided by Paytm
+                                  paramarray["orderId"] = result.insertId.toString(); //unique OrderId for every req
+                                  paramarray["userInfo"] = {
+                                    custId: req.userId.toString()
+                                  } // unique customer identifier
+                                  paramarray["requestType"] = "Payment";
+                                  paramarray["txnAmount"] = {
+                                    value: price.toString(),
+                                    currency: "INR"
+                                  } // transaction amount
+                                  paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
+                                  paramarray["callbackUrl"] =
                                     "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
                                     result.insertId; //Provided by Paytm
-                                  paramarray["EMAIL"] = user[0].email; // customer email id
-                                  // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
-                                  paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
+                                  // paramarray["EMAIL"] = user[0].email; // customer email id
+                                  // // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
+                                  // paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
                                   paytm_checksum.genchecksum(
                                     paramarray,
                                     paytm_config.MERCHANT_KEY,
@@ -226,24 +226,31 @@ router.post(
                                         JSON.stringify(checksum),
                                         "\n"
                                       );
-                                      res.status(200).json({
-                                        status: "1",
-                                        message:
-                                          "Checksum generated successfully.",
-                                        checksum: checksum,
-                                        order_id: result.insertId.toString(),
-                                        mid: process.env.MID,
-                                        cust_id: req.userId.toString(),
-                                        industry_type_id:
-                                          process.env.INDUTYPEID,
-                                        channel_id: process.env.CHANNELID,
-                                        txn_amount: price.toString(),
-                                        website: process.env.WEBSITE,
-                                        callback_url:
-                                          "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                                          result.insertId,
-                                        email: user[0].email,
-                                        mobile_no: user[0].mobile1
+                                      axios.post(`${process.env.INITATE_TRANSACTION_URL}`, {
+                                        "body": paramarray,
+                                        "head": {
+                                          "signature": checksum
+                                        }
+                                      }).then(function (body) {
+                                        res.status(200).json({
+                                          status: "1",
+                                          message:
+                                            "Checksum generated successfully.",
+                                          checksum: body.data.txnToken,
+                                          order_id: result.insertId.toString(),
+                                          mid: process.env.MID,
+                                          cust_id: req.userId.toString(),
+                                          industry_type_id:
+                                            process.env.INDUTYPEID,
+                                          channel_id: process.env.CHANNELID,
+                                          txn_amount: price.toString(),
+                                          website: process.env.WEBSITE,
+                                          callback_url:
+                                            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                            result.insertId,
+                                          email: user[0].email,
+                                          mobile_no: user[0].mobile1
+                                        });
                                       });
                                     }
                                   );
