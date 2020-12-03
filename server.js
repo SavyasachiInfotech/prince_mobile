@@ -67,7 +67,7 @@ app.get("*", function (req, res) {
 });
 
 function startJob() {
-  var job = new CronJob('* * * * *', function () {
+  var job = new CronJob('00 00 00 * * *', function () {
     // * * * * *
     /*
      *     00 00 00 * * *
