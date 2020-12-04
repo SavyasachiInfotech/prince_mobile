@@ -232,6 +232,7 @@ router.post(
                                           "signature": checksum
                                         }
                                       }).then(function (body) {
+                                        console.log("Token of initiate", body.data.txnToken);
                                         res.status(200).json({
                                           status: "1",
                                           message:
