@@ -321,6 +321,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
         orderId: req.body.paytm_token.ORDERID
       }
     }).then(function (body) {
+      console.log("generated", body.data);
       axios.post(`${process.env.TRANSACTION_STATUS_URL}`, {
         "body": {
           "mid": process.env.MID,
