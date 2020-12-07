@@ -319,9 +319,6 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
       "body": {
         mid: process.env.MID,
         orderId: req.body.paytm_token.ORDERID
-      },
-      "head": {
-        "signature": checksum
       }
     }).then(function (body) {
       console.log("generated", body.data);
