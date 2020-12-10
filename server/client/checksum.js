@@ -129,7 +129,7 @@ router.post(
                                   "signature": checksum
                                 }
                               };
-
+                              console.log(paytmData);
                               var post_data = JSON.stringify(paytmData);
 
                               var options = {
