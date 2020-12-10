@@ -124,6 +124,7 @@ router.post(
                                   "signature": checksum
                                 }
                               }).then(function (body) {
+                                console.log(body.data)
                                 res.status(200).json({
                                   status: "1",
                                   message: "Checksum generated successfully.",
