@@ -118,6 +118,7 @@ router.post(
                                 JSON.stringify(checksum),
                                 "\n"
                               );
+                              console.log(paramarray)
                               axios.post(`${process.env.CREATE_CHECKSUM_URL.replace("{mid}", paramarray.mid).replace("{orderId}", paramarray.orderId)}`, {
                                 "body": paramarray,
                                 "head": {
