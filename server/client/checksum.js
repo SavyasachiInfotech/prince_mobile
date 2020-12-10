@@ -98,7 +98,7 @@ router.post(
                           } // unique customer identifier
                           paramarray["requestType"] = "Payment";
                           paramarray["txnAmount"] = {
-                            value: price.toString(),
+                            value: price.toFixed(2),
                             currency: "INR"
                           } // transaction amount
                           paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
@@ -255,7 +255,7 @@ router.post(
                                           industry_type_id:
                                             process.env.INDUTYPEID,
                                           channel_id: process.env.CHANNELID,
-                                          txn_amount: price.toString(),
+                                          txn_amount: price.toFixed(2),
                                           website: process.env.WEBSITE,
                                           callback_url:
                                             "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
