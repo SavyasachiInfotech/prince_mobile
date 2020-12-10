@@ -91,7 +91,7 @@ router.post(
                       } else {
                         if (user.length > 0) {
                           var paramarray = {};
-                          paramarrayo["requestType"] = "Payment";
+                          paramarray["requestType"] = "Payment";
                           paramarray["mid"] = process.env.MID; //Provided by Paytm
                           paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
                           paramarray["orderId"] = result.insertId.toString(); //unique OrderId for every req
