@@ -96,7 +96,8 @@ router.post(
                           paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
                           paramarray["orderId"] = result.insertId.toString(); //unique OrderId for every req
                           paramarray["callbackUrl"] =
-                            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                            // "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                            "https://merchant.com/callback?ORDER_ID=" +
                             result.insertId.toString(); //Provided by Paytm
                           paramarray["txnAmount"] = {
                             value: price.toFixed(2),
