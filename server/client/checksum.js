@@ -118,7 +118,7 @@ router.post(
                                 JSON.stringify(checksum),
                                 "\n"
                               );
-                              axios.post(`${process.env.INITATE_TRANSACTION_URL.replace("{mid}", paramarray.mid).replace("{orderId}", paramarray.orderId)}`, {
+                              axios.post(`${process.env.CREATE_CHECKSUM_URL.replace("{mid}", paramarray.mid).replace("{orderId}", paramarray.orderId)}`, {
                                 "body": paramarray,
                                 "head": {
                                   "signature": checksum
@@ -236,7 +236,7 @@ router.post(
                                         JSON.stringify(checksum),
                                         "\n"
                                       );
-                                      axios.post(`${process.env.INITATE_TRANSACTION_URL.replace("{mid}", paramarray.mid).replace("{orderId}", paramarray.orderId)}`, {
+                                      axios.post(`${process.env.CREATE_CHECKSUM_URL.replace("{mid}", paramarray.mid).replace("{orderId}", paramarray.orderId)}`, {
                                         "body": paramarray,
                                         "head": {
                                           "signature": checksum
@@ -325,7 +325,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
     )
   ) {
     console.log("Checksum Verification => true");
-    axios.post(`${process.env.INITATE_TRANSACTION_URL.replace("{mid}", process.env.MID).replace("{orderId}", decodedBody.ORDERID)}`, {
+    axios.post(`${process.env.CREATE_CHECKSUM_URL.replace("{mid}", process.env.MID).replace("{orderId}", decodedBody.ORDERID)}`, {
       "body": {
         mid: process.env.MID,
         orderId: decodedBody.ORDERID
