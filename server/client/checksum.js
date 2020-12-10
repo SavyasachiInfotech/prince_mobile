@@ -92,19 +92,19 @@ router.post(
                         if (user.length > 0) {
                           var paramarray = {};
                           paramarray["mid"] = process.env.MID; //Provided by Paytm
+                          paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
                           paramarray["orderId"] = result.insertId.toString(); //unique OrderId for every req
-                          paramarray["userInfo"] = {
-                            custId: req.userId.toString()
-                          } // unique customer identifier
-                          paramarray["requestType"] = "Payment";
                           paramarray["txnAmount"] = {
                             value: price.toFixed(2),
                             currency: "INR"
                           } // transaction amount
-                          paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
+                          paramarray["userInfo"] = {
+                            custId: req.userId.toString()
+                          } // unique customer identifier
                           paramarray["callbackUrl"] =
                             "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
                             result.insertId; //Provided by Paytm
+                          paramarray["requestType"] = "Payment";
                           // paramarray["EMAIL"] = user[0].email; // customer email id
                           // // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
                           // paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
@@ -211,19 +211,19 @@ router.post(
                                 if (user.length > 0) {
                                   var paramarray = {};
                                   paramarray["mid"] = process.env.MID; //Provided by Paytm
+                                  paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
                                   paramarray["orderId"] = result.insertId.toString(); //unique OrderId for every req
+                                  paramarray["txnAmount"] = {
+                                    value: price.toFixed(2),
+                                    currency: "INR"
+                                  } // transaction amount
                                   paramarray["userInfo"] = {
                                     custId: req.userId.toString()
                                   } // unique customer identifier
-                                  paramarray["requestType"] = "Payment";
-                                  paramarray["txnAmount"] = {
-                                    value: price.toString(),
-                                    currency: "INR"
-                                  } // transaction amount
-                                  paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
                                   paramarray["callbackUrl"] =
                                     "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
                                     result.insertId; //Provided by Paytm
+                                  paramarray["requestType"] = "Payment";
                                   // paramarray["EMAIL"] = user[0].email; // customer email id
                                   // // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
                                   // paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
