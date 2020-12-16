@@ -109,7 +109,7 @@ router.post(
                           // paramarray["EMAIL"] = user[0].email; // customer email id
                           // // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
                           // paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
-                          paytm_checksum.genchecksum(
+                          paytm_checksum.generateSignature(
                             paramarray,
                             paytm_config.MERCHANT_KEY,
                             function (err, checksum) {
