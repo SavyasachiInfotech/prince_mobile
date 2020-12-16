@@ -126,7 +126,8 @@ router.post(
                               let paytmData = {
                                 "body": paramarray,
                                 "head": {
-                                  "signature": checksum
+                                  "signature": checksum,
+                                  "clientId": paytm_config.MERCHANT_KEY
                                 }
                               };
                               console.log(paytmData);
@@ -287,7 +288,8 @@ router.post(
                                       axios.post(`${process.env.CREATE_CHECKSUM_URL.replace("{mid}", paramarray.mid).replace("{orderId}", paramarray.orderId)}`, {
                                         "body": paramarray,
                                         "head": {
-                                          "signature": checksum
+                                          "signature": checksum,
+                                          "clientId": paytm_config.MERCHANT_KEY
                                         }
                                       }).then(function (body) {
                                         console.log("Token of initiate", body.data);
