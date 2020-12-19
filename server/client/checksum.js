@@ -6,6 +6,7 @@ const { check, validationResult, param } = require("express-validator");
 const con = require("../database-connection");
 var paytm_config = require("./paytm/paytm_config").paytm_config;
 var paytm_checksum = require("./paytm/checksum");
+const Paytm = require('paytmchecksum');
 var querystring = require("querystring");
 const auth = require("../auth");
 const notification = require("./send-notification");
@@ -96,9 +97,9 @@ router.post(
                           paramarray["websiteName"] = process.env.WEBSITE; //Provided by Paytm
                           paramarray["orderId"] = result.insertId.toString(); //unique OrderId for every req
                           paramarray["callbackUrl"] =
-                            // "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                            "https://merchant.com/callback";
-                          // result.insertId.toString(); //Provided by Paytm
+                            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                            // "https://merchant.com/callback";
+                            result.insertId.toString(); //Provided by Paytm
                           paramarray["txnAmount"] = {
                             value: price.toFixed(2),
                             currency: "INR"
@@ -109,90 +110,89 @@ router.post(
                           // paramarray["EMAIL"] = user[0].email; // customer email id
                           // // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
                           // paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
-                          paytm_checksum.generateSignature(
+                          var paytmChecksum = Paytm.generateSignature(
                             paramarray,
-                            paytm_config.MERCHANT_KEY,
-                            function (err, checksum) {
-                              console.log(checksum);
-                              console.log(
-                                "Checksum: ",
-                                JSON.stringify(checksum),
-                                "\n"
-                              );
-                              console.log(paramarray)
+                            paytm_config.MERCHANT_KEY);
+                          paytmChecksum.then(function (checksum) {
+                            console.log(checksum);
+                            console.log(
+                              "Checksum: ",
+                              JSON.stringify(checksum),
+                              "\n"
+                            );
+                            console.log(paramarray)
 
-                              const https = require('https');
+                            const https = require('https');
 
-                              let paytmData = {
-                                "body": paramarray,
-                                "head": {
-                                  "signature": checksum,
-                                  "clientId": paytm_config.MERCHANT_KEY
-                                }
-                              };
-                              console.log(paytmData);
-                              var post_data = JSON.stringify(paytmData);
+                            let paytmData = {
+                              "body": paramarray,
+                              "head": {
+                                "signature": checksum,
+                                "clientId": paytm_config.MERCHANT_KEY
+                              }
+                            };
+                            console.log(paytmData);
+                            var post_data = JSON.stringify(paytmData);
 
-                              var options = {
+                            var options = {
 
-                                /* for Staging */
-                                hostname: 'securegw-stage.paytm.in',
+                              /* for Staging */
+                              hostname: 'securegw-stage.paytm.in',
 
-                                /* for Production */
-                                // hostname: 'securegw.paytm.in',
+                              /* for Production */
+                              // hostname: 'securegw.paytm.in',
 
-                                port: 443,
-                                path: `/theia/api/v1/initiateTransaction?mid=${paramarray.mid}&orderId=${paramarray.orderId}`,
-                                method: 'POST',
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                  'Content-Length': post_data.length
-                                }
-                              };
+                              port: 443,
+                              path: `/theia/api/v1/initiateTransaction?mid=${paramarray.mid}&orderId=${paramarray.orderId}`,
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json',
+                                'Content-Length': post_data.length
+                              }
+                            };
 
-                              var response = "";
-                              var post_req = https.request(options, function (post_res) {
-                                post_res.on('data', function (chunk) {
-                                  response += chunk;
-                                });
-
-                                post_res.on('end', function () {
-                                  console.log('Response: ', response);
-                                });
+                            var response = "";
+                            var post_req = https.request(options, function (post_res) {
+                              post_res.on('data', function (chunk) {
+                                response += chunk;
                               });
 
-                              post_req.write(post_data);
-                              post_req.end();
-
-
-
-                              axios.post(`${process.env.CREATE_CHECKSUM_URL.replace("{mid}", paramarray.mid).replace("{orderId}", paramarray.orderId)}`, {
-                                "body": paramarray,
-                                "head": {
-                                  "signature": checksum
-                                }
-                              }).then(function (body) {
-                                console.log(body.data)
-                                res.status(200).json({
-                                  status: "1",
-                                  message: "Checksum generated successfully.",
-                                  checksum: checksum,
-                                  order_id: result.insertId.toString(),
-                                  mid: process.env.MID,
-                                  cust_id: req.userId.toString(),
-                                  industry_type_id: process.env.INDUTYPEID,
-                                  channel_id: process.env.CHANNELID,
-                                  txn_amount: price.toString(),
-                                  website: process.env.WEBSITE,
-                                  callback_url:
-                                    "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
-                                    result.insertId,
-                                  email: user[0].email,
-                                  mobile_no: user[0].mobile1
-                                });
+                              post_res.on('end', function () {
+                                console.log('Response: ', response);
                               });
-                            }
-                          );
+                            });
+
+                            post_req.write(post_data);
+                            post_req.end();
+
+
+
+                            axios.post(`${process.env.CREATE_CHECKSUM_URL.replace("{mid}", paramarray.mid).replace("{orderId}", paramarray.orderId)}`, {
+                              "body": paramarray,
+                              "head": {
+                                "signature": checksum
+                              }
+                            }).then(function (body) {
+                              console.log(body.data)
+                              res.status(200).json({
+                                status: "1",
+                                message: "Checksum generated successfully.",
+                                checksum: checksum,
+                                order_id: result.insertId.toString(),
+                                mid: process.env.MID,
+                                cust_id: req.userId.toString(),
+                                industry_type_id: process.env.INDUTYPEID,
+                                channel_id: process.env.CHANNELID,
+                                txn_amount: price.toString(),
+                                website: process.env.WEBSITE,
+                                callback_url:
+                                  "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=" +
+                                  result.insertId,
+                                email: user[0].email,
+                                mobile_no: user[0].mobile1
+                              });
+                            });
+                          }).catch(function (error) { });
                         } else {
                           res.status(200).json({
                             status: "0",
@@ -275,9 +275,10 @@ router.post(
                                   // paramarray["EMAIL"] = user[0].email; // customer email id
                                   // // paramarray["EMAIL"] = "pmdhankecha.18@gmail.com"; // customer email id
                                   // paramarray["MOBILE_NO"] = user[0].mobile1; // customer 10 digit mobile no.
-                                  paytm_checksum.genchecksum(
+                                  let paytmChecksum = Paytm.generateSignature(
                                     paramarray,
-                                    paytm_config.MERCHANT_KEY,
+                                    paytm_config.MERCHANT_KEY);
+                                  paytmChecksum.then(
                                     function (err, checksum) {
                                       console.log(checksum);
                                       console.log(
@@ -314,7 +315,7 @@ router.post(
                                         });
                                       });
                                     }
-                                  );
+                                  ).catch(error => { });
                                 } else {
                                   res.status(200).json({
                                     status: "0",
@@ -368,7 +369,7 @@ router.post("/verify_checksum", auth.verifyToken, (req, res) => {
   // remove this from body, will be passed to function as separate argument
   delete decodedBody.CHECKSUMHASH;
   if (
-    paytm_checksum.verifychecksum(
+    Paytm.verifySignature(
       decodedBody,
       paytm_config.MERCHANT_KEY,
       checksum
